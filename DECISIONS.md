@@ -480,3 +480,103 @@ region/QC/adjusted-value bug anywhere upstream would have blurred that ordering.
 | verification checks | 21 / 21 passed |
 | region + depth + average query | 32 ms |
 | new Python dependencies | none |
+
+
+---
+
+## Stage 6 — the query layer
+
+### D6.1 — The model fills parameters. It never writes SQL.
+**Decided:** a fixed catalogue of **11 hand-written parameterised queries**
+(`api/catalog.py`). The language model's entire influence is *which* query runs
+and *what values* go into the placeholders.
+**Alternative:** natural-language to generated SQL, which is what most
+text-to-SQL demos do and what demos better on stage.
+**Why templates:** three properties fall out for free and none of them depend
+on the model behaving. There is no SQL-injection surface, because no string the
+model produces ever reaches the SQL. There is no destructive statement to emit,
+because none exists in the catalogue. And every answer is traceable to a named
+query a human wrote and reviewed — `run()` returns the query name and the bound
+parameters alongside the rows, so the demo can always show *which* query
+produced a number.
+**What it costs:** a question nobody anticipated gets "I can't answer that"
+instead of a wrong SQL query confidently executed. For a defence, that is the
+better failure.
+
+### D6.2 — The enums come from the database, not from a constant
+**Decided:** `to_tool_schema()` fills each region and float parameter's `enum`
+by querying `regions` and `floats` at load time, and every tool is declared
+`strict: true` with `additionalProperties: false`.
+**Why:** a hallucinated region name is not something to detect and apologise
+for — it is something to make unrepresentable. The model is handed the nine
+real region names, and if it somehow proposes a tenth, `Param.coerce` rejects
+it with the list of valid ones so the next attempt succeeds. The same holds for
+the ten WMOs. Add a float to the demo set and the tool schema grows by itself.
+
+### D6.3 — A read-only role, because "read-only by prompt" is not read-only
+**Decided:** the query layer connects as `floatchat_ro`, which holds SELECT and
+nothing else (`db/roles.sql`).
+**Why:** the defence has to survive the prompt being wrong. Even a model talked
+into requesting a DELETE gets `permission denied for table profiles` from
+Postgres.
+**What the test caught:** the first version of the role was **not actually
+read-only**. On PostgreSQL 14 the `public` schema grants CREATE to `PUBLIC`,
+so `REVOKE CREATE ... FROM floatchat_ro` changed nothing and the role happily
+created a table. The test asserted it couldn't, and failed. The fix is
+`REVOKE CREATE ON SCHEMA public FROM PUBLIC` — which PostgreSQL 15 made the
+default, and which we now do explicitly so the hardening does not depend on
+the server version. This is the argument for writing the hostile test even when
+you are sure of the answer.
+
+### D6.4 — Claude Opus 5, adaptive thinking, strict tools
+**Decided:** model `claude-opus-5`, `thinking: {"type": "adaptive"}`, catalogue
+exposed as tool definitions with `strict: true`.
+**Why Opus rather than a cheaper tier:** the model's job is intent routing over
+eleven similar queries plus date arithmetic from vague phrasing ("last monsoon
+season"). Getting the wrong query is a wrong answer with a citation attached,
+which is worse than no answer. Cost is negligible at demo volume — one call per
+question.
+**Note:** `budget_tokens` is not used; it is rejected on this model family.
+Effort stays at the default rather than being tuned before there is anything to
+measure.
+
+### D6.5 — The query layer is tested without a model, an API key, or a network
+**Decided:** `api/test_catalog.py`, one file, no pytest, run it and read the
+output — the same rule the ETL scripts follow. **28 checks, all passing.**
+Every query runs against its documented example; eight hostile inputs are
+refused *and* checked for a message that names the valid values (a bad region,
+an injection string, an unknown float, `"last tuesday"` as a date, a limit of
+ten million, an invented parameter); four write statements are refused by
+Postgres itself.
+**The check worth stealing:** one assertion is physics — Bay of Bengal surface
+water must come out fresher than the Arabian Sea (32.872 against 35.428). It
+fails if anything from the QC rules to the region polygons breaks, and it is
+the only test in the suite that cannot be satisfied by a bug that is merely
+self-consistent.
+
+### D6.6 — Geodesic distance without PostGIS (closes D4.4's open clause)
+**Found:** the `cube` and `earthdistance` extensions ship with this Postgres and
+give great-circle distance in metres — `earth_distance(ll_to_earth(...), ...)`
+— plus `earth_box` for an indexable radius search. Verified against a known
+pair: 15N 68E to 12N 88E returns 2,189.6 km.
+**Consequence:** D4.4 named "floats within 200 km of a point" as the thing that
+would force a PostGIS install. It does not. `nearest_profiles` does exactly
+that in core Postgres. The remaining reasons to install PostGIS are
+reprojection and true multipolygon geometry, and the demo needs neither.
+
+### D6.7 — The repository exists now
+`git init`, one commit, 14 files. Data stays out (every stage regenerates it
+from the GDAC), so the repository is 212 KB. D1.1's claim — clone, make a venv,
+`pip install -r requirements.txt`, run it — is finally something a judge can
+actually do.
+
+### Stage 6 result
+| | |
+|---|---:|
+| queries in the catalogue | 11 |
+| tests | 28 / 28 passing |
+| generated SQL | none, by design |
+| database role | `floatchat_ro`, SELECT only |
+| statement timeout / row cap | 10 s / 5,000 |
+| new Python dependency | `psycopg` (the driver D4.3 deferred) |
+| repository | initialised, 14 files, 212 KB |
