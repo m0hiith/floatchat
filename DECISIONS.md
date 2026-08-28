@@ -767,19 +767,58 @@ name in the trail that was never called. `GeminiTransport` uses its own
 **Failures are diagnosed, not raised:** a rejected key and a renamed model id
 each print one line and the command that fixes them, on D7.7's rule.
 
-### D8.8 — Written and tested; the key on this machine is rejected
-**State:** `GEMINI_API_KEY` is set in the environment, and the API returns
-`400 API_KEY_INVALID` for it — on `models.list` as well as
-`generate_content`, so it is the key and not the request. A valid key is the
-only thing between here and a live answer.
-**What is therefore proven:** the translation in both directions, against real
-`google.genai.types` objects, so a schema Gemini's own pydantic models would
-reject fails in the suite rather than in the demo. **45 offline checks.**
-**What is still unproven, on both providers:** whether the model routes a real
-question to the right query. That was D7.7's open item and it stays open.
-**Model default:** `gemini-3-pro-preview`, overridable by `$GEMINI_MODEL` or
-`--model=`. The exact id wants confirming against a live key — which is what
-`--models` is for.
+### D8.8 — `models.list` is not the same as "this key can call it"
+**Found, with a working key:** the key lists 39 models, and three separate
+things go wrong under it.
+  * `gemini-3.1-pro-preview` and `gemini-pro-latest` return **429 with
+    `limit: 0`** — not a rate limit but a tier with no pro quota at all, which
+    no amount of waiting fixes.
+  * `gemini-2.5-flash` and `gemini-2.5-pro` are in the listing and return
+    **404 NOT_FOUND** when called.
+  * `gemini-3.7-flash` and `gemini-flash-latest` answered `"say ok"` fine and
+    then returned **503 UNAVAILABLE** twice under the real request, which
+    carries the system prompt and eleven tool declarations.
+**Decided:** default to **`gemini-3.6-flash`** — the newest model that
+answered the actual request reliably — overridable by `$GEMINI_MODEL` or
+`--model=`. My first guess, `gemini-3-pro-preview`, does not exist on this
+key; guessing a model id from memory is not a thing to do when `--models`
+takes a second.
+**Why it is logged:** those three failures look identical in a traceback and
+mean completely different things. `report_provider_error` now separates them:
+`limit: 0` says retrying will never help and points at `--models`, a plain 429
+says wait, a 503 says transient, a 404 says the id is wrong. A judge on a
+fresh key hits at least one of these.
+
+### D8.9 — Routing works. Stage 7's open item is closed.
+**D7.7 and the first draft of D8.8 both ended "whether the model routes real
+questions to the right query is unproven."** Seven live questions on
+`gemini-3.6-flash`, against the real database:
+
+| Question | Query chosen | Turns |
+|---|---|---:|
+| dissolved oxygen at 500 m | *none* — refused | 1 |
+| how temperature changes with depth in the Arabian Sea | `depth_profile` | 2 |
+| how much data for the Atlantic Ocean | *none* — refused | 1 |
+| which floats, and which centres run them | `float_inventory` | 2 |
+| why is float 2902203 missing profiles | `missing_profiles` + `data_provenance` | 3 |
+| profiles per month in the Bay of Bengal | `monthly_profile_counts` | 2 |
+| what did the monsoon look like in 1998 | *none* — refused | 1 |
+| surface salinity, Bay of Bengal vs Arabian Sea | `compare_regions` | 2 |
+
+**Seven of seven correct**, and every number in every answer traced to a named
+query in the trail.
+**The two results worth reading twice:**
+  * **The three refusals ran no query at all.** Oxygen, the Atlantic and 1998
+    were each declined from the system prompt and the tool enums, before any
+    tool call — so the scope statement in D7.2 is doing exactly the work it
+    was written for, and a wrong question costs nothing.
+  * **The missing-profiles question called a second query nobody asked for.**
+    It answered from `missing_profiles`, then pulled `data_provenance` to
+    check the float's ingest history before committing to "no level survived
+    QC". That is the behaviour the catalogue was shaped to allow, and the
+    trail shows it happened rather than leaving it to be inferred.
+**Still worth saying plainly:** eight questions is a demo, not an evaluation.
+It proves the loop routes; it does not measure how often it routes right.
 
 ### Stage 8 result
 | | |
@@ -787,12 +826,10 @@ question to the right query. That was D7.7's open item and it stays open.
 | files changed in Stages 6–7 | 0 (plus `main()`) |
 | new module | `api/gemini.py` |
 | tests | 45 offline (**101 with Stages 6 and 7**) |
-| default model | `gemini-3-pro-preview` |
+| default model | `gemini-3.6-flash` |
 | new dependency | `google-genai` 2.20.0 |
-| live API calls made | key rejected — `400 API_KEY_INVALID` |
+| live questions answered | 8 of 8, all traced to a named query |
 
-
----
 ## Stage 9 — packaging
 
 ### D9.1 — One runner, and it skips what is already built
@@ -832,8 +869,8 @@ an answer ready.
 |---|---:|
 | entry point | `python run_pipeline.py` |
 | cold run | ~155 MB downloaded |
-| warm re-run | 8.4 s, 77 checks |
-| checks | 21 database + 28 catalogue + 28 tool loop |
+| warm re-run | 9.3 s, 122 checks |
+| checks | 21 database + 28 catalogue + 28 tool loop + 45 Gemini adapter |
 | documentation | `README.md` front door, `DECISIONS.md` long version |
 
 ---
@@ -855,13 +892,17 @@ Complete end to end: GDAC index -> filter -> float selection -> NetCDF download
 
 **The two things still open, both needing something only the author can supply:**
 
-1. **Live routing is unmeasured, on both providers (D7.7, D8.8).** No working
-   key exists on the build machine — there are no Anthropic credentials at all,
-   and the `GEMINI_API_KEY` that is set returns `400 API_KEY_INVALID` on
-   `models.list` as well as on generation. Every layer between the model's
-   answer and Postgres is tested; whether either model routes a real question to
-   the right query has never been observed. That needs one valid key and a set
-   of real questions with expected query names.
+1. **Live routing is proven on Gemini, still unobserved on Anthropic (D8.9,
+   D7.7).** A working `GEMINI_API_KEY` closed half of this: eight real
+   questions on `gemini-3.6-flash`, eight correct query choices, three of them
+   correctly refusing to query at all. What that does *not* give is a
+   measurement — there is no fixed question set with expected query names and
+   no pass rate, so "it routes" is an observation, not a number. On Anthropic
+   the layer is still tested only against a scripted transport; there are no
+   Anthropic credentials on this machine, so not one live call has been made.
+   The free-tier key also has **no quota for any pro model**, so what is proven
+   is proven on a flash model.
+
 2. **There is no interface beyond the CLI.** `api/chat.py` answers on the
    terminal. Whether the demo wants an HTTP API, a Streamlit dashboard with a
    map and depth plots, or nothing more than the CLI is a product decision, not

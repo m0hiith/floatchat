@@ -266,6 +266,22 @@ def report_provider_error(provider: str, exc: Exception) -> int:
               "  see what it can reach:  python api/chat.py --models\n"
               '  then:                   python api/chat.py --model=NAME "..."')
         return 2
+    if "RESOURCE_EXHAUSTED" in text or "429" in text:
+        # "limit: 0" is not a rate limit -- it means this tier cannot call
+        # this model at all, which waiting will never fix.
+        if "limit: 0" in text:
+            print(f"{provider}: this key's tier has NO quota for that model, so "
+                  "retrying will not help.\n"
+                  "  pick one its tier allows:  python api/chat.py --models\n"
+                  '  e.g.                       python api/chat.py --model=gemini-3.5-flash "..."')
+        else:
+            print(f"{provider}: rate limited. Wait and retry, or use a smaller model "
+                  "with --model=.")
+        return 2
+    if "UNAVAILABLE" in text or "503" in text:
+        print(f"{provider}: the model is busy (503). This is transient -- retry, or "
+              "pin a steadier one with --model=.")
+        return 2
     raise exc
 
 

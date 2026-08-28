@@ -147,12 +147,17 @@ parameters, and how many rows each returned.
 
 ## Known limitations
 
-- **The routing is untested against a real API, on both providers.** Everything
-  between the model's answer and Postgres is covered by offline tests, but
-  whether either model picks the right query for a real question has never been
-  observed. There are no Anthropic credentials on the build machine, and the
-  `GEMINI_API_KEY` that is set returns `400 API_KEY_INVALID`. One valid key is
-  all that stands in the way.
+- **The routing is observed on Gemini, unmeasured everywhere.** Eight real
+  questions on `gemini-3.6-flash` chose the right query eight times, and the
+  three that fell outside the data ran no query at all. That is a demo, not an
+  evaluation: there is no fixed question set with expected query names and no
+  pass rate. On Anthropic it is worse than unmeasured — there are no Anthropic
+  credentials on this machine, so the loop has never made a live call there at
+  all, only scripted ones.
+- **What is proven is proven on a flash model.** The available Gemini key has
+  no free-tier quota for any pro model (`429`, `limit: 0`), so
+  `gemini-3.6-flash` is the default and the only tier the routing has been
+  seen on.
 - **Ten floats, two years, one ocean basin.** The scope is deliberate and
   documented, not a stub. Widening it means re-running Stage 1 with different
   constants and re-checking the funnel.

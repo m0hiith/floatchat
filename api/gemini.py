@@ -40,7 +40,7 @@ import os
 from dataclasses import dataclass, field
 from typing import Any
 
-DEFAULT_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3-pro-preview")
+DEFAULT_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
 
 # Gemini finish reasons that mean "the model declined", not "the model finished".
 REFUSALS = {"SAFETY", "PROHIBITED_CONTENT", "BLOCKLIST", "SPII", "IMAGE_SAFETY",
