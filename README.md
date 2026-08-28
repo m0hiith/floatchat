@@ -27,7 +27,7 @@ python -m venv .venv
 ```
 
 That downloads ~155 MB, builds the database, builds the retrieval index, and
-runs 400 checks. First run is a few minutes, mostly transfer; afterwards it
+runs 405 checks. First run is a few minutes, mostly transfer; afterwards it
 re-runs from cache in about 11 seconds.
 
 Then apply the read-only role the query layer uses, once:
@@ -85,7 +85,7 @@ The retrieval index builds with no key either, and reports how well it works:
 | database size | 95 MB |
 | parameterised queries | 11 |
 | indexed summaries | 131 |
-| automated checks | 400 |
+| automated checks | 405 |
 
 The ten floats are deliberately mixed: 6 delayed-mode, 2 real-time-only, 2 that
 change mode mid-life; 4 data centres of which 5 floats are Indian (`incois`);
@@ -275,7 +275,7 @@ parameters, and how many rows each returned.
 - **Ten floats, two years, one ocean basin.** The scope is deliberate and
   documented, not a stub. Widening it means re-running Stage 1 with different
   constants and re-checking the funnel.
-- **The dashboard has no automated tests.** The 400 checks cover the ETL, the
+- **The dashboard has no automated tests.** The 405 checks cover the ETL, the
   catalogue, both model loops, retrieval and the HTTP API. The UI was verified
   by driving a real browser and reading back the rendered chart and map objects
   — which found three bugs that built cleanly and passed every server-side
@@ -308,7 +308,7 @@ api/embed.py      three embedders behind one seam (Gemini · keyless · scripted
 api/retrieval.py  the FAISS index, and the measurement of whether it works
 api/router.py     Stage 12: picks a query with no model, and measures itself
 api/server.py     GET /meta, GET /regions.geojson, POST /query, POST /ask
-api/test_*.py     379 checks, no network, no API key
+api/test_*.py     384 checks, no network, no API key
 ui/               the dashboard; ui/src/displays.js maps each query to a chart
 db/schema.sql     tables, constraints, indexes
 db/roles.sql      the read-only role

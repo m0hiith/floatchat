@@ -311,6 +311,21 @@ def main():
           "cannot chain queries" in ui)
     check("retrieval is only described on the path that actually uses it",
           "rag.available && !lexical" in ui)
+
+    print("\na model failure offers the path that works")
+    states = (UI.parent / "States.jsx").read_text()
+    check("the failure panel's primary action re-asks without a model",
+          "Ask this again without a model" in states and "onRetryLexical" in states)
+    check("the selector moves to the working path after a model failure",
+          'error.kind === "no-model"' in ui and 'setPath("lexical")' in ui)
+    check("and the move announces itself -- it is not a silent fallback",
+          "Switched to the lexical router" in ui)
+    check("the failed request is NOT re-answered behind the reader's back "
+          "(D12.12 still holds)",
+          "Nothing above was re-answered" in ui
+          and "re-answered by a different engine" in ui)
+    check("re-asking is an explicit click, carrying the original question",
+          'send(turn.text, "lexical")' in ui)
     app = (UI.parent.parent / "App.jsx").read_text()
     check("the header reports the LIVE path, so it cannot contradict the replies",
           "usingModel" in app and "chatPath ===" in app)

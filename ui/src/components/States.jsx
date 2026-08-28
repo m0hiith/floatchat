@@ -195,7 +195,7 @@ export class DisplayBoundary extends Component {
  * them to fix the wrong thing.  The server's own diagnosis is shown verbatim;
  * it already names the variable to set (api/chat.py diagnose_provider_error).
  */
-export function ModelFailure({ error, onSwitchToCatalogue }) {
+export function ModelFailure({ error, onSwitchToCatalogue, onRetryLexical }) {
   return (
     <Panel tone="amber" title="No model answered">
       <p>{error.message}</p>
@@ -207,18 +207,32 @@ export function ModelFailure({ error, onSwitchToCatalogue }) {
       <div className="rounded border border-amber-300 bg-white/70 p-2 text-xs">
         <p className="font-semibold">The data is fine. The model is not.</p>
         <p className="mt-1">
-          Every one of the catalogue queries still runs without a key — the chat box is the
-          only part of this dashboard that needs one.
+          Nothing on this dashboard needs a key. The lexical router answers the same
+          question by matching your wording against written examples — no model — and every
+          catalogue query still runs from the other tab.
         </p>
       </div>
-      {onSwitchToCatalogue && (
-        <button
-          onClick={onSwitchToCatalogue}
-          className="rounded border border-amber-400 bg-white px-3 py-1 text-xs font-medium hover:bg-amber-100"
-        >
-          Use the query catalogue instead
-        </button>
-      )}
+      <div className="flex flex-wrap gap-2">
+        {/* The primary action is the path that works, not a consolation prize.
+            Asking again is one explicit click: the request above is NOT
+            re-answered behind the reader's back (D12.12). */}
+        {onRetryLexical && (
+          <button
+            onClick={onRetryLexical}
+            className="rounded bg-slate-800 px-3 py-1 text-xs font-medium text-white hover:bg-slate-700"
+          >
+            Ask this again without a model
+          </button>
+        )}
+        {onSwitchToCatalogue && (
+          <button
+            onClick={onSwitchToCatalogue}
+            className="rounded border border-amber-400 bg-white px-3 py-1 text-xs font-medium hover:bg-amber-100"
+          >
+            Use the query catalogue instead
+          </button>
+        )}
+      </div>
     </Panel>
   );
 }

@@ -1606,6 +1606,31 @@ found four things:
 Two and three are honesty bugs, which is the class this project is organised
 against, and both were caught by looking rather than by testing.
 
+### D12.15 — A dead key must not cost the first question
+**Found by the author opening the dashboard**, which is the second time in two
+stages that looking has beaten reading (D12.13).
+**The failure:** `GEMINI_API_KEY` is set to a placeholder, so
+`chat.resolve_provider()` reports `gemini`, so the composer defaulted to the
+model path, so the first question anyone asks fails with a 503 — on a stage
+whose entire purpose was "the chat panel works without a key". The working path
+was one unlabelled click away and nothing pointed at it.
+**Why the default could not simply be flipped:** a key variable being set is
+the only evidence available before a call is made. Defaulting to the router
+whenever *any* key exists would demote a working model on every correctly
+configured machine.
+**Decided:** learn from the failure instead of guessing ahead of it. When a
+model call returns `no-model`, three things happen: the failure panel's
+**primary** action becomes "Ask this again without a model", the selector moves
+to the lexical path for the next question, and a line of text says it moved and
+why.
+**Why this is not the automatic fallback D12.12 refuses.** The distinction is
+exact and worth keeping: the failed request stays failed and renders as a
+failure — nothing is silently re-answered by a different engine. What changes
+is the position of a selector, it announces itself on screen, and re-running
+the question is an explicit click that the reader makes. D12.12 forbids an
+answer whose engine changed without the reader knowing; it does not forbid
+pointing at the door.
+
 ### D12.14 — What Stage 12 did NOT prove
 - **Routing accuracy is 66.7% and that is the ceiling of the method, not a
   bug to be fixed later.** A third of legitimate paraphrases are refused. The
@@ -1629,8 +1654,8 @@ against, and both were caught by looking rather than by testing.
 | refusal recall | 100.0% (refused with the right reason) |
 | routing accuracy | 66.7% (33 in-scope questions), 11 misses printed |
 | leakage | 0 evaluation questions contain a routing fixture |
-| new checks | 91 (`api/test_router.py`) |
-| total checks | 400 |
+| new checks | 96 (`api/test_router.py`) |
+| total checks | 405 |
 | new dependencies | 0 |
 | needs a key, a network, a daemon or a download | no, and `run_pipeline.py --check` proves it |
 
@@ -1644,7 +1669,7 @@ query catalogue -> vector index over the database's own summaries -> a model
 that picks a query (Anthropic **and** Gemini behind one transport seam) **or a
 lexical router that picks one with no model at all** -> HTTP API -> dashboard
 with both front doors and one audit trail.
-**12 stages, 101 logged decisions, 400 automated checks, one command to rebuild.**
+**12 stages, 102 logged decisions, 405 automated checks, one command to rebuild.**
 
 The dashboard is demonstrable on a machine with no API key, no network and no
 model download. The Catalogue tab always was. Since Stage 12 the Chat tab is
@@ -1661,8 +1686,8 @@ send, and in the audit trail beside the queries a model chose.
 | Gemini adapter (`api/test_gemini.py`) | 45 |
 | HTTP API (`api/test_server.py`) | 62 |
 | retrieval, corpus, embedders and `/ask` (`api/test_retrieval.py`) | 125 |
-| lexical router, no model (`api/test_router.py`) | 91 |
-| **total** | **400** |
+| lexical router, no model (`api/test_router.py`) | 96 |
+| **total** | **405** |
 
 **The measured numbers, in one place.** Everything below is produced by a suite
 that runs with no network and no credentials.

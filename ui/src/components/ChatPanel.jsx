@@ -58,9 +58,10 @@ export default function ChatPanel({ meta, outlines, onQueries, onSwitchToCatalog
     bottom.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [turns, busy]);
 
-  async function send(question) {
+  async function send(question, force) {
     const text = (question ?? draft).trim();
     if (!text || busy) return;
+    const useLexical = force ? force === "lexical" : lexical;
     setDraft("");
     setBusy(true);
     const at = timeOfDay();
@@ -68,8 +69,8 @@ export default function ChatPanel({ meta, outlines, onQueries, onSwitchToCatalog
 
     try {
       const data = await ask(text, {
-        retrieval: useRetrieval && !lexical,
-        provider: lexical ? "lexical" : null,
+        retrieval: useRetrieval && !useLexical,
+        provider: useLexical ? "lexical" : null,
       });
       setTurns((t) => [...t, { role: "assistant", at: timeOfDay(), data }]);
       // The audit trail is shared with the catalogue panel: a query the model
@@ -90,7 +91,23 @@ export default function ChatPanel({ meta, outlines, onQueries, onSwitchToCatalog
         })),
       );
     } catch (error) {
-      setTurns((t) => [...t, { role: "assistant", at: timeOfDay(), error }]);
+      setTurns((t) => [...t, { role: "assistant", at: timeOfDay(), error, text }]);
+      // The model was configured and did not answer. We now KNOW something the
+      // credential check could not: this key does not work. Move the selector
+      // so the next question reaches the path that does, and say so on screen.
+      //
+      // This is not the automatic fallback D12.12 refuses. The failed request
+      // stays failed and is rendered as a failure; nothing is silently
+      // re-answered by a different engine. Only the selector moves, it
+      // announces itself, and re-running the question is one explicit click.
+      if (error.kind === "no-model" && !useLexical) {
+        setPath("lexical");
+        setTurns((t) => [...t, {
+          role: "notice", at: timeOfDay(),
+          text: "Switched to the lexical router for the next question — it needs " +
+                "no key. Nothing above was re-answered.",
+        }]);
+      }
     } finally {
       setBusy(false);
     }
@@ -121,9 +138,12 @@ export default function ChatPanel({ meta, outlines, onQueries, onSwitchToCatalog
         {turns.map((turn, i) =>
           turn.role === "user" ? (
             <Question key={i} turn={turn} />
+          ) : turn.role === "notice" ? (
+            <Notice key={i} turn={turn} />
           ) : (
             <Reply key={i} turn={turn} meta={meta} outlines={outlines}
-                   onSwitchToCatalogue={onSwitchToCatalogue} />
+                   onSwitchToCatalogue={onSwitchToCatalogue}
+                   onRetryLexical={() => send(turn.text, "lexical")} />
           ),
         )}
 
@@ -277,6 +297,13 @@ function Opening({ meta, rag, router, lexical }) {
   );
 }
 
+function Notice({ turn }) {
+  return (
+    <p className="px-1 text-center text-[11px] text-slate-500">{turn.text}</p>
+  );
+}
+
+
 function Question({ turn }) {
   return (
     <div className="flex justify-end">
@@ -287,11 +314,17 @@ function Question({ turn }) {
   );
 }
 
-function Reply({ turn, meta, outlines, onSwitchToCatalogue }) {
+function Reply({ turn, meta, outlines, onSwitchToCatalogue, onRetryLexical }) {
   if (turn.error) {
     const error = turn.error;
     if (error.kind === "no-model") {
-      return <ModelFailure error={error} onSwitchToCatalogue={onSwitchToCatalogue} />;
+      return (
+        <ModelFailure
+          error={error}
+          onRetryLexical={turn.text ? onRetryLexical : null}
+          onSwitchToCatalogue={onSwitchToCatalogue}
+        />
+      );
     }
     if (error.kind === "refused") return <Refusal error={error} />;
     return <ApiFailure error={error} />;
