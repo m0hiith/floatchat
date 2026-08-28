@@ -580,3 +580,96 @@ actually do.
 | statement timeout / row cap | 10 s / 5,000 |
 | new Python dependency | `psycopg` (the driver D4.3 deferred) |
 | repository | initialised, 14 files, 212 KB |
+
+
+---
+
+## Stage 7 — the natural-language layer
+
+### D7.1 — A manual tool loop, not the SDK's tool runner
+**Decided:** `api/chat.py` drives the request → tool_use → execute → loop cycle
+itself against `client.messages.create`.
+**Alternative:** the SDK's `client.beta.messages.tool_runner`, which writes the
+loop for you.
+**Why:** the runner expects tools declared as decorated Python functions. Ours
+are **generated at runtime** from the catalogue, with enums read out of the
+database (D6.2) — there is no fixed function to decorate. More importantly,
+every tool call has to pass through `Param.coerce` and land in the audit trail
+before it reaches Postgres, and owning the loop is the simplest way to
+guarantee that rather than hope a helper preserves it.
+
+### D7.2 — The system prompt is generated from the database
+**Decided:** `build_system()` fills the scope paragraph — float count, profile
+count, level count, the date window, the nine region names — by querying at
+startup.
+**Why:** a hand-written prompt saying "about 900 profiles" starts drifting the
+moment the demo set changes, and a prompt that misstates its own scope is how a
+model ends up confidently answering outside it. Adding a float updates the
+prompt, the tool enums, and the tests together or not at all.
+**What the prompt is actually for:** three refusals the tools cannot enforce on
+their own — answer only from returned rows, say plainly when the data does not
+cover the question, and never silently substitute an easier question. The
+tools stop the model reaching bad data; the prompt stops it filling silence
+with plausible prose.
+
+### D7.3 — A refused parameter goes back to the model, not up to the user
+**Decided:** a `QueryError` becomes a `tool_result` with `is_error: true`
+carrying the message, and the loop continues.
+**Why:** the catalogue's error messages were written to name the valid values
+(D6.2) — "'Atlantic Ocean' is not a region in this database. Valid regions:
+…". Handed back, that is a correction the model can act on in one more turn.
+Raised to the user, it is a stack trace. The trail records the failed attempt
+*and* the corrected one, so the correction is visible rather than hidden.
+
+### D7.4 — Two seams, so the whole loop is tested with no API key
+**Decided:** the model is reached through a `Transport` protocol
+(`AnthropicTransport` for real, `ScriptedTransport` for tests) and the executor
+is injectable.
+**Result:** `api/test_chat.py` — **28 checks, no network, no credentials** —
+asserts what we own rather than whether Claude is clever: the request shape
+(model, adaptive thinking, every tool `strict` with `additionalProperties:
+false`, system prompt cached and stating the real scope), that parallel tool
+results go back in **one** user message with matching `tool_use_id`s, that a
+refused parameter round-trips and recovers, that a question outside the data
+runs no query at all, and that the loop is bounded, refusals are surfaced, and
+an over-large limit is stopped before Postgres sees it.
+**Total across Stages 6 and 7: 56 checks, both suites runnable offline.**
+
+### D7.5 — The test double had to snapshot requests
+**Found:** `ScriptedTransport` originally stored the `kwargs` it was handed.
+`ask` mutates one `messages` list in place, so every recorded turn showed the
+conversation's *final* state. One assertion failed because of it — and a second
+one **passed for the wrong reason**, matching "Arabian Sea" inside a success
+payload it should never have been looking at.
+**Fixed:** the transport deep-copies each request.
+**Why it is in this log:** a test that passes for the wrong reason is worse than
+one that fails, because nothing ever asks it again. The failing neighbour is
+the only reason it was caught.
+
+### D7.6 — Every answer carries its audit trail
+**Decided:** `ask()` returns an `Answer` holding the text *and* an ordered list
+of every query that ran, with the **bound** parameters — defaults included —
+and the row count or the error. Printing an `Answer` shows both.
+**Why:** this is the thing that separates the project from a text-to-SQL demo.
+Any number on screen can be pointed at a named query, its parameters, and the
+row count behind it, live, during questions.
+
+### D7.7 — Written, tested, not yet run against the API
+**State:** there are no Anthropic credentials on this machine — no
+`ANTHROPIC_API_KEY`, no `ANTHROPIC_AUTH_TOKEN`, no `ant` CLI, no stored
+profile. `python api/chat.py "<question>"` says so and points at the two
+offline suites instead of failing obscurely.
+**What is therefore still unproven:** whether Claude routes real questions to
+the right query. Everything between the model's answer and Postgres is tested;
+the routing itself needs one key and an afternoon of real questions.
+**Model:** `claude-opus-5`, adaptive thinking, default effort (D6.4).
+
+### Stage 7 result
+| | |
+|---|---:|
+| tool loop | manual, bounded at 8 turns |
+| tools exposed | 11, all `strict` |
+| tests | 28 offline (56 with Stage 6) |
+| model | `claude-opus-5`, adaptive thinking |
+| new dependency | `anthropic` 1.2.0 |
+| live API calls made | none — no credentials on this machine |
