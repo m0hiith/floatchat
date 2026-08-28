@@ -61,6 +61,12 @@ STAGES = [
     Stage("8", "Gemini adapter tests", "api/test_gemini.py", is_check=True),
     Stage("10", "HTTP API tests", "api/test_server.py", is_check=True),
     Stage("11c", "retrieval and /ask tests", "api/test_retrieval.py", is_check=True),
+    # Stage 12 has no build artefact -- the router fits its exemplars at import,
+    # in milliseconds -- so it appears here only as its check suite. That suite
+    # is the stage's central claim: it needs no network, no API key, no daemon
+    # and no model download, and it runs on a fresh clone.
+    Stage("12", "lexical router tests (no model, no key, no network)",
+          "api/test_router.py", is_check=True),
 ]
 
 
@@ -172,7 +178,9 @@ def main():
     print("                         everything above runs without either)")
     print("or open the dashboard:  .venv/bin/uvicorn api.server:app --port 8000")
     print("                        cd ui && npm install && npm run dev")
-    print("                        Catalogue tab needs no key; Chat tab needs one.")
+    print("                        No key needed for any of it: the Chat tab's")
+    print("                        lexical router answers without a model.")
+    print("routing, measured    :  python api/router.py")
     return 0
 
 

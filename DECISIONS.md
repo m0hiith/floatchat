@@ -1357,20 +1357,301 @@ Written down because rule 8 says lead with it.
 
 ---
 
+## Stage 12 — answering with no model at all
+
+### D12.1 — The lexical router, and Ollama deferred rather than rejected
+**Decided:** Stage 12 is a lexical router that picks one catalogue query from a
+question with no model in the loop.
+**Alternative, seriously considered:** an Ollama transport — a third adapter on
+the `Transport` seam that already took Gemini, running a local model with
+constrained tool output. Architecturally the cleaner of the two, and it
+restores the demo path this project originally locked in.
+**Why not, and it was the stated constraint that decided it:** "must run with
+no network and no key, prove it in `run_pipeline.py`". Ollama needs no API key
+but it needs a system-level install, a multi-gigabyte model pull and a running
+daemon. An Ollama-backed check has two options and both are bad: skip when the
+daemon is absent — a quiet no-op, rule 7 — or fail the pipeline on every
+machine that has not pulled the model, which breaks D1.1 harder than the bad
+Gemini key did in D11.22. What it *could* prove offline is the adapter
+translation, mirroring `test_gemini.py`; that proves the adapter, not the demo.
+**Two supporting reasons.** Small local models are unreliable at constrained
+tool calling against an eleven-tool schema with database-derived enums, and
+that is unmeasurable until the model is pulled. And "restores the LLM path"
+overstates what is missing: the model path *exists* with 73 checks across
+`chat.py` and `gemini.py`. It is not absent, it is uncredentialed. A third
+transport adds to a seam that already has two.
+**Deferred, not rejected.** When there is a network and time before a demo:
+`brew install ollama` (~1 GB), `ollama pull qwen3:8b` or `llama3.1:8b` (~5 GB;
+`qwen3:4b` at ~2.5 GB is the floor and should be expected to mis-route),
+`pip install ollama`, `ollama serve` on `:11434`. Once, on wifi, never at check
+time. Startup must fail the way D11.22 taught: `/meta` reports
+`provider: null, reason: "ollama is not running on :11434"` so the tab is muted
+with the reason, `/ask` returns the 503 carrying the exact commands, and
+`test_ollama.py` runs against a recording fake so `--check` never needs the
+daemon.
+**And the cheapest fix is still neither.** A working `GEMINI_API_KEY` costs two
+minutes and closes D11.21's first bullet and D8.9 together.
+
+### D12.2 — A sibling of `chat.ask`, not a sibling of `Transport`
+**Decided, and worth stating in exactly these words:** `api/router.py` is a
+**sibling of `chat.ask`, not a sibling of `gemini.GeminiTransport`.** It does
+not satisfy the `Transport` protocol and must never be registered as one.
+**Why the distinction is not pedantry:** `Transport` is a seam to a *model*.
+Registering a model-free router there would make `chat.ask` — which owns the
+system prompt, the tool loop, the turn bound and the audit trail — appear to be
+running when none of it is. Every guarantee in that function would be claimed
+by something that does not have it.
+**What it reuses instead:** the *other* seam from D7.4, the injected
+`run_query` executor. `api/server.py` builds one closure and hands it to
+`chat.ask` or to `router.answer` interchangeably, which is why there is no new
+path into the database and why both paths' rows arrive in the same shape and
+are drawn by the same `displays.js` spec.
+**Checked:** `Router` has no `create()`, `router.py` imports no database driver
+and opens no cursor, and the module's own docstring carries the sentence.
+
+### D12.3 — Exemplars are routing fixtures, and D11.4 does not apply to them
+**The objection to answer:** D11.4 says every retrievable document is generated
+from a SQL query it carries. The exemplars are hand-written text. Is this the
+same rule being broken one stage later?
+**No, and the line is where the text goes.** D11.4 governs `api/corpus.py`:
+things retrieved and shown as evidence *about the ocean*, which is why they
+have to be re-derivable. An exemplar carries no fact. It is matched *against*
+and never returned *as* content, and no word of one reaches an answer. It is
+the same species as `retrieval.EVALUATION`'s patterns and
+`catalog.Query.example` — a fixture describing how to *reach* the data.
+**Enforced mechanically rather than argued:** no exemplar may contain a digit,
+asserted over all 110. A digit in a phrasing means the phrasing is carrying a
+value, and values come from `fill_slots` or from the catalogue's own defaults.
+**It caught something while being written.** `surface_conditions` naturally
+wants "the top 10 metres", and that digit was carrying `max_dbar` — a value
+belonging to the catalogue default. Rewritten to "near the surface". The three
+queries most suspected of needing a digit (`float_inventory`,
+`float_trajectory`, `data_provenance`) needed none: the WMO comes from slot
+filling in every case.
+
+### D12.4 — Mask the values out of a question before routing it
+**Found:** "is the Bay of Bengal fresher than the Arabian Sea" scored 0.274
+against `compare_regions` and fell below the floor. The region names are noise
+— they share almost no tokens with "compare two regions" and actively pull the
+score down.
+**Decided:** replace regions, WMOs and coordinates with a sentinel before
+embedding. Routing is about the *shape* of a question; the values are
+`fill_slots`'s job. It is the same principle the no-digit rule enforces on the
+other side of the match.
+**The first attempt was worse than doing nothing.** Substituting the phrase
+"a region" made the placeholder a token in its own right, it matched the
+exemplar "the depth profile for a region", and the question routed to
+`depth_profile`. A masked value must contribute *nothing* to any route, not
+contribute equally to the wrong one. The sentinel is punctuation, which
+`embed.features` drops.
+**Measured, and the first two claims about it were wrong.** Masking does not
+change which route wins for that question, and after D12.6 moved the floor it
+is not what rescues it from the floor either. What it does is raise the score,
+and the aggregate is the evidence that it is worth doing: **routing accuracy
+66.7% with masking, 60.6% without.** The check now asserts the weaker true
+thing rather than the stronger false one.
+
+### D12.5 — A structural gate, not a tuned floor, for the dangerous case
+**Found by the measurement:** "delete all the profiles" scored 0.299 against
+`float_inventory`, cleared the floor, and rendered a table of floats. Nothing
+was deleted and nothing could be — `floatchat_ro` holds SELECT and nothing else
+(D6.3) — but a destructive request was answered with data, looking for all the
+world like it had been carried out.
+**Decided:** a `NOT_PERFORMED` gate refuses `delete`, `truncate`, `drop`,
+`insert`, `update`, `alter`, `export`, `download`, `email` and `train` before
+routing, naming that this interface only reads. Not a security control: the
+role is. An **honesty** control.
+**Why structurally and not by raising the floor:** a floor high enough to
+exclude 0.299 wrongly refuses ten legitimate questions, and it would leave the
+dangerous case one paraphrase away from clearing it again. The verbs are
+deliberately unambiguous ones; `remove` and `send` are excluded because a
+legitimate question can contain them.
+**Consequence worth having:** "export all of this to NetCDF" — asked for by the
+problem statement and not built — now refuses for the *right* structural reason
+rather than by scoring low.
+**Also checked, so the list cannot rot:** `NOT_MEASURED` is a hardcoded set of
+absences, and a test asserts none of those terms is a column in `levels`.
+Ingest a biogeochemical parameter and the suite fails, forcing the list to be
+corrected instead of quietly refusing data the database now holds.
+
+### D12.6 — The floor is the one constant fitted to the question set
+**Declared rather than buried, because it is the measurement's known weakness.**
+`ROUTE_FLOOR = 0.23`.
+**There is no clean separating value.** In-scope questions score 0.159 to 0.779;
+out-of-scope questions that reach the router score up to 0.226. The
+distributions **overlap**, and any floor trades in-scope recall against false
+accepts:
+
+| floor | false-accept | routing |
+|---|---:|---:|
+| 0.28 (first try) | 4.0% | 63.6% |
+| **0.23 (shipped)** | **0.0%** | **66.7%** |
+| 0.20 | 12.0% | higher, and admits a weather question and a satellite question |
+
+**What makes 0.23 defensible rather than merely convenient:** it was chosen
+*after* D12.5 removed the one genuinely dangerous case, so it trades paraphrase
+recall only. It is not the thing standing between a destructive-sounding
+request and a table of results. It is still fitted to this question set, and a
+new set would move it.
+
+### D12.7 — Three numbers, and the false-accept rate leads
+**Decided:** report false-accept rate, refusal recall and routing accuracy
+separately. Current figures, 33 in-scope and 25 out-of-scope questions:
+
+| | |
+|---|---:|
+| **false-accept rate** | **0.0%** |
+| refusal recall | 100.0% |
+| routing accuracy | 66.7% |
+
+**Why false-accept leads:** it is the number that measures answering something
+we should not. A single figure would let a high routing accuracy hide it.
+**Why refusal recall is not simply `1 − false-accept`:** it counts refusals
+made *with the right reason kind*. Declining a biogeochemical question because
+of the date window is a wrong answer that happens to say no, and only this
+number catches it.
+**66.7% is the honest ceiling of a lexical router, and the 11 misses are
+printed on every run.** They are paraphrases with no shared vocabulary — "give
+me the roster of instruments", "what happens to warmth as you go deeper". They
+were not tuned away, and adding exemplars for them after seeing them fail would
+be fitting to the answer key even without verbatim leakage.
+
+### D12.8 — No evaluation question may contain a routing fixture
+**Decided:** `leakage()` fails the suite if any normalised exemplar is a
+**substring** of any normalised evaluation question.
+**Why substring and not equality:** exact-match disjointness would let "show me
+temperature against depth" through while the exemplar "temperature against
+depth" sits inside it. The strict form is the point — that is precisely the
+leakage worth banning.
+**It matters concretely:** "which float went deepest?" is an exemplar and
+scores exactly 1.000. Had it been left in the question set the router would
+have been scored against its own answer key.
+**And the check is checked:** a second test plants a leak and asserts the
+detector fires, because a leakage check that cannot fail proves nothing.
+
+### D12.9 — Every bound value says where it came from
+**Decided:** `Slot(name, value, source, evidence)` with four sources —
+`extracted`, `window-fallback`, `catalogue-default`, `missing` — returned in
+the `/ask` response, and rendered by the panel *above* the chart when anything
+fell back.
+**Why it is not enough to put the dates in the audit trail:** they would be
+there, correct, and indistinguishable from dates the question actually
+contained. D10.5 spent a decision making the catalogue's defaults visible
+rather than assumed; a router that quietly picked a two-year window and showed
+it as a bound parameter would undo exactly that work.
+**The distinction the sources draw:** `catalogue-default` is the catalogue
+filling a blank it documents. `window-fallback` is *us* failing to parse
+something. They are different failures and they are coloured differently.
+**What parses:** ISO dates, "March 2023", a bare year, "between March and June
+2023". **What does not, and falls back loudly:** "last six months", "recently",
+"this year". Asserted: no query that binds dates may do so without a slot
+recording the source.
+
+### D12.10 — No gazetteer, and region centroids deferred
+**Decided:** when `nearest_profiles` routes and the question has no
+coordinates, refuse and say what format would work — do not look the place up.
+**Why:** the moment "Arabian Sea = 15N 65E" is written into this repository, an
+answer contains a number that is nowhere in the database. Rule 2 exists for
+that. It costs one of the problem statement's own example questions ("salinity
+profiles near the equator"), and that cost is paid deliberately.
+**Deferred with a route through:** region centroids are *derivable* from the
+IHO polygons already in `regions.poly`, and would be carried with the SQL that
+produced them exactly as a corpus document is (D11.4). That resolves "near the
+equator" without inventing anything. Not before the demo.
+
+### D12.11 — The evaluation calls `answer()`; it does not re-implement it
+**Found immediately.** The first `evaluate()` reproduced the pipeline —
+scope gate, route, fill slots — and the copy diverged on its first run: a
+below-floor refusal is constructed inside `answer()`, so the reimplementation
+reported every correctly-refused question as "routed to None" and inflated the
+false-accept rate.
+**Decided:** `evaluate()` calls the same function the API calls, against a real
+database connection.
+**The rule:** a measurement of a reimplementation measures the
+reimplementation. This is the same failure as D11.15's floor being excluded
+from its own scoring, caught from the other direction.
+
+### D12.12 — No automatic fallback from a failed model call to the router
+**Decided:** if a model call fails, `/ask` returns the 503 with D11.22's
+diagnosis. It does **not** answer with the router instead.
+**Why, given D11.22 chose exactly the opposite for the index build:** the two
+are different. Falling back to a keyless *embedder* changes how well retrieval
+works and says so in five lines of `!!`. Falling back to a keyless *answering
+engine* would hand back something that reads as though a model wrote it. The
+path is chosen explicitly, before sending, and named on every reply.
+**The affordance instead of the silent swap:** the composer carries a
+two-button selector, the panel defaults to whichever path can actually answer,
+and the model-failure state points at the one that works.
+
+### D12.13 — What opening a browser found that reading the code did not
+Stage 10 logged three such bugs (D10.9); Stage 11's panel had never been
+rendered at all until this stage. Driving Chrome over the DevTools Protocol —
+using only the already-pinned `websockets`, no new dependency and no download —
+found four things:
+1. **A stale `uvicorn` from before Stage 11 owned port 8000.** The new server
+   hit `errno 48`, exited, and only its log knew; the browser was talking to
+   pre-Stage-11 code with no `ai` block, and the Chat tab correctly rendered
+   "no model credentials" for entirely the wrong reason. Ten minutes were spent
+   suspecting the panel.
+2. **The audit trail badged a lexically-routed query as `model`.** `via` was
+   hardcoded to `"chat"` in `ChatPanel`. This is a direct violation of the
+   badge requirement, it was invisible to every server-side check, and one
+   screenshot showed it.
+3. **The header claimed `RAG` and "the model picks a catalogue query" while
+   the lexical path was answering**, because it keyed off capability rather
+   than the live selection. Fixed by lifting the path state into `App`, so the
+   header cannot contradict the replies.
+4. **The empty thread left ~500px of dead space** between the opening card and
+   the composer — `flex-1` on a thread with nothing in it.
+Two and three are honesty bugs, which is the class this project is organised
+against, and both were caught by looking rather than by testing.
+
+### D12.14 — What Stage 12 did NOT prove
+- **Routing accuracy is 66.7% and that is the ceiling of the method, not a
+  bug to be fixed later.** A third of legitimate paraphrases are refused. The
+  router cannot follow up, cannot chain queries, cannot synthesise across
+  results and writes no prose about the data.
+- **The floor is fitted to the question set** (D12.6), and the in-scope and
+  out-of-scope score distributions overlap, so a different question set would
+  move it and could move the false-accept rate off zero.
+- **Still no live model call from this machine**, and Stage 12 does not change
+  that — it makes it survivable rather than fixed.
+- **The chat panel now has automated checks of its couplings**, not of its
+  rendering. What is verified by grep: the badge string, the fallback notice,
+  the slot panel, the retrieval text being path-conditional. What is verified
+  by having looked once: everything else.
+
+### Stage 12 result
+| | |
+|---|---:|
+| routes · exemplars | 11 · 110, none containing a digit |
+| false-accept rate | **0.0%** (25 out-of-scope questions) |
+| refusal recall | 100.0% (refused with the right reason) |
+| routing accuracy | 66.7% (33 in-scope questions), 11 misses printed |
+| leakage | 0 evaluation questions contain a routing fixture |
+| new checks | 91 (`api/test_router.py`) |
+| total checks | 400 |
+| new dependencies | 0 |
+| needs a key, a network, a daemon or a download | no, and `run_pipeline.py --check` proves it |
+
+---
+
 ## Where the project stands
 
-Complete end to end: GDAC index -> filter -> float selection -> NetCDF download
--> parse -> regions -> Postgres -> query catalogue -> natural-language layer
-(Anthropic **and** Gemini behind one transport seam) -> vector index over the
-database's own summaries -> HTTP API -> dashboard with both front doors.
-**11 stages, 87 logged decisions, 309 automated checks, one command to rebuild.**
+Complete end to end, and answerable with or without a model: GDAC index ->
+filter -> float selection -> NetCDF download -> parse -> regions -> Postgres ->
+query catalogue -> vector index over the database's own summaries -> a model
+that picks a query (Anthropic **and** Gemini behind one transport seam) **or a
+lexical router that picks one with no model at all** -> HTTP API -> dashboard
+with both front doors and one audit trail.
+**12 stages, 101 logged decisions, 400 automated checks, one command to rebuild.**
 
-The platform is demonstrable with the model switched off and switched on. With
-it off: eleven queries, every one with a defined visual output, reachable from
-dropdowns built out of the database. With it on: the same eleven queries,
-chosen by a model that has been handed retrieved summaries to orient it, with
-the notes, the bound parameters and the rows all on screen — and the two paths
-sharing one audit trail.
+The dashboard is demonstrable on a machine with no API key, no network and no
+model download. The Catalogue tab always was. Since Stage 12 the Chat tab is
+too: the lexical router chooses one of the same eleven queries, fills its
+parameters from the question, and renders through the same `displays.js` spec —
+badged `lexical router · no model` on every reply, in the composer before you
+send, and in the audit trail beside the queries a model chose.
 
 | check suite | count |
 |---|---:|
@@ -1380,44 +1661,50 @@ sharing one audit trail.
 | Gemini adapter (`api/test_gemini.py`) | 45 |
 | HTTP API (`api/test_server.py`) | 62 |
 | retrieval, corpus, embedders and `/ask` (`api/test_retrieval.py`) | 125 |
-| **total** | **309** |
+| lexical router, no model (`api/test_router.py`) | 91 |
+| **total** | **400** |
 
-**Against the problem statement.** Closed: NetCDF ingest to PostgreSQL; a
-vector store of metadata and summaries; a RAG pipeline feeding an LLM that maps
-natural language to database queries; geospatial dashboards with trajectories,
-profiles and tabular summaries; and a chat interface that guides discovery. Not
-built, and not claimed: **MCP** (the catalogue is already a tool list, so the
-adapter is small, but it does not exist); **Parquet** export; **ASCII/NetCDF
-export** of query results; a **depth-time (Hovmöller) plot** and a
-**multi-profile comparison** display. **BGC is out of scope by the data**, not
-by omission — these ten floats carry no biogeochemical parameters, and the
-dashboard puts that question on a suggestion button so it is asked and answered
-rather than avoided.
+**The measured numbers, in one place.** Everything below is produced by a suite
+that runs with no network and no credentials.
+
+| | |
+|---|---:|
+| retrieval recall@1 / @3 / @5 | 77.8% · 88.9% · 94.4% (MRR 0.835) |
+| router false-accept rate | 0.0% |
+| router refusal recall | 100.0% |
+| router routing accuracy | 66.7% |
+| model routing accuracy | **unmeasured** (D11.21) |
+
+**Against the problem statement.** Closed: NetCDF ingest to PostgreSQL; a vector
+store of metadata and summaries; a RAG pipeline feeding an LLM that maps natural
+language to database queries; geospatial dashboards with trajectories, profiles
+and tabular summaries; and a chat interface that guides discovery — which now
+works with no credentials at all. Not built, and not claimed: **MCP**; **Parquet**
+output; **ASCII/NetCDF export** of query results (the router refuses to fake it,
+D12.5); a **depth-time Hovmöller plot**; a **multi-profile comparison** display.
+**BGC is out of scope by the data**, and the dashboard puts that question on a
+suggestion button so it is asked and answered rather than avoided.
 
 **The three things still open, in order of how much they would cost:**
 
-1. **Nothing here has been run against a live model or a live embedding API.**
-   The `GEMINI_API_KEY` in this environment is the placeholder string
-   `YOUR_REAL_KEY` and the API rejects it; there are no Anthropic credentials on
-   this machine at all. Stage 8 *did* observe real routing on
-   `gemini-3.6-flash` when a working key was present — eight questions, eight
-   correct query choices — but that key no longer works, and every Stage 11
-   number in this log is the keyless lexical embedder's. Both the Gemini
-   embedder and `/ask` are tested against recording fakes, which proves the
-   translation and not the transaction. **A working key closes this in
-   minutes**, and it is the single highest-value thing to do before a demo.
+1. **Nothing has been run against a live model or a live embedding API.** The
+   `GEMINI_API_KEY` here is the placeholder `YOUR_REAL_KEY`; there are no
+   Anthropic credentials on this machine. Stage 8 observed real routing on
+   `gemini-3.6-flash` when a working key existed, but that key no longer works,
+   and every Stage 11 and Stage 12 number is the keyless path's. Stage 12 makes
+   this **survivable**, not fixed. **A working key closes it in minutes** and is
+   still the highest-value thing to do before a demo.
 
-2. **Routing is still unmeasured, even though retrieval now is not.** D11.13
-   supplies a fixed question set with expected documents and a recall figure;
-   the equivalent for routing — a fixed question set with expected *query
-   names* and a pass rate — still does not exist. The pieces are now in place
-   to build it cheaply, since `EVALUATION` is the pattern and
-   `ScriptedTransport` is not what it needs.
+2. **Model routing is still unmeasured, though the router's is not.** D11.13 and
+   D12.7 supply fixed question sets, three rates and printed misses for
+   retrieval and for the lexical path. The equivalent for the *model* path — the
+   same questions, expected query names, a pass rate — does not exist. The
+   pattern is now built twice and would transfer directly.
 
-3. **The dashboard has no automated tests of its own.** Unchanged from Stage
-   10, and now larger: the chat panel, the retrieved-notes disclosure and the
-   two-tab chrome are all unverified by anything that runs on every build. The
-   Stage 11 drift checks cover the *couplings* — every query has a display,
-   every suggestion names a real query and interpolates a real example key —
-   but nothing re-checks that depth still plots downward or that an answer's
-   chart renders. A Playwright suite over D10.8's states remains the honest fix.
+3. **The dashboard's rendering has no automated tests.** Its *couplings* do:
+   every query has a display, every suggestion names a real query and a real
+   example key, the badge string exists, the fallback notice exists, retrieval
+   is only described on the path that uses it. But D12.13 found four bugs by
+   opening a browser that no server-side check could have seen, two of them
+   honesty bugs. A Playwright suite over D10.8's states remains the honest fix,
+   and the CDP driver written for D12.13 shows it needs no new dependency.

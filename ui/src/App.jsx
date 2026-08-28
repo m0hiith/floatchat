@@ -36,6 +36,9 @@ export default function App() {
   const [result, setResult] = useState({ status: "idle" });
   const [audit, setAudit] = useState([]);
   const [mode, setMode] = useState("catalogue");
+  // Which engine the Chat tab will use. Held here, not in ChatPanel, because
+  // the header reports it too.
+  const [chatPath, setChatPath] = useState(null);
 
   // One trail, two sources. `seq` is assigned here so a batch of queries from
   // a single question keeps its order without either caller counting.
@@ -50,6 +53,9 @@ export default function App() {
       const data = await getMeta();
       setMeta(data);
       setSelected((s) => s ?? data.queries[0]?.name ?? null);
+      // Default to whichever path can actually answer. With no model
+      // credentials that is the lexical router, which is why Stage 12 exists.
+      setChatPath((p) => p ?? (data.ai?.model_provider ? "model" : "lexical"));
     } catch (error) {
       // Nothing is rendered half-loaded. No dropdowns at all is correct here:
       // empty dropdowns would claim the database is empty.
@@ -129,7 +135,7 @@ export default function App() {
   if (mode === "chat") {
     return (
       <div className="mx-auto flex h-screen max-w-[110rem] flex-col gap-4 p-4">
-        <Header meta={meta} mode={mode} onMode={setMode} />
+        <Header meta={meta} mode={mode} onMode={setMode} chatPath={chatPath} />
         <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_21rem]">
           <main className="min-h-0">
             <ChatPanel
@@ -137,6 +143,8 @@ export default function App() {
               outlines={outlines}
               onQueries={addAudit}
               onSwitchToCatalogue={() => setMode("catalogue")}
+              path={chatPath ?? "lexical"}
+              onPath={setChatPath}
             />
           </main>
           <div className="min-h-0 lg:max-h-full">
@@ -262,8 +270,10 @@ export default function App() {
   );
 }
 
-function Header({ meta, mode, onMode }) {
+function Header({ meta, mode, onMode, chatPath }) {
   const ai = meta?.ai;
+  // What would answer right now -- the live selection, not merely what exists.
+  const usingModel = chatPath === "model" && !!ai?.model_provider;
   return (
     <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-lg border border-slate-300 bg-white px-4 py-2.5">
       <div className="flex items-center gap-3">
@@ -283,9 +293,16 @@ function Header({ meta, mode, onMode }) {
               muted={!ai?.available}
             >
               Chat
-              {ai?.available && ai?.retrieval?.available && (
-                <span className="ml-1.5 rounded bg-emerald-100 px-1 py-px text-[10px] font-medium text-emerald-800">
-                  RAG
+              {/* Only claim retrieval when the path that would answer uses it.
+                  With no model credentials the lexical router answers and
+                  retrieval is not in play, so the badge names the router. */}
+              {ai?.available && (
+                <span className={`ml-1.5 rounded px-1 py-px text-[10px] font-medium ${
+                  usingModel && ai.retrieval?.available
+                    ? "bg-emerald-100 text-emerald-800"
+                    : "bg-slate-200 text-slate-600"
+                }`}>
+                  {usingModel && ai.retrieval?.available ? "RAG" : "no model"}
                 </span>
               )}
             </Tab>
@@ -293,7 +310,9 @@ function Header({ meta, mode, onMode }) {
         )}
         <span className="hidden text-xs text-slate-500 xl:inline">
           {mode === "chat"
-            ? "the model picks a catalogue query; it never writes SQL"
+            ? (usingModel
+                ? "the model picks a catalogue query; it never writes SQL"
+                : "a lexical router picks the query — no model in this path")
             : "the query catalogue, with the AI switched off"}
         </span>
       </div>

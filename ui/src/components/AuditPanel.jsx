@@ -22,12 +22,22 @@ function Entry({ entry }) {
       <div className="flex items-baseline justify-between gap-3">
         <span className="font-mono text-xs font-semibold text-slate-800">{entry.query}</span>
         <div className="flex shrink-0 items-baseline gap-1.5">
-          {/* Who chose this query. The two are the same eleven queries, run the
-              same way, which is the point -- but which of them picked it is a
-              fact the trail should not lose. */}
-          {entry.via === "chat" && (
-            <span className="rounded bg-indigo-100 px-1.5 py-px text-[10px] font-medium text-indigo-800">
-              model
+          {/* Who chose this query. All three routes run the same eleven
+              queries the same way, which is the point -- but WHICH of them
+              picked it is a fact the trail must not lose, and must not
+              guess at. `via` is the provider the API reported. */}
+          {entry.via && (
+            <span
+              className={`rounded px-1.5 py-px text-[10px] font-medium ${
+                entry.via === "lexical"
+                  ? "bg-slate-200 text-slate-700"
+                  : "bg-indigo-100 text-indigo-800"
+              }`}
+              title={entry.via === "lexical"
+                ? "chosen by lexical matching against written examples; no model"
+                : `chosen by the ${entry.via} model`}
+            >
+              {entry.via === "lexical" ? "lexical" : `model · ${entry.via}`}
             </span>
           )}
           <span className="font-mono text-[11px] text-slate-400">{entry.at}</span>

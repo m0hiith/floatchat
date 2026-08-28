@@ -6,7 +6,9 @@ Four endpoints, and deliberately no more:
     GET  /meta              everything the UI is allowed to know
     GET  /regions.geojson   the IHO outlines, for the map
     POST /query             run one named query from the catalogue
-    POST /ask               Stage 11: a question in English, through the tool loop
+    POST /ask               a question in English -- through the model's tool
+                            loop, or through Stage 12's lexical router when
+                            there is no model
 
 The important property is that this file adds no knowledge.  It does not know
 what a region is called, which floats exist, what the date window is, or what
@@ -34,9 +36,18 @@ chart with the same `displays.js` mapping as the manual panel, from the same
 rows, and there is no second path into the database for a model to take.
 
 Whether /ask can work at all is reported by /meta under `ai`, so the dashboard
-never offers a chat box it cannot use.  That is a credential fact and a
-retrieval fact; neither is a fact about ARGO, so this file still holds no
-knowledge of the data.
+never offers a chat box it cannot use.  That is a credential fact, a retrieval
+fact and a router fact; none of them is a fact about ARGO, so this file still
+holds no knowledge of the data.
+
+Stage 12 adds a second answering path, and the two are kept visibly apart.
+`api/router.py` is a sibling of `chat.ask`, not a `Transport`: it reaches the
+database through the same injected `run_query` and returns the same audit
+trail, but no model is involved and the response says `provider: "lexical"` so
+the dashboard can badge it as such.  There is deliberately NO automatic
+fallback from a failed model call to the router -- swapping the answering
+engine mid-request would produce an answer that looks like a model wrote it.
+The choice is explicit, in the request, and shown in the UI.
 
 Run it:
     .venv/bin/uvicorn api.server:app --reload --port 8000
@@ -61,12 +72,15 @@ from pydantic import BaseModel, Field
 
 import catalog
 import chat
+import router as lexical
 from catalog import QUERIES, LiveValues, Param, QueryError
 
 # A question longer than this is not a question. Refused here rather than
 # forwarded, so an accidental paste costs nothing and gets a message that says
 # what the limit is (the same shape as every catalogue refusal).
 MAX_QUESTION_CHARS = 2_000
+
+PROVIDER_LEXICAL = lexical.PROVIDER
 
 # The Vite dev server.  Listed explicitly rather than "*" -- this API is a
 # read-only view of a local database, but a wildcard would still be a claim we
@@ -214,16 +228,41 @@ def retrieval_state() -> dict[str, Any]:
     }
 
 
-def ai_state() -> dict[str, Any]:
-    """Whether /ask is usable, and by what.  No ARGO knowledge lives here."""
-    provider = chat.resolve_provider()
+def router_state() -> dict[str, Any]:
+    """The Stage 12 lexical router.  Always available: it needs no credential,
+    no network and no download, which is the whole reason it exists."""
+    try:
+        r = lexical.shared_router()
+    except Exception as exc:                       # pragma: no cover - defensive
+        return {"available": False, "reason": _db_error(exc)}
     return {
-        "available": provider is not None,
-        "provider": provider,
+        "available": True,
+        "routes": len(lexical.ROUTES),
+        "exemplars": len(r.texts),
+        "embedder": r.embedder.name,
+        "floor": r.floor,
+        # Said in the payload, not only in the UI, so an API consumer cannot
+        # mistake this path for a language model either (rule 9).
+        "method": "lexical nearest-exemplar matching; no model, not semantic",
+    }
+
+
+def ai_state() -> dict[str, Any]:
+    """What can answer a question, and by what means.  No ARGO knowledge here."""
+    model = chat.resolve_provider()
+    router_ = router_state()
+    return {
+        # The chat box is usable if EITHER path can answer. Since Stage 12 the
+        # router always can, so the tab is always offered -- which is the point.
+        "available": model is not None or router_["available"],
+        "provider": model or (PROVIDER_LEXICAL if router_["available"] else None),
+        "model_provider": model,
         "providers": {"anthropic": chat.have_anthropic(), "gemini": chat.have_gemini()},
-        "reason": None if provider else
-                  "no model credentials -- set ANTHROPIC_API_KEY or GEMINI_API_KEY",
+        "reason": None if model else
+                  "no model credentials -- set ANTHROPIC_API_KEY or GEMINI_API_KEY "
+                  "for the model path; the lexical router needs neither",
         "retrieval": retrieval_state(),
+        "router": router_,
     }
 
 
@@ -375,7 +414,8 @@ def query(req: QueryRequest) -> dict[str, Any]:
 
 class AskRequest(BaseModel):
     question: str = Field(description="A question in English about the ARGO data")
-    provider: str | None = Field(default=None, description="anthropic | gemini")
+    provider: str | None = Field(
+        default=None, description="anthropic | gemini | lexical (no model)")
     model: str | None = Field(default=None, description="Override the provider's model id")
     retrieval: bool = Field(default=True, description="Use the Stage 11 vector index")
     k: int | None = Field(default=None, description="How many documents to retrieve")
@@ -385,12 +425,12 @@ class AskRequest(BaseModel):
 def ask(req: AskRequest) -> dict[str, Any]:
     """A question in English -> an answer, its audit trail, and the rows behind it.
 
-    The rows are the reason this returns more than a string.  `chat.ask` records
-    row *counts*; the dashboard needs the rows themselves so the chat panel can
-    draw the same chart the manual panel draws for that query.  We get them by
-    supplying the `run_query` seam `chat.ask` already exposes, which also means
-    this file never calls the catalogue behind the loop's back -- everything in
-    `executed` is something the model actually asked for.
+    Two paths, one response shape.  The rows are why this returns more than a
+    string: `chat.ask` and `router.answer` both record row *counts*, and the
+    dashboard needs the rows themselves so either path's answer can be drawn by
+    the same `displays.js` spec the manual panel uses.  Both get them the same
+    way -- through the `run_query` seam each already exposes -- which also means
+    this file never calls the catalogue behind either one's back.
     """
     question = req.question.strip()
     if not question:
@@ -399,14 +439,19 @@ def ask(req: AskRequest) -> dict[str, Any]:
         raise QueryError(f"question: must be at most {MAX_QUESTION_CHARS} characters, "
                          f"got {len(question)}")
 
-    provider = chat.resolve_provider(req.provider)
-    if provider is None:
-        raise ModelUnavailable(
-            f"no credentials for provider {req.provider or 'any'}. "
-            "Set ANTHROPIC_API_KEY or GEMINI_API_KEY and restart the server. "
-            "The dashboard's eleven queries work without either.")
+    wants_lexical = req.provider == PROVIDER_LEXICAL
+    provider = None if wants_lexical else chat.resolve_provider(req.provider)
+    if provider is None and not wants_lexical:
+        if req.provider in ("anthropic", "gemini"):
+            # An explicit model request with no credentials is an error, not an
+            # invitation to answer by other means. Substituting the router here
+            # would hand back something that reads like a model wrote it.
+            raise ModelUnavailable(
+                f"no credentials for provider {req.provider}. "
+                "Set ANTHROPIC_API_KEY or GEMINI_API_KEY, or ask for "
+                f"provider '{PROVIDER_LEXICAL}', which needs neither.")
+        wants_lexical = True                    # auto, and no model configured
 
-    retriever = chat.open_retriever(req.k) if req.retrieval else None
     live = _live()
     executed: list[dict] = []
 
@@ -418,7 +463,30 @@ def ask(req: AskRequest) -> dict[str, Any]:
                              "rows": jsonable_rows(out["rows"])})
             return out
 
+        if wants_lexical:
+            out = lexical.answer(question, live=live, run_query=run_query)
+            return {
+                "question": question,
+                "answer": lexical.statement(out),
+                "refusal": out.refusal.message if out.refusal else None,
+                "refusal_reason": out.refusal.reason if out.refusal else None,
+                "alternatives": list(out.refusal.alternatives) if out.refusal else [],
+                "stop_reason": "refused" if out.refusal else "routed",
+                "turns": 1,
+                "provider": PROVIDER_LEXICAL,
+                "retrieved": [],
+                # Stage 12's honesty surface: every bound value with where it
+                # came from, and a notice for any the question did not supply.
+                "slots": [{"name": s.name, "value": s.value, "source": s.source,
+                           "evidence": s.evidence} for s in out.slots],
+                "notices": out.notices,
+                "considered": [{"query": q, "score": round(v, 4)}
+                               for q, v in out.considered],
+                "audit": executed,
+            }
+
         try:
+            retriever = chat.open_retriever(req.k) if req.retrieval else None
             answer = chat.ask(question, transport=chat.make_transport(provider, req.model),
                               live=live, run_query=run_query, retriever=retriever)
         except Exception as exc:
@@ -429,8 +497,8 @@ def ask(req: AskRequest) -> dict[str, Any]:
 
     # The loop's trail is authoritative for order and for refusals; `executed`
     # carries the rows.  Zipping by position would break the moment a query is
-    # refused (refusals never reach run_query), so they are matched by index
-    # into `executed` counted over the entries that actually ran.
+    # refused (refusals never reach run_query), so they are matched by advancing
+    # an iterator only over the entries that actually ran.
     rows_by_position = iter(executed)
     audit = []
     for entry in answer.audit:
@@ -444,10 +512,15 @@ def ask(req: AskRequest) -> dict[str, Any]:
         "question": question,
         "answer": answer.text,
         "refusal": answer.refusal,
+        "refusal_reason": None,
+        "alternatives": [],
         "stop_reason": answer.stop_reason,
         "turns": answer.turns,
         "provider": provider,
         "retrieved": answer.retrieved,
+        "slots": [],
+        "notices": [],
+        "considered": [],
         "audit": audit,
     }
 
