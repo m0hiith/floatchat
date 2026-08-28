@@ -673,3 +673,120 @@ the routing itself needs one key and an afternoon of real questions.
 | model | `claude-opus-5`, adaptive thinking |
 | new dependency | `anthropic` 1.2.0 |
 | live API calls made | none — no credentials on this machine |
+
+---
+
+## Stage 8 — running the same loop on Gemini
+
+### D8.1 — An adapter behind the existing seam, not a second loop
+**Decided:** `api/gemini.py` provides `GeminiTransport`, which satisfies the
+`Transport` protocol from D7.4. `chat.ask`, the catalogue, the audit trail and
+the system prompt are untouched.
+**Alternative:** a parallel `ask_gemini()`, or refactoring the request into a
+provider-neutral intermediate format that both transports render.
+**Why:** the loop is the part that carries the guarantees — bounded turns,
+every call through `Param.coerce`, every call in the trail. Two copies of it
+means two things to keep correct, and the second copy is the one nobody
+re-reads. A neutral format is the same work plus a third representation to
+maintain, for a project with exactly two providers.
+**What this cost:** the request is still written in Anthropic's shape, and
+`api/gemini.py` translates it. That is a wire format, not an allegiance; the
+docstring now says so, so the next reader does not mistake it for coupling.
+**Evidence the seam was real:** Stages 6 and 7 needed no edit at all. All 56
+existing checks pass unmodified, and `main()` — provider selection — is the
+only line of Stage 7 that changed.
+
+### D8.2 — Gemini has no `strict`, and it does not matter
+**Found:** Anthropic tools take `strict: true` and `additionalProperties:
+false` and enforce them. Gemini's `FunctionDeclaration` has no equivalent, and
+rejects `additionalProperties` outright, so `clean_schema()` strips it.
+**Why the safety argument survives:** the schema was never what made this
+safe. An invented parameter is refused by `Query.validate`, a hallucinated
+region by `Param.coerce`, and a write by the `floatchat_ro` role — all of them
+in our process or in Postgres, none of them in the model's API (D6.1, D6.2).
+`strict` made the model's job easier; it was not a defence.
+**Demonstrated, not asserted:** `api/test_gemini.py` runs the same refusal and
+row-cap cases through the Gemini path. `'Atlantic Ocean'` and `limit=99999999`
+are refused there exactly as they are on Anthropic, with the valid values
+named.
+
+### D8.3 — Gemini matches tool results by NAME, so we send ids as well
+**Found:** Anthropic pairs a result to its call by `tool_use_id`. Gemini's
+`FunctionResponse` is matched by function *name* — which is ambiguous the
+moment the model calls one query twice in parallel, which is exactly what a
+region comparison does.
+**Decided:** every `FunctionResponse` carries both `name` and `id`, and
+`call_names()` rebuilds the id → name map by reading the transcript, since
+Anthropic's `tool_result` block carries only the id.
+**Test:** two parallel `region_summary` calls, one Arabian Sea and one Bay of
+Bengal, come back distinguishable. Without the id this test passes by luck of
+ordering, which is not a property worth having.
+
+### D8.4 — Echo the original `Part`, never rebuild it
+**Found:** Gemini attaches an opaque `thought_signature` to function-call
+parts and rejects the next turn if it does not come back. A part reconstructed
+from `name` + `args` loses it and looks well-formed.
+**Decided:** every response block keeps the `types.Part` it was parsed from,
+and `to_gemini_contents` returns that same object rather than building a new
+one.
+**The test nearly repeated D7.5.** The first draft of the identity assertion
+had a stray `and False or` in it, so it collapsed to checking the signature
+value and would have passed with a rebuilt part. It is now three checks: the
+echoed part `is` the original object, its signature is byte-identical, and a
+deliberately rebuilt part has `thought_signature is None` — the last one
+existing only to prove the first two could fail.
+
+### D8.5 — Reasoning is a distinct block type, so it cannot become the answer
+**Decided:** a part Gemini marks `thought=True` becomes a `ThinkingBlock` with
+`type="thinking"`, not `type="text"`.
+**Why:** `chat.ask` builds the answer with `"".join(b.text for b in content if
+b.type == "text")`. Had thoughts arrived as text, the model's private
+reasoning — including numbers it was still working out — would have been
+concatenated into the user-facing answer, in a project whose whole claim is
+that every number on screen is traceable to a query. Asserted directly: a
+response containing a thought part and an answer part yields only the answer.
+
+### D8.6 — `cache_control` is dropped, not translated
+**Decided:** the Anthropic cache breakpoint has no Gemini equivalent and is
+simply not passed through.
+**Why it changes nothing:** Gemini caches long stable prefixes implicitly, and
+the system prompt is still the stable prefix (D7.2) with the volatile question
+after it. The layout that earns the cache is the same; only the instruction
+saying so is Anthropic-specific.
+
+### D8.7 — The provider is whichever key exists; the transport owns its model id
+**Decided:** `python api/chat.py "..."` picks Anthropic if Anthropic
+credentials are present, else Gemini if `GEMINI_API_KEY` is. `--gemini` /
+`--anthropic` force it, `--model=NAME` overrides the model, `--models` lists
+what the key can actually reach.
+**Why the transport ignores the model id it is handed:** `ask` sends
+`model="claude-opus-5"` because that is what Stage 7 hardcodes. Honouring it
+would be nonsense; silently substituting *and* logging it would put a model
+name in the trail that was never called. `GeminiTransport` uses its own
+`model` field, and that is the one recorded.
+**Failures are diagnosed, not raised:** a rejected key and a renamed model id
+each print one line and the command that fixes them, on D7.7's rule.
+
+### D8.8 — Written and tested; the key on this machine is rejected
+**State:** `GEMINI_API_KEY` is set in the environment, and the API returns
+`400 API_KEY_INVALID` for it — on `models.list` as well as
+`generate_content`, so it is the key and not the request. A valid key is the
+only thing between here and a live answer.
+**What is therefore proven:** the translation in both directions, against real
+`google.genai.types` objects, so a schema Gemini's own pydantic models would
+reject fails in the suite rather than in the demo. **45 offline checks.**
+**What is still unproven, on both providers:** whether the model routes a real
+question to the right query. That was D7.7's open item and it stays open.
+**Model default:** `gemini-3-pro-preview`, overridable by `$GEMINI_MODEL` or
+`--model=`. The exact id wants confirming against a live key — which is what
+`--models` is for.
+
+### Stage 8 result
+| | |
+|---|---:|
+| files changed in Stages 6–7 | 0 (plus `main()`) |
+| new module | `api/gemini.py` |
+| tests | 45 offline (**101 with Stages 6 and 7**) |
+| default model | `gemini-3-pro-preview` |
+| new dependency | `google-genai` 2.20.0 |
+| live API calls made | key rejected — `400 API_KEY_INVALID` |

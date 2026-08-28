@@ -14,8 +14,14 @@ Two seams make this testable:
 
   * `Transport` -- anything with `.create(**kwargs)`.  `AnthropicTransport` is
     the real SDK; `ScriptedTransport` replays canned responses, so the whole
-    tool loop is tested with no API key and no network (`api/test_chat.py`).
+    tool loop is tested with no API key and no network (`api/test_chat.py`);
+    `gemini.GeminiTransport` runs the identical loop on Gemini (Stage 8).
   * `run_query` is injected, so tests can assert exactly what was executed.
+
+The request below is written in Anthropic's shape because that is the shape
+this file was built against.  It is a wire format, not a commitment to a
+vendor: `api/gemini.py` translates it, and `ask` never learns which model
+answered.
 """
 
 from __future__ import annotations
@@ -214,20 +220,98 @@ def ask(question: str,
             conn.close()
 
 
+ANTHROPIC_HELP = (
+    "  export ANTHROPIC_API_KEY=...   (or run `ant auth login`)\n"
+    "  export GEMINI_API_KEY=...      (then: python api/chat.py --gemini \"...\")\n"
+)
+
+
+def have_anthropic() -> bool:
+    return bool(os.environ.get("ANTHROPIC_API_KEY")
+                or os.environ.get("ANTHROPIC_AUTH_TOKEN")
+                or Path.home().joinpath(".config", "anthropic").exists())
+
+
+def have_gemini() -> bool:
+    return bool(os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"))
+
+
+def make_transport(provider: str, model: str | None) -> Transport:
+    """Provider choice is a transport choice and nothing else -- `ask` and the
+    catalogue never learn which model answered (D8.1)."""
+    if provider == "gemini":
+        import gemini
+        return gemini.GeminiTransport(model=model or gemini.DEFAULT_MODEL)
+    return AnthropicTransport()
+
+
+def report_provider_error(provider: str, exc: Exception) -> int:
+    """A wrong key or a renamed model is a setup problem, not a stack trace.
+
+    Both are things someone hits on a fresh machine, so each gets a one-line
+    diagnosis and the command that fixes it -- D7.7's rule, applied to the
+    second provider.
+    """
+    text = str(exc)
+    var = "GEMINI_API_KEY" if provider == "gemini" else "ANTHROPIC_API_KEY"
+    if "API_KEY_INVALID" in text or "API key not valid" in text or "authentication" in text.lower():
+        print(f"{provider}: the key in ${var} was rejected by the API.\n"
+              f"  ${var} is set, so this is a wrong or expired key, not a missing one.")
+        if provider == "gemini":
+            print("  new key: https://aistudio.google.com/apikey\n"
+                  f"  then:    export {var}=...")
+        return 2
+    if "NOT_FOUND" in text or "was not found" in text:
+        print(f"{provider}: that model id does not exist for this key.\n"
+              "  see what it can reach:  python api/chat.py --models\n"
+              '  then:                   python api/chat.py --model=NAME "..."')
+        return 2
+    raise exc
+
+
 def main(argv: list[str]):
+    provider, model = None, None
+    while argv and argv[0].startswith("--"):
+        flag = argv.pop(0)
+        if flag in ("--gemini", "--anthropic"):
+            provider = flag[2:]
+        elif flag.startswith("--model="):
+            model, provider = flag.split("=", 1)[1], provider or "gemini"
+        elif flag == "--models":
+            import gemini
+            try:
+                print("\n".join(gemini.available_models()))
+            except Exception as exc:
+                return report_provider_error("gemini", exc)
+            return 0
+        else:
+            print(f"unknown flag {flag}")
+            return 2
+
+    if provider is None:                      # whichever key is actually present
+        provider = "anthropic" if have_anthropic() else "gemini" if have_gemini() else None
+
     if not argv:
         print(__doc__)
-        print("usage: python api/chat.py \"how salty is the Bay of Bengal?\"")
+        print('usage: python api/chat.py [--gemini|--anthropic] [--model=NAME] "how salty '
+              'is the Bay of Bengal?"')
+        print("       python api/chat.py --models      # what this Gemini key can reach")
+        print(f"detected provider: {provider or 'none -- no credentials found'}")
         return 0
-    if not (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN")
-            or Path.home().joinpath(".config", "anthropic").exists()):
-        print("No Anthropic credentials found.\n"
-              "  export ANTHROPIC_API_KEY=...   (or run `ant auth login`)\n"
-              "The query layer and the tool loop are testable without one:\n"
+
+    if provider is None or (provider == "anthropic" and not have_anthropic()) \
+            or (provider == "gemini" and not have_gemini()):
+        print(f"No credentials for provider '{provider or 'any'}'.\n" + ANTHROPIC_HELP +
+              "The query layer and the tool loop are testable without either:\n"
               "  .venv/bin/python api/test_catalog.py\n"
-              "  .venv/bin/python api/test_chat.py")
+              "  .venv/bin/python api/test_chat.py\n"
+              "  .venv/bin/python api/test_gemini.py")
         return 2
-    print(ask(" ".join(argv)))
+
+    try:
+        print(ask(" ".join(argv), transport=make_transport(provider, model)))
+    except Exception as exc:                      # a bad key or a bad model id
+        return report_provider_error(provider, exc)
     return 0
 
 
