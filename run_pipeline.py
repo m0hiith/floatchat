@@ -57,6 +57,7 @@ STAGES = [
     Stage("6", "query catalogue tests", "api/test_catalog.py", is_check=True),
     Stage("7", "natural-language tool loop tests", "api/test_chat.py", is_check=True),
     Stage("8", "Gemini adapter tests", "api/test_gemini.py", is_check=True),
+    Stage("10", "HTTP API tests", "api/test_server.py", is_check=True),
 ]
 
 
@@ -68,7 +69,8 @@ def preflight() -> bool:
     print(f"  python              {v.major}.{v.minor}.{v.micro}")
 
     missing = []
-    for mod in ("pandas", "numpy", "requests", "netCDF4", "xarray", "psycopg", "anthropic"):
+    for mod in ("pandas", "numpy", "requests", "netCDF4", "xarray", "psycopg", "anthropic",
+                "fastapi", "uvicorn"):
         try:
             __import__(mod)
         except ImportError:
@@ -165,6 +167,8 @@ def main():
     print("ask it something     :  python api/chat.py \"how salty is the Bay of Bengal?\"")
     print("                        (needs ANTHROPIC_API_KEY or GEMINI_API_KEY;")
     print("                         everything above runs without either)")
+    print("or open the dashboard:  .venv/bin/uvicorn api.server:app --port 8000")
+    print("                        cd ui && npm install && npm run dev")
     return 0
 
 
