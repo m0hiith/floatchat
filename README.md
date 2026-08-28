@@ -25,7 +25,7 @@ python -m venv .venv
 .venv/bin/python run_pipeline.py
 ```
 
-That downloads ~155 MB, builds the database, and runs 122 checks. First run is
+That downloads ~155 MB, builds the database, and runs 184 checks. First run is
 a few minutes, mostly transfer; afterwards it re-runs from cache in about 9
 seconds.
 
@@ -37,7 +37,8 @@ psql -h localhost -d floatchat -f db/roles.sql
 
 To ask questions in English you need a key for **either** provider — the same
 tool loop runs on Anthropic or Gemini behind one transport seam. **Everything
-else works without either key**, including all four test suites:
+else works without either key**, including the dashboard and all five test
+suites:
 
 ```bash
 export ANTHROPIC_API_KEY=...          # or: export GEMINI_API_KEY=...
@@ -48,6 +49,14 @@ export ANTHROPIC_API_KEY=...          # or: export GEMINI_API_KEY=...
 
 Whichever key is present is used; `--anthropic` / `--gemini` force the choice
 and `--model=NAME` overrides the model.
+
+**The dashboard needs no key at all.** Eleven queries, dropdowns built from the
+database, and an audit trail — the platform with the AI switched off:
+
+```bash
+.venv/bin/uvicorn api.server:app --port 8000     # one terminal
+cd ui && npm install && npm run dev              # another; opens :5173
+```
 
 ---
 
@@ -62,6 +71,8 @@ and `--model=NAME` overrides the model.
 | depth range | 0 .. 2052 dbar |
 | named regions | 9 (IHO S-23, MRGID recorded) |
 | database size | 95 MB |
+| parameterised queries | 11 |
+| automated checks | 184 |
 
 The ten floats are deliberately mixed: 6 delayed-mode, 2 real-time-only, 2 that
 change mode mid-life; 4 data centres of which 5 floats are Indian (`incois`);
@@ -83,10 +94,17 @@ GDAC index (3,397,664 rows)
                       └─ etl/fetch_regions.py  → IHO polygons, simplification proven lossless
                            └─ etl/load_db.py   → Postgres, 21 verification checks
                                 └─ api/catalog.py  11 parameterised queries (read-only role)
-                                     └─ api/chat.py     the model picks a query and fills its parameters
-                                          ├─ Anthropic (claude-opus-5)
-                                          └─ api/gemini.py  the same loop on Gemini
+                                     ├─ api/chat.py     the model picks a query and fills its parameters
+                                     │    ├─ Anthropic (claude-opus-5)
+                                     │    └─ api/gemini.py  the same loop on Gemini
+                                     └─ api/server.py   GET /meta, POST /query
+                                          └─ ui/        the dashboard, no model in the loop
 ```
+
+`api/catalog.py` feeds two consumers from the same objects: the model's tool
+schemas and the dashboard's dropdowns. The choices a human can pick and the
+enums a model is offered are the same list by construction, and a test compares
+them element by element.
 
 `db/schema.sql` holds six tables. Four hold data; two exist because the project
 forbids silent dropping — `dropped_profiles` records every profile the pipeline
@@ -135,6 +153,13 @@ parameters, and how many rows each returned.
 - **45 Gemini-adapter checks** — the translation in both directions against
   real `google.genai.types` objects, so a schema Gemini's own models would
   reject fails in the suite rather than in the demo.
+- **62 HTTP API checks** — `/meta` compared against the catalogue and the
+  database directly, so hardcoding a region list into the server fails the
+  suite; the dashboard's choices compared element by element against the
+  model's tool enums; the eight hostile inputs again over HTTP; `numeric`
+  arriving as a number rather than a string; an aggregate over nothing
+  reporting `null` rather than `0.0`; and a stopped database returning 503
+  with its reason instead of an empty body.
 - **The funnel reconciles.** 939 profiles promised by the index − 13 dropped by
   QC + 2 the index's box filter had excluded = 928 written. Every one of those
   15 has a name and a reason in `dropped_profiles`.
@@ -161,6 +186,12 @@ parameters, and how many rows each returned.
 - **Ten floats, two years, one ocean basin.** The scope is deliberate and
   documented, not a stub. Widening it means re-running Stage 1 with different
   constants and re-checking the funnel.
+- **The dashboard has no automated tests.** The 184 checks cover the ETL, the
+  catalogue, both model loops and the HTTP API. The UI was verified by driving
+  a real browser and reading back the rendered chart and map objects — which
+  found three bugs that built cleanly and passed every server-side check — but
+  that was a session, not a suite. Nothing re-checks on every run that depth
+  still plots downward.
 - **Core ARGO only.** Pressure, temperature, salinity. No biogeochemical
   parameters — the ten floats do not carry them.
 - **Region polygons drop island holes and are simplified** to fit a core
@@ -179,9 +210,12 @@ etl/              the pipeline, one script per stage, each prints its own report
 api/catalog.py    the 11 parameterised queries + their tool schemas
 api/chat.py       the tool loop, provider-agnostic
 api/gemini.py     the same loop on Gemini, behind the same seam
-api/test_*.py     101 checks, no network, no API key
+api/server.py     GET /meta, GET /regions.geojson, POST /query
+api/test_*.py     163 checks, no network, no API key
+ui/               the dashboard; ui/src/displays.js maps each query to a chart
 db/schema.sql     tables, constraints, indexes
 db/roles.sql      the read-only role
 run_pipeline.py   runs everything, skips what is already built
+CLAUDE.md         the working agreement and the ARGO domain rules
 DECISIONS.md      every choice and why — the long version
 ```

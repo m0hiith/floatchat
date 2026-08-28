@@ -875,12 +875,175 @@ an answer ready.
 
 ---
 
+## Stage 10 — the HTTP API and the dashboard
+
+### D10.1 — Stage 10 is the dashboard; pgvector RAG becomes Stage 11
+**Decided:** claim 10 for the API and the dashboard, and write the claim down.
+**Why it needed deciding at all:** 10 was informally reserved for a pgvector
+RAG layer, but nothing in this log said so — `grep 'Stage 10'` and
+`grep pgvector` both returned nothing, and `origin/master` had no new commits.
+The reservation existed only in conversation, which is exactly how D8/D9
+collided the first time (commit 20e3215 renumbered packaging from Stage 8 to
+Stage 9 after the Gemini transport landed from a parallel session).
+**The rule that follows:** stage numbers track build order, and a reservation
+that is not in this file is not binding on this file. The dashboard was built
+first, so it is Stage 10. RAG is Stage 11 when it exists. `CLAUDE.md` now
+carries "grep before you number" so the next parallel session reads it.
+
+### D10.2 — An HTTP layer had to exist before a dashboard could
+**Found:** the stage brief said "inputs: the FastAPI endpoints ... everything
+the UI knows comes from GET /meta". No such endpoint existed. `fastapi` was
+not in `requirements.txt`; the only mention of it in the repository was D1.1
+noting that the conda env happened to have it. The closing section of this log
+said so plainly — "there is no interface beyond the CLI".
+**Decided:** one stage, two commits — `api/server.py` first, `ui/` second.
+**Why not two stages:** the API has no purpose without the UI and no consumer
+to test it against. Splitting them would have produced a stage whose only
+evidence was its own test suite.
+
+### D10.3 — /meta serves the catalogue's own `Param` objects
+**Decided:** `/meta` renders each `Param` as `{kind, required, default, minimum,
+maximum, choices, description}`, resolving `region` and `wmo` kinds to their
+live values. The UI builds a control from the kind; it never learns what a
+region is.
+**Why this is the load-bearing decision of the stage:** `catalog.tool_schemas()`
+builds the model's tools from `QUERIES` and `LiveValues`. `/meta` builds the
+dropdowns from *the same two objects*. The choices a human is offered and the
+enums a model is offered are therefore the same list by construction, and
+`test_server.py` compares them element by element rather than trusting it.
+Change the database, reload the page, and both move together.
+**Consequence worth stating at a defence:** a hallucinated region is
+unrepresentable for the model *and* unpickable for the human, for one reason,
+not two.
+**Cost:** `/meta` is rebuilt from the database on every request. Nine regions
+and ten floats make that free; a hundred thousand floats would not, and the
+answer then is a cache with an explicit invalidation, not a constant in the
+server.
+
+### D10.4 — Eleven queries, four display types, declared as data
+**Decided:** `ui/src/displays.js` maps every query to `map` (3), `line` (2),
+`bar` (2) or `table` (4), carrying the axis keys, the units, and the empty-state
+sentence. It is the only file in the UI that knows a query name; every component
+below it takes a spec and some rows.
+**Alternative:** let each result component decide from the column names it sees —
+`mean_psal_psu` ends in `_psu`, so label it PSU.
+**Why not:** it works until a column is renamed, and it puts presentation
+knowledge in five components instead of one. `invert: true` on the pressure
+axis is what makes depth increase downward, and it is declared once.
+**Two sub-decisions:**
+- `region_summary` is one row of nine columns, which reads as a horizontal
+  scroll. `orient: "row"` flips a single-row result to label/value pairs down
+  the page. It is a table option, not a fifth display type.
+- Every chart carries a "show the N rows behind this" toggle. A chart whose
+  numbers cannot be read is the thing the audit panel exists to prevent.
+
+### D10.5 — The audit panel is expanded by default and reads the response
+**Decided:** every query that ran, with bound parameters and row count, visible
+without a click, on screen at all times.
+**Why not collapsed:** the argument for the per-chart row table applies harder
+to the panel itself. This is not debug output; it is the evidence that the
+number on the chart came out of the database, and evidence behind a disclosure
+triangle is evidence nobody reads.
+**The mechanism that makes it honest:** an optional field left blank is **not
+sent**. The form does not pre-fill defaults. The catalogue binds them
+server-side in `Query.validate` and returns them in `params`, and the panel
+renders *that*, highlighting the keys the caller never sent. Leave `bin_dbar`
+blank and the panel reports `bin_dbar=50`.
+**Why it would otherwise be worthless:** if the form filled the default in and
+the panel displayed the form, the panel would be echoing the browser and
+proving nothing. Verified end to end in a real browser: the POST body carries
+three parameters, the panel shows five.
+
+### D10.6 — Every frontend version pinned exactly, and no library was added
+**Decided:** react 19.2.8, leaflet 1.9.4, plotly.js-dist-min 4.0.0, vite 8.2.2,
+tailwindcss 4.3.3, `@vitejs/plugin-react` 6.1.1, `@tailwindcss/vite` 4.3.3. No
+carets anywhere. `fastapi==0.141.1` and `uvicorn==0.52.4` likewise.
+**Also decided:** no `react-leaflet`. Leaflet's own API inside a `useEffect` is
+a few more lines and one less dependency, and rule 6 makes the default "don't".
+No component library, no state management, no data-fetching library — `useState`
+and `fetch` carry the whole page.
+**Cost, stated:** the Plotly bundle is 4.4 MB minified. Acceptable for a local
+demo, and the alternative is a custom partial bundle, which is a build step to
+maintain for a demo that runs on localhost.
+
+### D10.7 — Postgres `numeric` arrives as a JSON string
+**Found while smoke-testing the API,** before any chart existed: every `round()`
+in the catalogue returns `numeric`, psycopg renders it as a `Decimal`, and the
+default JSON encoding of a `Decimal` is `"28.093"` — a string.
+**Why it mattered more than it looks:** handed to Plotly, `"28.093"` is a
+category label. The axis silently becomes ordinal and the line is drawn in row
+order rather than value order. It renders. It looks like a chart. It is wrong,
+and nothing about it announces that.
+**Decided:** `jsonable()` at the API boundary converts `Decimal` to `float` and
+leaves `NULL` as `null`, with a check asserting both. Not in the UI, because
+the model-facing path deserves the same numbers.
+**The null half is the same rule as rule 2:** a level with no salinity reading
+is not a level with zero salinity. The deepest bin of the Arabian Sea profile
+is exactly this case — 3 levels, temperature present, salinity `None` — and
+the chart leaves a gap rather than drawing the line to the seabed.
+
+### D10.8 — Four failure states, each rendered as itself
+**Decided:** the dashboard distinguishes, visually and by HTTP status:
+| state | code | what the user sees |
+|---|---|---|
+| API unreachable | fetch throws | the URL tried, the command to start it, and "this is not an empty database" |
+| database down | 503 | psycopg's own reason and the host it tried |
+| parameter refused | 400 | the catalogue's message, with the valid values as chips |
+| no rows | 200 | "no rows", never 0.0 |
+**Why the first one is spelled out in words:** an API that is down and a
+database with no regions both produce empty dropdowns. So no dropdowns render
+at all in that state, and the panel says which of the two it is. The two must
+not be able to look alike.
+**The refusal renders the catalogue's own sentence.** `QueryError` messages
+always name what would have been acceptable, so the UI splits on that phrase
+and shows the alternatives — and falls back to plain text if a future message
+is worded differently. It composes nothing itself.
+**`nearest_profiles` with no results still draws the map**, taking the centre
+and the radius from the *bound* parameters rather than from the rows, over the
+sentence "0 profiles within 50 km". A blank panel would not tell you whether
+the query ran.
+
+### D10.9 — Three bugs the browser found that reading the code did not
+**A detached Leaflet circle cannot report its bounds.** `Circle.getBounds()`
+projects through `this._map`, so calling it on a circle that was never added
+threw — and the exception unmounted the entire dashboard. A white screen is the
+one failure mode indistinguishable from every other, which makes it the worst
+one available. Fixed at the source, and a `DisplayBoundary` now contains any
+repeat so a drawing bug costs the chart and not the audit panel.
+**Zero-based bars hid the comparison the query exists to make.** Arabian Sea
+35.428 PSU against Bay of Bengal 32.872 PSU, drawn from zero, are two bars the
+same height. Truncating the axis is the conventional fix and it lies the other
+way — a 2.5 PSU gap becomes a cliff. Decided: keep the zero baseline and print
+the value on the bar.
+**Selecting a query low in the list scrolled the picker off screen.**
+**Why these are logged:** all three build clean, pass every server-side check,
+and are invisible in the source. They were found by driving a real browser and
+reading the rendered `layout` object back out, which is now how this stage is
+verified.
+
+### Stage 10 result
+| | |
+|---|---:|
+| endpoints | 3 (`/meta`, `/regions.geojson`, `/query`) |
+| queries with a declared display | 11 of 11 |
+| display types | map 3 · line 2 · bar 2 · table 4 |
+| new checks | 62 (`api/test_server.py`) |
+| total checks | 184 |
+| frontend dependencies | 4 runtime, 4 build, all pinned exactly |
+| lines that hardcode a region, date or WMO | 0, asserted |
+
+---
+
 ## Where the project stands
 
 Complete end to end: GDAC index -> filter -> float selection -> NetCDF download
 -> parse -> regions -> Postgres -> query catalogue -> natural-language layer
-(Anthropic **and** Gemini behind one transport seam) -> runner and README.
-**9 stages, 55 logged decisions, 122 automated checks, one command to rebuild.**
+(Anthropic **and** Gemini behind one transport seam) -> HTTP API -> dashboard.
+**10 stages, 64 logged decisions, 184 automated checks, one command to rebuild.**
+
+The platform is now demonstrable with the model switched off: eleven queries,
+every one with a defined visual output, reachable from dropdowns built out of
+the database, with the bound parameters and row counts on screen throughout.
 
 | check suite | count |
 |---|---:|
@@ -888,7 +1051,8 @@ Complete end to end: GDAC index -> filter -> float selection -> NetCDF download
 | query catalogue (`api/test_catalog.py`) | 28 |
 | tool loop (`api/test_chat.py`) | 28 |
 | Gemini adapter (`api/test_gemini.py`) | 45 |
-| **total** | **122** |
+| HTTP API (`api/test_server.py`) | 62 |
+| **total** | **184** |
 
 **The two things still open, both needing something only the author can supply:**
 
@@ -903,7 +1067,12 @@ Complete end to end: GDAC index -> filter -> float selection -> NetCDF download
    The free-tier key also has **no quota for any pro model**, so what is proven
    is proven on a flash model.
 
-2. **There is no interface beyond the CLI.** `api/chat.py` answers on the
-   terminal. Whether the demo wants an HTTP API, a Streamlit dashboard with a
-   map and depth plots, or nothing more than the CLI is a product decision, not
-   an engineering one, and guessing it would waste a stage.
+2. ~~**There is no interface beyond the CLI.**~~ **Closed at Stage 10.** The
+   answer was an HTTP API and a React dashboard driven entirely by `/meta`
+   (D10.2--D10.8). What remains open is smaller and more specific: the
+   dashboard has **no automated tests of its own**. The 62 new checks cover
+   `api/server.py`; the UI was verified by driving a real browser and reading
+   back the rendered Plotly `layout` and the Leaflet DOM, which found three
+   bugs (D10.9) but is a session, not a suite. Nothing re-checks on every run
+   that depth still plots downward, and rule 5 says that means it is not
+   proven. A Playwright suite over the states in D10.8 is the honest fix.
