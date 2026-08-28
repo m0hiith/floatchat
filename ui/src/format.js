@@ -42,6 +42,15 @@ export function formatParams(params) {
     .join(", ");
 }
 
+/** "2023-03-01" -> "March 2023". Returns the input unchanged if it is not a
+ *  date, because a suggestion that reads "Invalid Date" is worse than one that
+ *  reads the raw string. */
+export function monthYear(iso) {
+  const d = new Date(`${iso}T00:00:00Z`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+}
+
 export function timeOfDay(date = new Date()) {
   return date.toLocaleTimeString("en-GB", { hour12: false });
 }

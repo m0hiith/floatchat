@@ -22,6 +22,19 @@ The request below is written in Anthropic's shape because that is the shape
 this file was built against.  It is a wire format, not a commitment to a
 vendor: `api/gemini.py` translates it, and `ask` never learns which model
 answered.
+
+Stage 11 adds a third, optional seam: a `retriever`.  When one is supplied,
+the question is prefixed with summaries pulled from a FAISS index over this
+same database (`api/retrieval.py`), and the model is told plainly what they
+are -- orientation, never evidence.  Retrieval changes which tool is chosen
+and what parameters go into it; it never becomes a number in the answer, and
+the system prompt says so in as many words.  `ask` without a retriever is
+exactly Stage 7's behaviour and is still tested that way.
+
+The notes go in the USER turn, not the system prompt, and that is deliberate:
+the system prompt and the tool list are the byte-stable cache prefix, and
+folding a per-question block into them would invalidate the cache on every
+single question.
 """
 
 from __future__ import annotations
@@ -79,6 +92,24 @@ tool says exactly which profiles were refused and why. Use it rather than \
 speculating.
 """
 
+# Appended to the system prompt only when a retriever is in play, so the
+# cached prefix stays byte-stable within each mode instead of drifting.
+RETRIEVAL_PROMPT = """\
+
+RETRIEVED NOTES
+  * The user turn may open with notes retrieved from a vector index built over \
+this same database. Each note is a summary generated from a SQL query, and it \
+names that query.
+  * They are there to orient you: which region, which float, which month, \
+which of the tools above actually answers this. Use them to CHOOSE a tool and \
+to FILL its parameters.
+  * Do not answer from them. Every number you state must come from a tool \
+result in this conversation, even when a note appears to contain that number \
+already. A note summarises the database; a tool result is the database.
+  * If the notes have nothing to do with the question, ignore them silently. \
+Never tell the user that notes were retrieved.
+"""
+
 
 class Transport(Protocol):
     def create(self, **kwargs) -> Any: ...
@@ -123,31 +154,61 @@ class Answer:
     turns: int
     stop_reason: str
     refusal: str | None = None
+    # What retrieval put in front of the question, with scores. Empty when no
+    # retriever was supplied. Shown for the same reason the audit trail is:
+    # if a summary steered the answer, the user gets to see the summary.
+    retrieved: list[dict] = field(default_factory=list)
 
     def __str__(self) -> str:
         lines = [self.text, ""]
+        for r in self.retrieved:
+            lines.append(f"  ~ retrieved [{r['doc_id']}] {r['score']:.3f}")
         for a in self.audit:
             status = f"{a['row_count']} rows" if "row_count" in a else f"REFUSED: {a['error']}"
             lines.append(f"  [{a['query']}] {json.dumps(a['params'], default=str)} -> {status}")
         return "\n".join(lines)
 
 
-def build_system(live: catalog.LiveValues) -> str:
+def context_block(hits: list) -> str:
+    """The retrieved notes, as one labelled text block.
+
+    Labelled, numbered and score-carrying on purpose: the model should be able
+    to tell these apart from the question, and a reader of the transcript
+    should be able to tell them apart from a tool result.
+    """
+    lines = ["Retrieved notes from the FloatChat index. These are SUMMARIES of the "
+             "database, not query results. Use them to pick a tool and its parameters; "
+             "run that tool for any number you state.", ""]
+    for i, hit in enumerate(hits, start=1):
+        d = hit.document
+        lines.append(f"[{i}] {d.title}   (kind: {d.kind}, similarity {hit.score:.3f})")
+        lines.append(d.text)
+        lines.append("")
+    return "\n".join(lines).rstrip()
+
+
+def build_system(live: catalog.LiveValues, with_retrieval: bool = False) -> str:
     with catalog.connect() as conn:
         n = catalog.run_raw(conn, "SELECT (SELECT count(*) FROM profiles) AS p, "
                                   "(SELECT count(*) FROM levels) AS l")[0]
-    return SYSTEM_PROMPT.format(
+    text = SYSTEM_PROMPT.format(
         n_floats=len(live.wmos), n_profiles=f"{n['p']:,}", n_levels=f"{n['l']:,}",
         win_start=live.window[0], win_end=live.window[1],
         regions=", ".join(live.regions))
+    return text + RETRIEVAL_PROMPT if with_retrieval else text
 
 
 def ask(question: str,
         transport: Transport | None = None,
         live: catalog.LiveValues | None = None,
         run_query: Callable[[str, dict], dict] | None = None,
-        conn=None) -> Answer:
-    """One question in, one answer plus its audit trail out."""
+        conn=None,
+        retriever=None) -> Answer:
+    """One question in, one answer plus its audit trail out.
+
+    `retriever` is anything with `.retrieve(question) -> [Hit]`.  None means
+    Stage 7 behaviour: no notes, no retrieval section in the system prompt.
+    """
     live = live or catalog.LiveValues.load()
     transport = transport or AnthropicTransport()
     own_conn = conn is None and run_query is None
@@ -160,11 +221,31 @@ def ask(question: str,
     execute = run_query or default_run
     tools = catalog.tool_schemas(live)
 
+    # Retrieval failing must not take the answer down with it: the loop worked
+    # for three stages without an index and still does.  A broken index is
+    # reported in the trail rather than raised (rule 1 -- it gets a name).
+    hits, retrieved = [], []
+    if retriever is not None:
+        try:
+            hits = list(retriever.retrieve(question))
+            retrieved = [h.as_dict() for h in hits]
+        except Exception as exc:
+            retrieved = [{"doc_id": "retrieval-failed", "kind": "error",
+                          "title": "retrieval unavailable", "score": 0.0, "rank": 0,
+                          "text": str(exc), "source": "", "keys": {}}]
+            hits = []
+
     # The system prompt and the tool list are byte-stable across questions, so
     # they sit in front of the cache breakpoint and the volatile question after.
-    system = [{"type": "text", "text": build_system(live),
+    system = [{"type": "text", "text": build_system(live, with_retrieval=bool(hits)),
                "cache_control": {"type": "ephemeral"}}]
-    messages: list[dict] = [{"role": "user", "content": question}]
+    # Notes first, question last: the question stays the most recent thing the
+    # model read, and the cached prefix above is untouched either way.
+    content: Any = question if not hits else [
+        {"type": "text", "text": context_block(hits)},
+        {"type": "text", "text": question},
+    ]
+    messages: list[dict] = [{"role": "user", "content": content}]
     audit: list[dict] = []
 
     try:
@@ -181,11 +262,13 @@ def ask(question: str,
             if response.stop_reason == "refusal":
                 detail = getattr(response, "stop_details", None)
                 return Answer("", audit, turn, "refusal",
-                              refusal=getattr(detail, "explanation", "declined"))
+                              refusal=getattr(detail, "explanation", "declined"),
+                              retrieved=retrieved)
 
             if response.stop_reason != "tool_use":
                 text = "".join(b.text for b in response.content if b.type == "text")
-                return Answer(text.strip(), audit, turn, response.stop_reason)
+                return Answer(text.strip(), audit, turn, response.stop_reason,
+                              retrieved=retrieved)
 
             messages.append({"role": "assistant", "content": response.content})
 
@@ -214,7 +297,7 @@ def ask(question: str,
             messages.append({"role": "user", "content": results})
 
         return Answer("I could not answer that within the allowed number of query steps.",
-                      audit, MAX_TURNS, "max_turns")
+                      audit, MAX_TURNS, "max_turns", retrieved=retrieved)
     finally:
         if own_conn and conn is not None:
             conn.close()
@@ -236,6 +319,33 @@ def have_gemini() -> bool:
     return bool(os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"))
 
 
+def open_retriever(k: int | None = None):
+    """The Stage 11 retriever, or None.
+
+    Imported lazily and failing to None on purpose: a checkout with no index
+    built, or without faiss installed, must still be able to ask a question.
+    Retrieval is an addition to this loop, never a requirement of it.
+    """
+    try:
+        import retrieval
+    except ImportError:
+        return None
+    return retrieval.open_default(**({"k": k} if k else {}))
+
+
+def describe_retriever(retriever, asked_for: bool = True) -> str:
+    """Off because you said so, and off because there is nothing to open, are
+    different states.  Reporting them with one sentence would send someone to
+    build an index they already have."""
+    if not asked_for:
+        return "off -- --no-rag was passed"
+    if retriever is None:
+        return "off -- no index (build one: python etl/build_index.py)"
+    index = retriever.index
+    return (f"on -- {len(index.documents)} documents, embedder {index.embedder.name}, "
+            f"top {retriever.k}, built {index.built_at}")
+
+
 def make_transport(provider: str, model: str | None) -> Transport:
     """Provider choice is a transport choice and nothing else -- `ask` and the
     catalogue never learn which model answered (D8.1)."""
@@ -245,52 +355,75 @@ def make_transport(provider: str, model: str | None) -> Transport:
     return AnthropicTransport()
 
 
-def report_provider_error(provider: str, exc: Exception) -> int:
+def diagnose_provider_error(provider: str, exc: Exception) -> str | None:
     """A wrong key or a renamed model is a setup problem, not a stack trace.
 
-    Both are things someone hits on a fresh machine, so each gets a one-line
-    diagnosis and the command that fixes it -- D7.7's rule, applied to the
-    second provider.
+    Returns the diagnosis and the command that fixes it, or None when this is
+    not a failure we recognise -- in which case the caller must not pretend to
+    understand it.  Split out from the printing so `api/server.py` can put the
+    same sentence in a 503 body that the CLI puts on the terminal; one source
+    of truth for what a bad key looks like.
     """
     text = str(exc)
     var = "GEMINI_API_KEY" if provider == "gemini" else "ANTHROPIC_API_KEY"
     if "API_KEY_INVALID" in text or "API key not valid" in text or "authentication" in text.lower():
-        print(f"{provider}: the key in ${var} was rejected by the API.\n"
-              f"  ${var} is set, so this is a wrong or expired key, not a missing one.")
-        if provider == "gemini":
-            print("  new key: https://aistudio.google.com/apikey\n"
-                  f"  then:    export {var}=...")
-        return 2
+        fix = ("  new key: https://aistudio.google.com/apikey\n"
+               f"  then:    export {var}=..." if provider == "gemini" else
+               f"  set a valid ${var}")
+        return (f"{provider}: the key in ${var} was rejected by the API.\n"
+                f"  ${var} is set, so this is a wrong or expired key, not a missing one.\n"
+                + fix)
     if "NOT_FOUND" in text or "was not found" in text:
-        print(f"{provider}: that model id does not exist for this key.\n"
-              "  see what it can reach:  python api/chat.py --models\n"
-              '  then:                   python api/chat.py --model=NAME "..."')
-        return 2
+        return (f"{provider}: that model id does not exist for this key.\n"
+                "  see what it can reach:  python api/chat.py --models\n"
+                '  then:                   python api/chat.py --model=NAME "..."')
     if "RESOURCE_EXHAUSTED" in text or "429" in text:
         # "limit: 0" is not a rate limit -- it means this tier cannot call
         # this model at all, which waiting will never fix.
         if "limit: 0" in text:
-            print(f"{provider}: this key's tier has NO quota for that model, so "
-                  "retrying will not help.\n"
-                  "  pick one its tier allows:  python api/chat.py --models\n"
-                  '  e.g.                       python api/chat.py --model=gemini-3.5-flash "..."')
-        else:
-            print(f"{provider}: rate limited. Wait and retry, or use a smaller model "
-                  "with --model=.")
-        return 2
+            return (f"{provider}: this key's tier has NO quota for that model, so "
+                    "retrying will not help.\n"
+                    "  pick one its tier allows:  python api/chat.py --models\n"
+                    '  e.g.                       python api/chat.py --model=gemini-3.5-flash "..."')
+        return (f"{provider}: rate limited. Wait and retry, or use a smaller model "
+                "with --model=.")
     if "UNAVAILABLE" in text or "503" in text:
-        print(f"{provider}: the model is busy (503). This is transient -- retry, or "
-              "pin a steadier one with --model=.")
-        return 2
-    raise exc
+        return (f"{provider}: the model is busy (503). This is transient -- retry, or "
+                "pin a steadier one with --model=.")
+    return None
+
+
+def report_provider_error(provider: str, exc: Exception) -> int:
+    diagnosis = diagnose_provider_error(provider, exc)
+    if diagnosis is None:
+        raise exc
+    print(diagnosis)
+    return 2
+
+
+def resolve_provider(requested: str | None = None) -> str | None:
+    """Which provider a call would actually use.  None means no credentials.
+
+    `api/server.py` needs this to tell the dashboard whether to offer a chat
+    box at all, and it must not re-implement the rule -- the CLI and the HTTP
+    layer have to agree about what "configured" means.
+    """
+    if requested in ("anthropic", "gemini"):
+        have = have_anthropic() if requested == "anthropic" else have_gemini()
+        return requested if have else None
+    return "anthropic" if have_anthropic() else "gemini" if have_gemini() else None
 
 
 def main(argv: list[str]):
-    provider, model = None, None
+    provider, model, use_rag, rag_k = None, None, True, None
     while argv and argv[0].startswith("--"):
         flag = argv.pop(0)
         if flag in ("--gemini", "--anthropic"):
             provider = flag[2:]
+        elif flag == "--no-rag":
+            use_rag = False
+        elif flag.startswith("--rag-k="):
+            rag_k = int(flag.split("=", 1)[1])
         elif flag.startswith("--model="):
             model, provider = flag.split("=", 1)[1], provider or "gemini"
         elif flag == "--models":
@@ -307,12 +440,17 @@ def main(argv: list[str]):
     if provider is None:                      # whichever key is actually present
         provider = "anthropic" if have_anthropic() else "gemini" if have_gemini() else None
 
+    # Opened before the credential check so `chat.py` with no arguments can
+    # report the retrieval state on a machine with no key at all.
+    retriever = open_retriever(rag_k) if use_rag else None
+
     if not argv:
         print(__doc__)
-        print('usage: python api/chat.py [--gemini|--anthropic] [--model=NAME] "how salty '
-              'is the Bay of Bengal?"')
+        print('usage: python api/chat.py [--gemini|--anthropic] [--model=NAME] [--no-rag] '
+              '"how salty is the Bay of Bengal?"')
         print("       python api/chat.py --models      # what this Gemini key can reach")
         print(f"detected provider: {provider or 'none -- no credentials found'}")
+        print(f"retrieval        : {describe_retriever(retriever, use_rag)}")
         return 0
 
     if provider is None or (provider == "anthropic" and not have_anthropic()) \
@@ -325,7 +463,8 @@ def main(argv: list[str]):
         return 2
 
     try:
-        print(ask(" ".join(argv), transport=make_transport(provider, model)))
+        print(ask(" ".join(argv), transport=make_transport(provider, model),
+                  retriever=retriever))
     except Exception as exc:                      # a bad key or a bad model id
         return report_provider_error(provider, exc)
     return 0

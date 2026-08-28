@@ -185,3 +185,40 @@ export class DisplayBoundary extends Component {
     );
   }
 }
+
+/**
+ * There is no model to answer with.
+ *
+ * A separate state from `ApiFailure` on purpose.  The API is up, the database
+ * is up, and the eleven queries in the other tab all still work — telling
+ * someone their database is down because their API key expired would send
+ * them to fix the wrong thing.  The server's own diagnosis is shown verbatim;
+ * it already names the variable to set (api/chat.py diagnose_provider_error).
+ */
+export function ModelFailure({ error, onSwitchToCatalogue }) {
+  return (
+    <Panel tone="amber" title="No model answered">
+      <p>{error.message}</p>
+      {error.detail && (
+        <pre className="overflow-x-auto rounded border border-amber-300 bg-white/70 p-2 font-mono text-xs whitespace-pre-wrap">
+          {error.detail}
+        </pre>
+      )}
+      <div className="rounded border border-amber-300 bg-white/70 p-2 text-xs">
+        <p className="font-semibold">The data is fine. The model is not.</p>
+        <p className="mt-1">
+          Every one of the catalogue queries still runs without a key — the chat box is the
+          only part of this dashboard that needs one.
+        </p>
+      </div>
+      {onSwitchToCatalogue && (
+        <button
+          onClick={onSwitchToCatalogue}
+          className="rounded border border-amber-400 bg-white px-3 py-1 text-xs font-medium hover:bg-amber-100"
+        >
+          Use the query catalogue instead
+        </button>
+      )}
+    </Panel>
+  );
+}

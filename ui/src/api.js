@@ -12,6 +12,13 @@
  *   refused      400: the catalogue rejected a parameter.  The message always
  *                names the valid values, so the UI shows it verbatim and
  *                composes nothing of its own.
+ *   no-model     503, but a different 503: the API and the database are both
+ *                up and there is no usable model, or the key was rejected.
+ *                Kept apart from `unavailable` because they are fixed in
+ *                different places -- one is `uvicorn`, the other is an
+ *                environment variable -- and telling a user to restart
+ *                Postgres because their API key expired is a wrong answer
+ *                delivered confidently.
  */
 
 export const API_BASE =
@@ -48,6 +55,13 @@ async function request(path, options) {
   if (response.ok) return body;
 
   if (response.status === 503) {
+    // The server labels its own 503s. Two platform outages, two messages.
+    if (body?.error === "model unavailable") {
+      throw new ApiError("no-model", "The API is up. The language model is not.", {
+        url,
+        detail: body?.detail ?? `HTTP ${response.status}`,
+      });
+    }
     throw new ApiError("unavailable", "The API is running, but the database is not.", {
       url,
       detail: body?.detail ?? `HTTP ${response.status}`,
@@ -72,4 +86,17 @@ export const runQuery = (name, params) =>
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, params }),
+  });
+
+/**
+ * A question in English.  Returns the answer, what was retrieved, and the
+ * audit trail WITH the rows -- so the chat panel draws its charts from the
+ * same rows and the same displays.js mapping the manual panel uses.  There is
+ * no second path into the database and no second way to draw one.
+ */
+export const ask = (question, { retrieval = true, provider = null } = {}) =>
+  request("/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question, retrieval, provider }),
   });

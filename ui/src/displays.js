@@ -163,3 +163,42 @@ export const DATA_MODES = {
 export function displayFor(queryName) {
   return DISPLAYS[queryName] ?? null;
 }
+
+/**
+ * Example questions for the chat box.
+ *
+ * The wording is presentation, which is why it lives here — but the VALUES are
+ * not.  Each suggestion is filled from the example the catalogue publishes for
+ * that query in /meta, so no region name, float id or date is written into the
+ * browser.  Point this dashboard at a different database and the suggestions
+ * name that database's regions.  It also means a suggestion cannot propose a
+ * question the data cannot answer: the example it is built from is the one the
+ * query is tested against.
+ *
+ * The last one is deliberate and it is meant to fail.  The problem this
+ * project answers asks for biogeochemical comparisons; these ten floats carry
+ * none, and the honest refusal is worth demonstrating on purpose rather than
+ * hoping nobody asks.
+ */
+export const SUGGESTIONS = [
+  { from: "compare_regions", ask: (e) => `Is the ${e.region_a} fresher than the ${e.region_b}?` },
+  { from: "profiles_in_region", ask: (e, f) => `Show me salinity profiles in the ${e.region} in ${f.monthYear(e.start)}` },
+  { from: "nearest_profiles", ask: (e) => `Which ARGO floats are nearest to ${e.lat}°N, ${e.lon}°E?` },
+  { from: "depth_profile", ask: (e) => `Plot temperature against depth in the ${e.region}` },
+  { from: "missing_profiles", ask: (e) => `Why does float ${e.wmo} have fewer profiles than the index promised?` },
+  { from: "region_summary", ask: (e) => `Show me the BGC oxygen profiles for the ${e.region}` },
+];
+
+export function suggestionsFor(meta, helpers) {
+  return SUGGESTIONS.map(({ from, ask }) => {
+    const query = meta?.queries?.find((q) => q.name === from);
+    if (!query?.example || Object.keys(query.example).length === 0) return null;
+    try {
+      return { from, text: ask(query.example, helpers) };
+    } catch {
+      // A catalogue whose example lost a key drops that suggestion rather than
+      // rendering "undefined" into a question someone might click.
+      return null;
+    }
+  }).filter(Boolean);
+}

@@ -1,15 +1,20 @@
 /**
- * Stage 10: the dashboard, with the AI switched off.
+ * The dashboard: two ways into the same eleven queries.
  *
- * Eleven queries, dropdowns, and an audit trail.  No chat box: the point of
- * this stage is that the platform is complete and provable before anything
- * routes into it, so every query type has a defined visual output that a human
- * can reach without a model in the loop.
+ * Stage 10 built this with the AI switched off, deliberately — the platform
+ * had to be complete and provable before anything routed into it, so every
+ * query type has a defined visual output a human can reach with no model in
+ * the loop.  Stage 11 switches it on beside that, and the arrangement is the
+ * argument: **Catalogue** and **Chat** are two front doors to one catalogue,
+ * and they share an audit trail.  A query the model chose and a query a human
+ * chose land in the same list, drawn by the same displays.js mapping, from
+ * rows returned by the same read-only role.
  *
  * Everything the page knows — regions, floats, the date window, which
- * parameters exist and what values they accept — arrives from GET /meta.  The
- * only knowledge held in the browser is how each query is DRAWN (displays.js),
- * which is a presentation choice with no counterpart in the database.
+ * parameters exist and what values they accept, whether there is a model at
+ * all — arrives from GET /meta.  The only knowledge held in the browser is how
+ * each query is DRAWN (displays.js), which is a presentation choice with no
+ * counterpart in the database.
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -18,6 +23,7 @@ import { displayFor } from "./displays";
 import ParamControls, { toRequestParams, missingRequired } from "./components/ParamControls";
 import ResultPanel from "./components/ResultPanel";
 import AuditPanel from "./components/AuditPanel";
+import ChatPanel from "./components/ChatPanel";
 import { ApiFailure, Refusal, Spinner, Idle, DisplayBoundary } from "./components/States";
 import { timeOfDay } from "./format";
 
@@ -29,6 +35,13 @@ export default function App() {
   const [values, setValues] = useState({});
   const [result, setResult] = useState({ status: "idle" });
   const [audit, setAudit] = useState([]);
+  const [mode, setMode] = useState("catalogue");
+
+  // One trail, two sources. `seq` is assigned here so a batch of queries from
+  // a single question keeps its order without either caller counting.
+  const addAudit = useCallback((entries) => {
+    setAudit((a) => [...a, ...entries.map((e, i) => ({ seq: a.length + i, ...e }))]);
+  }, []);
 
   const loadMeta = useCallback(async () => {
     setMeta(null);
@@ -79,19 +92,13 @@ export default function App() {
         (k) => !(k in sent) && data.params[k] !== null,
       );
       setResult({ status: "ok", ...data });
-      setAudit((a) => [
-        ...a,
-        { seq: a.length, at, status: "ok", query: data.query,
-          params: data.params, rows: data.row_count, defaulted },
-      ]);
+      addAudit([{ at, status: "ok", query: data.query, params: data.params,
+                  rows: data.row_count, defaulted }]);
     } catch (error) {
       const kind = error.kind === "refused" ? "refused" : "failed";
       setResult({ status: kind, error });
-      setAudit((a) => [
-        ...a,
-        { seq: a.length, at, status: kind, query: query.name,
-          params: sent, error: error.message },
-      ]);
+      addAudit([{ at, status: kind, query: query.name, params: sent,
+                  error: error.message }]);
     }
   }
 
@@ -100,7 +107,7 @@ export default function App() {
   if (metaError) {
     return (
       <div className="mx-auto max-w-2xl p-8">
-        <Header meta={null} />
+        <Header meta={null} mode={mode} onMode={setMode} />
         <div className="mt-6">
           <ApiFailure error={metaError} onRetry={loadMeta} />
         </div>
@@ -111,7 +118,7 @@ export default function App() {
   if (!meta) {
     return (
       <div className="mx-auto max-w-2xl p-8">
-        <Header meta={null} />
+        <Header meta={null} mode={mode} onMode={setMode} />
         <div className="mt-6 rounded-lg border border-slate-300 bg-white">
           <Spinner label={`Loading /meta from ${API_BASE}`} />
         </div>
@@ -119,9 +126,30 @@ export default function App() {
     );
   }
 
+  if (mode === "chat") {
+    return (
+      <div className="mx-auto flex h-screen max-w-[110rem] flex-col gap-4 p-4">
+        <Header meta={meta} mode={mode} onMode={setMode} />
+        <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_21rem]">
+          <main className="min-h-0">
+            <ChatPanel
+              meta={meta}
+              outlines={outlines}
+              onQueries={addAudit}
+              onSwitchToCatalogue={() => setMode("catalogue")}
+            />
+          </main>
+          <div className="min-h-0 lg:max-h-full">
+            <AuditPanel entries={audit} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto flex h-screen max-w-[110rem] flex-col gap-4 p-4">
-      <Header meta={meta} />
+      <Header meta={meta} mode={mode} onMode={setMode} />
 
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-[19rem_minmax(0,1fr)_21rem]">
         {/* left: the picker and its controls */}
@@ -234,13 +262,39 @@ export default function App() {
   );
 }
 
-function Header({ meta }) {
+function Header({ meta, mode, onMode }) {
+  const ai = meta?.ai;
   return (
     <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-lg border border-slate-300 bg-white px-4 py-2.5">
-      <div className="flex items-baseline gap-3">
+      <div className="flex items-center gap-3">
         <h1 className="text-base font-semibold text-slate-900">FloatChat</h1>
-        <span className="text-xs text-slate-500">
-          the query catalogue, with the AI switched off
+        {meta && (
+          <nav className="flex rounded-md border border-slate-300 p-0.5 text-xs">
+            <Tab active={mode === "catalogue"} onClick={() => onMode("catalogue")}>
+              Catalogue
+            </Tab>
+            {/* The chat tab is offered only when /meta says a model can answer.
+                A tab that always errors is worse than a tab that is not there,
+                and the reason is on the tab itself rather than behind a click. */}
+            <Tab
+              active={mode === "chat"}
+              onClick={() => onMode("chat")}
+              title={ai?.available ? undefined : ai?.reason}
+              muted={!ai?.available}
+            >
+              Chat
+              {ai?.available && ai?.retrieval?.available && (
+                <span className="ml-1.5 rounded bg-emerald-100 px-1 py-px text-[10px] font-medium text-emerald-800">
+                  RAG
+                </span>
+              )}
+            </Tab>
+          </nav>
+        )}
+        <span className="hidden text-xs text-slate-500 xl:inline">
+          {mode === "chat"
+            ? "the model picks a catalogue query; it never writes SQL"
+            : "the query catalogue, with the AI switched off"}
         </span>
       </div>
       {meta ? (
@@ -258,6 +312,24 @@ function Header({ meta }) {
         <span className="text-xs text-slate-400">{API_BASE}</span>
       )}
     </header>
+  );
+}
+
+function Tab({ active, onClick, children, title, muted }) {
+  return (
+    <button
+      onClick={onClick}
+      title={title}
+      className={`rounded px-2.5 py-1 font-medium ${
+        active
+          ? "bg-slate-800 text-white"
+          : muted
+            ? "text-slate-400 hover:bg-slate-100"
+            : "text-slate-600 hover:bg-slate-100"
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 

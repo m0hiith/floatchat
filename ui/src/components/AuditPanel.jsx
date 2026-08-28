@@ -21,7 +21,17 @@ function Entry({ entry }) {
     <li className="border-b border-slate-200 px-3 py-2.5 last:border-b-0">
       <div className="flex items-baseline justify-between gap-3">
         <span className="font-mono text-xs font-semibold text-slate-800">{entry.query}</span>
-        <span className="shrink-0 font-mono text-[11px] text-slate-400">{entry.at}</span>
+        <div className="flex shrink-0 items-baseline gap-1.5">
+          {/* Who chose this query. The two are the same eleven queries, run the
+              same way, which is the point -- but which of them picked it is a
+              fact the trail should not lose. */}
+          {entry.via === "chat" && (
+            <span className="rounded bg-indigo-100 px-1.5 py-px text-[10px] font-medium text-indigo-800">
+              model
+            </span>
+          )}
+          <span className="font-mono text-[11px] text-slate-400">{entry.at}</span>
+        </div>
       </div>
 
       <div className="mt-1 font-mono text-[11px] leading-relaxed break-words text-slate-600">
@@ -97,8 +107,9 @@ export default function AuditPanel({ entries }) {
         <div className="min-h-0 flex-1 overflow-y-auto">
           {entries.length === 0 ? (
             <p className="px-3 py-6 text-center text-xs text-slate-400">
-              Run a query and every one will be listed here, with the parameters the
-              catalogue bound and how many rows came back.
+              Run a query — from the catalogue or by asking a question — and every one
+              will be listed here, with the parameters the catalogue bound and how many
+              rows came back.
             </p>
           ) : (
             <ol className="divide-y divide-slate-100">

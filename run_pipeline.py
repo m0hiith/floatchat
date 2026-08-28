@@ -54,10 +54,13 @@ STAGES = [
     Stage("5a", "build the IHO region polygons", "etl/fetch_regions.py",
           "data/regions/regions.csv", accepts_force=True),
     Stage("4", "load Postgres and verify", "etl/load_db.py"),
+    Stage("11", "build the vector index over the summaries", "etl/build_index.py",
+          "data/rag/manifest.json", accepts_force=True),
     Stage("6", "query catalogue tests", "api/test_catalog.py", is_check=True),
     Stage("7", "natural-language tool loop tests", "api/test_chat.py", is_check=True),
     Stage("8", "Gemini adapter tests", "api/test_gemini.py", is_check=True),
     Stage("10", "HTTP API tests", "api/test_server.py", is_check=True),
+    Stage("11c", "retrieval and /ask tests", "api/test_retrieval.py", is_check=True),
 ]
 
 
@@ -70,7 +73,7 @@ def preflight() -> bool:
 
     missing = []
     for mod in ("pandas", "numpy", "requests", "netCDF4", "xarray", "psycopg", "anthropic",
-                "fastapi", "uvicorn"):
+                "fastapi", "uvicorn", "faiss"):
         try:
             __import__(mod)
         except ImportError:
@@ -169,6 +172,7 @@ def main():
     print("                         everything above runs without either)")
     print("or open the dashboard:  .venv/bin/uvicorn api.server:app --port 8000")
     print("                        cd ui && npm install && npm run dev")
+    print("                        Catalogue tab needs no key; Chat tab needs one.")
     return 0
 
 

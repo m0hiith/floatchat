@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 """Stage 10a: the HTTP layer over the query catalogue.
 
-Three endpoints, and deliberately no more:
+Four endpoints, and deliberately no more:
 
     GET  /meta              everything the UI is allowed to know
     GET  /regions.geojson   the IHO outlines, for the map
     POST /query             run one named query from the catalogue
+    POST /ask               Stage 11: a question in English, through the tool loop
 
 The important property is that this file adds no knowledge.  It does not know
 what a region is called, which floats exist, what the date window is, or what
@@ -22,6 +23,20 @@ and the human get identical, database-derived choices.
 `QueryError` becomes a 400 whose body is the catalogue's own message, and those
 messages always name what would have been acceptable ("Valid regions: ...").
 The UI renders that string; it never composes its own.
+
+/ask is a pass-through to `chat.ask()` in exactly the same sense.  This file
+does not prompt the model, does not choose a query and does not read a row: it
+supplies a `run_query` that records what the loop executed, and returns the
+loop's own audit trail with the rows attached.  Every number in an /ask
+response therefore came out of the same catalogue query the dashboard's
+dropdowns run, and the response says which one -- so the chat panel draws its
+chart with the same `displays.js` mapping as the manual panel, from the same
+rows, and there is no second path into the database for a model to take.
+
+Whether /ask can work at all is reported by /meta under `ai`, so the dashboard
+never offers a chat box it cannot use.  That is a credential fact and a
+retrieval fact; neither is a fact about ARGO, so this file still holds no
+knowledge of the data.
 
 Run it:
     .venv/bin/uvicorn api.server:app --reload --port 8000
@@ -45,7 +60,13 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 import catalog
+import chat
 from catalog import QUERIES, LiveValues, Param, QueryError
+
+# A question longer than this is not a question. Refused here rather than
+# forwarded, so an accidental paste costs nothing and gets a message that says
+# what the limit is (the same shape as every catalogue refusal).
+MAX_QUESTION_CHARS = 2_000
 
 # The Vite dev server.  Listed explicitly rather than "*" -- this API is a
 # read-only view of a local database, but a wildcard would still be a claim we
@@ -78,6 +99,14 @@ class Unavailable(Exception):
     must not render them the same way, so they do not share a status code."""
 
 
+class ModelUnavailable(Exception):
+    """There is no usable model, or the one configured refused to answer for a
+    reason the user has to fix -- a rejected key, a model id the key cannot
+    reach, an exhausted quota.  Like `Unavailable` it is a platform state, not
+    a bad question, so it is a 503 and not a 400.  It is a *different* 503 body
+    from the database one, because the two are fixed in different places."""
+
+
 def _db_error(exc: Exception) -> str:
     """A one-line reason a human can act on.  psycopg's messages carry the host,
     port and reason; the UI shows this verbatim rather than 'failed to load'."""
@@ -92,6 +121,12 @@ def _unavailable(_request, exc: Unavailable) -> JSONResponse:
         content={"error": "database unavailable", "detail": str(exc),
                  "dsn": catalog.DSN.split("@")[-1]},
     )
+
+
+@app.exception_handler(ModelUnavailable)
+def _model_unavailable(_request, exc: ModelUnavailable) -> JSONResponse:
+    return JSONResponse(status_code=503,
+                        content={"error": "model unavailable", "detail": str(exc)})
 
 
 @app.exception_handler(QueryError)
@@ -151,6 +186,47 @@ def param_json(p: Param, live: LiveValues) -> dict[str, Any]:
     return out
 
 
+def retrieval_state() -> dict[str, Any]:
+    """What the Stage 11 index is, or why there is not one.
+
+    Reported rather than assumed: a dashboard that showed "RAG" as a static
+    badge would keep showing it after someone deleted the index directory.
+    """
+    try:
+        import retrieval
+    except ImportError as exc:
+        return {"available": False, "reason": f"faiss not installed ({exc})"}
+    if not retrieval.exists():
+        return {"available": False,
+                "reason": "no index built -- run: python etl/build_index.py"}
+    try:
+        index = retrieval.load()
+    except Exception as exc:                       # a corrupt or stale index
+        return {"available": False, "reason": _db_error(exc)}
+    return {
+        "available": True,
+        "documents": len(index.documents),
+        "kinds": {k: v for k, v in __import__("corpus").by_kind(index.documents).items()},
+        "embedder": index.embedder.name,
+        "dimensions": index.dim,
+        "built_at": index.built_at,
+        "k": retrieval.DEFAULT_K,
+    }
+
+
+def ai_state() -> dict[str, Any]:
+    """Whether /ask is usable, and by what.  No ARGO knowledge lives here."""
+    provider = chat.resolve_provider()
+    return {
+        "available": provider is not None,
+        "provider": provider,
+        "providers": {"anthropic": chat.have_anthropic(), "gemini": chat.have_gemini()},
+        "reason": None if provider else
+                  "no model credentials -- set ANTHROPIC_API_KEY or GEMINI_API_KEY",
+        "retrieval": retrieval_state(),
+    }
+
+
 @app.get("/meta")
 def meta() -> dict[str, Any]:
     """Regions, floats, the date window, the row counts, and every query with
@@ -205,6 +281,10 @@ def meta() -> dict[str, Any]:
         # Where the map should open.  Derived from the profiles actually
         # loaded, so a different dataset frames itself differently.
         "extent": extent,
+        # Not data: whether the natural-language path is switched on, and what
+        # is behind it.  The dashboard uses this to decide whether to offer a
+        # chat box, which is better than offering one that always errors.
+        "ai": ai_state(),
         "regions": regions,
         "floats": floats,
         "queries": [
@@ -291,6 +371,85 @@ def query(req: QueryRequest) -> dict[str, Any]:
         out = catalog.run(req.name, req.params, live=live, conn=conn)
     out["rows"] = jsonable_rows(out["rows"])
     return out
+
+
+class AskRequest(BaseModel):
+    question: str = Field(description="A question in English about the ARGO data")
+    provider: str | None = Field(default=None, description="anthropic | gemini")
+    model: str | None = Field(default=None, description="Override the provider's model id")
+    retrieval: bool = Field(default=True, description="Use the Stage 11 vector index")
+    k: int | None = Field(default=None, description="How many documents to retrieve")
+
+
+@app.post("/ask")
+def ask(req: AskRequest) -> dict[str, Any]:
+    """A question in English -> an answer, its audit trail, and the rows behind it.
+
+    The rows are the reason this returns more than a string.  `chat.ask` records
+    row *counts*; the dashboard needs the rows themselves so the chat panel can
+    draw the same chart the manual panel draws for that query.  We get them by
+    supplying the `run_query` seam `chat.ask` already exposes, which also means
+    this file never calls the catalogue behind the loop's back -- everything in
+    `executed` is something the model actually asked for.
+    """
+    question = req.question.strip()
+    if not question:
+        raise QueryError("question: expected some text, got an empty string")
+    if len(question) > MAX_QUESTION_CHARS:
+        raise QueryError(f"question: must be at most {MAX_QUESTION_CHARS} characters, "
+                         f"got {len(question)}")
+
+    provider = chat.resolve_provider(req.provider)
+    if provider is None:
+        raise ModelUnavailable(
+            f"no credentials for provider {req.provider or 'any'}. "
+            "Set ANTHROPIC_API_KEY or GEMINI_API_KEY and restart the server. "
+            "The dashboard's eleven queries work without either.")
+
+    retriever = chat.open_retriever(req.k) if req.retrieval else None
+    live = _live()
+    executed: list[dict] = []
+
+    with _connect() as conn:
+        def run_query(name: str, params: dict) -> dict:
+            out = catalog.run(name, params, live=live, conn=conn)
+            executed.append({"query": out["query"], "params": out["params"],
+                             "row_count": out["row_count"],
+                             "rows": jsonable_rows(out["rows"])})
+            return out
+
+        try:
+            answer = chat.ask(question, transport=chat.make_transport(provider, req.model),
+                              live=live, run_query=run_query, retriever=retriever)
+        except Exception as exc:
+            diagnosis = chat.diagnose_provider_error(provider, exc)
+            if diagnosis is None:
+                raise
+            raise ModelUnavailable(diagnosis) from exc
+
+    # The loop's trail is authoritative for order and for refusals; `executed`
+    # carries the rows.  Zipping by position would break the moment a query is
+    # refused (refusals never reach run_query), so they are matched by index
+    # into `executed` counted over the entries that actually ran.
+    rows_by_position = iter(executed)
+    audit = []
+    for entry in answer.audit:
+        item = dict(entry)
+        if "error" not in entry:
+            ran = next(rows_by_position, None)
+            item["rows"] = ran["rows"] if ran else []
+        audit.append(item)
+
+    return {
+        "question": question,
+        "answer": answer.text,
+        "refusal": answer.refusal,
+        "stop_reason": answer.stop_reason,
+        "turns": answer.turns,
+        "provider": provider,
+        "retrieved": answer.retrieved,
+        "audit": audit,
+    }
 
 
 @app.get("/health")
