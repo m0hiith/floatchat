@@ -1,0 +1,25 @@
+{
+  "name": "floatchat-ui",
+  "private": true,
+  "version": "10.0.0",
+  "type": "module",
+  "description": "Stage 10 dashboard: the FloatChat query catalogue with the AI switched off.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "//": "Every version is exact. No carets. A different Plotly the week of the demo is an avoidable failure (D10.6).",
+  "dependencies": {
+    "leaflet": "1.9.4",
+    "plotly.js-dist-min": "4.0.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.3.3",
+    "@vitejs/plugin-react": "6.1.1",
+    "tailwindcss": "4.3.3",
+    "vite": "8.2.2"
+  }
+}

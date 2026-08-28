@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+:root { color-scheme: light; }
+body { @apply bg-slate-100 text-slate-900 antialiased; }
+
+/* Leaflet sets its own z-index stack; keep it under the app chrome. */
+.leaflet-container { z-index: 0; font: inherit; }
