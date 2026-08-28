@@ -56,6 +56,7 @@ STAGES = [
     Stage("4", "load Postgres and verify", "etl/load_db.py"),
     Stage("6", "query catalogue tests", "api/test_catalog.py", is_check=True),
     Stage("7", "natural-language tool loop tests", "api/test_chat.py", is_check=True),
+    Stage("8", "Gemini adapter tests", "api/test_gemini.py", is_check=True),
 ]
 
 
@@ -162,7 +163,8 @@ def main():
     print(f"\n{ran} stage(s) ran, {cached} cached, {total:.1f}s total")
     print("\nthe database is ready:  psql -h localhost -d floatchat")
     print("ask it something     :  python api/chat.py \"how salty is the Bay of Bengal?\"")
-    print("                        (needs ANTHROPIC_API_KEY; everything else runs without one)")
+    print("                        (needs ANTHROPIC_API_KEY or GEMINI_API_KEY;")
+    print("                         everything above runs without either)")
     return 0
 
 

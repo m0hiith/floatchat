@@ -793,10 +793,9 @@ question to the right query. That was D7.7's open item and it stays open.
 
 
 ---
+## Stage 9 — packaging
 
-## Stage 8 — packaging
-
-### D8.1 — One runner, and it skips what is already built
+### D9.1 — One runner, and it skips what is already built
 **Decided:** `run_pipeline.py` runs the eight stages in order, skips any whose
 output is already on disk, times each, and prints one line per stage.
 `--check` runs only the verification suites; `--from` / `--only` / `--fresh`
@@ -809,7 +808,7 @@ instead of failing three stages later with a traceback.
 **Caching is the point:** a first run moves 155 MB; a re-run finishes in about
 8 seconds. Nobody re-verifies a pipeline that costs a coffee break to check.
 
-### D8.2 — `--fresh` only forces the stages that can be forced
+### D9.2 — `--fresh` only forces the stages that can be forced
 **Found while writing it:** the first version passed `--force` to every stage
 with an output file. Three of those scripts parse no arguments at all, so the
 flag was silently ignored — the stage looked forced and was not.
@@ -817,7 +816,7 @@ flag was silently ignored — the stage looked forced and was not.
 rest `--fresh` just means "do not skip". A flag that appears to do something
 and does nothing is the exact failure mode this log exists to prevent.
 
-### D8.3 — The README leads with what is *not* proven
+### D9.3 — The README leads with what is *not* proven
 **Decided:** `README.md` carries a Known Limitations section naming the
 untested routing, the deliberate ten-float scope, the absence of
 biogeochemical parameters, the dropped island holes, and the two profiles
@@ -828,7 +827,7 @@ control of the material; finding them unlisted reads as an oversight. The
 limitations are also all consequences of decisions logged here, so each one has
 an answer ready.
 
-### Stage 8 result
+### Stage 9 result
 | | |
 |---|---:|
 | entry point | `python run_pipeline.py` |
@@ -841,17 +840,28 @@ an answer ready.
 
 ## Where the project stands
 
-Complete end to end: GDAC index → filter → float selection → NetCDF download →
-parse → regions → Postgres → query catalogue → natural-language layer →
-runner and README. 8 stages, 38 logged decisions, 77 automated checks, one
-command to rebuild.
+Complete end to end: GDAC index -> filter -> float selection -> NetCDF download
+-> parse -> regions -> Postgres -> query catalogue -> natural-language layer
+(Anthropic **and** Gemini behind one transport seam) -> runner and README.
+**9 stages, 55 logged decisions, 122 automated checks, one command to rebuild.**
+
+| check suite | count |
+|---|---:|
+| database verification (`etl/load_db.py`) | 21 |
+| query catalogue (`api/test_catalog.py`) | 28 |
+| tool loop (`api/test_chat.py`) | 28 |
+| Gemini adapter (`api/test_gemini.py`) | 45 |
+| **total** | **122** |
 
 **The two things still open, both needing something only the author can supply:**
 
-1. **Live routing is unmeasured (D7.7).** No Anthropic credentials exist on the
-   build machine, so whether Claude picks the right query for a real question
-   has never been tested. Needs a key and a set of real questions with expected
-   answers.
+1. **Live routing is unmeasured, on both providers (D7.7, D8.8).** No working
+   key exists on the build machine — there are no Anthropic credentials at all,
+   and the `GEMINI_API_KEY` that is set returns `400 API_KEY_INVALID` on
+   `models.list` as well as on generation. Every layer between the model's
+   answer and Postgres is tested; whether either model routes a real question to
+   the right query has never been observed. That needs one valid key and a set
+   of real questions with expected query names.
 2. **There is no interface beyond the CLI.** `api/chat.py` answers on the
    terminal. Whether the demo wants an HTTP API, a Streamlit dashboard with a
    map and depth plots, or nothing more than the CLI is a product decision, not

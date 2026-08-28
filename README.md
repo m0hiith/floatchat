@@ -25,8 +25,8 @@ python -m venv .venv
 .venv/bin/python run_pipeline.py
 ```
 
-That downloads ~155 MB, builds the database, and runs 77 checks. First run is a
-few minutes, mostly transfer; afterwards it re-runs from cache in about 8
+That downloads ~155 MB, builds the database, and runs 122 checks. First run is
+a few minutes, mostly transfer; afterwards it re-runs from cache in about 9
 seconds.
 
 Then apply the read-only role the query layer uses, once:
@@ -35,13 +35,19 @@ Then apply the read-only role the query layer uses, once:
 psql -h localhost -d floatchat -f db/roles.sql
 ```
 
-To ask questions in English you also need an Anthropic API key. **Everything
-else works without one**, including both test suites:
+To ask questions in English you need a key for **either** provider — the same
+tool loop runs on Anthropic or Gemini behind one transport seam. **Everything
+else works without either key**, including all four test suites:
 
 ```bash
-export ANTHROPIC_API_KEY=...
+export ANTHROPIC_API_KEY=...          # or: export GEMINI_API_KEY=...
 .venv/bin/python api/chat.py "how salty is the Bay of Bengal compared to the Arabian Sea?"
+.venv/bin/python api/chat.py --gemini "which float went deepest?"
+.venv/bin/python api/chat.py --models  # what a Gemini key can actually reach
 ```
+
+Whichever key is present is used; `--anthropic` / `--gemini` force the choice
+and `--model=NAME` overrides the model.
 
 ---
 
@@ -77,7 +83,9 @@ GDAC index (3,397,664 rows)
                       └─ etl/fetch_regions.py  → IHO polygons, simplification proven lossless
                            └─ etl/load_db.py   → Postgres, 21 verification checks
                                 └─ api/catalog.py  11 parameterised queries (read-only role)
-                                     └─ api/chat.py   Claude picks a query and fills its parameters
+                                     └─ api/chat.py     the model picks a query and fills its parameters
+                                          ├─ Anthropic (claude-opus-5)
+                                          └─ api/gemini.py  the same loop on Gemini
 ```
 
 `db/schema.sql` holds six tables. Four hold data; two exist because the project
@@ -124,6 +132,9 @@ parameters, and how many rows each returned.
   network: request shape, parallel tool results returned in one message, a
   refused parameter round-tripping and recovering, questions outside the data
   running no query at all.
+- **45 Gemini-adapter checks** — the translation in both directions against
+  real `google.genai.types` objects, so a schema Gemini's own models would
+  reject fails in the suite rather than in the demo.
 - **The funnel reconciles.** 939 profiles promised by the index − 13 dropped by
   QC + 2 the index's box filter had excluded = 928 written. Every one of those
   15 has a name and a reason in `dropped_profiles`.
@@ -136,9 +147,12 @@ parameters, and how many rows each returned.
 
 ## Known limitations
 
-- **The routing is untested against the real API.** Everything between Claude's
-  answer and Postgres is covered by offline tests, but whether Claude picks the
-  right query for a real question has not been measured — that needs an API key.
+- **The routing is untested against a real API, on both providers.** Everything
+  between the model's answer and Postgres is covered by offline tests, but
+  whether either model picks the right query for a real question has never been
+  observed. There are no Anthropic credentials on the build machine, and the
+  `GEMINI_API_KEY` that is set returns `400 API_KEY_INVALID`. One valid key is
+  all that stands in the way.
 - **Ten floats, two years, one ocean basin.** The scope is deliberate and
   documented, not a stub. Widening it means re-running Stage 1 with different
   constants and re-checking the funnel.
@@ -158,8 +172,9 @@ parameters, and how many rows each returned.
 ```
 etl/              the pipeline, one script per stage, each prints its own report
 api/catalog.py    the 11 parameterised queries + their tool schemas
-api/chat.py       the Claude tool loop
-api/test_*.py     56 checks, no network, no API key
+api/chat.py       the tool loop, provider-agnostic
+api/gemini.py     the same loop on Gemini, behind the same seam
+api/test_*.py     101 checks, no network, no API key
 db/schema.sql     tables, constraints, indexes
 db/roles.sql      the read-only role
 run_pipeline.py   runs everything, skips what is already built
