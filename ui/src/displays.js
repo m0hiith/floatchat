@@ -179,12 +179,26 @@ export function displayFor(queryName) {
  * project answers asks for biogeochemical comparisons; these ten floats carry
  * none, and the honest refusal is worth demonstrating on purpose rather than
  * hoping nobody asks.
+ *
+ * Stage 16 curated the rest (D16.7).  Every question here was routed through
+ * `api/router.py` and run against the database before it was written down: all
+ * seven of the drawing queries are now offered -- two maps, two lines, two
+ * bars and a trajectory -- and each one comes back with rows.  A chip that
+ * routes somewhere else, or lands on an empty result, is not a suggestion, it
+ * is a trap laid for whoever clicks it first.  `ui/test_render.py` re-measures
+ * every chip on the rendered page on every run and prints the misses, so this
+ * list cannot rot quietly: the order below is pictures first, then the two
+ * questions that are worth asking precisely because their answers are not
+ * pretty.
  */
 export const SUGGESTIONS = [
   { from: "compare_regions", ask: (e) => `Is the ${e.region_a} fresher than the ${e.region_b}?` },
-  { from: "profiles_in_region", ask: (e, f) => `Show me salinity profiles in the ${e.region} in ${f.monthYear(e.start)}` },
-  { from: "nearest_profiles", ask: (e) => `Which ARGO floats are nearest to ${e.lat}°N, ${e.lon}°E?` },
   { from: "depth_profile", ask: (e) => `Plot temperature against depth in the ${e.region}` },
+  { from: "float_trajectory", ask: (e) => `Show me the trajectory of float ${e.wmo}` },
+  { from: "profiles_in_region", ask: (e, f) => `Show me salinity profiles in the ${e.region} in ${f.monthYear(e.start)}` },
+  { from: "monthly_profile_counts", ask: (e) => `How many profiles per month in the ${e.region}?` },
+  { from: "surface_conditions", ask: () => `What are the surface conditions by region?` },
+  { from: "nearest_profiles", ask: (e) => `Which ARGO floats are nearest to ${e.lat}°N, ${e.lon}°E?` },
   { from: "missing_profiles", ask: (e) => `Why does float ${e.wmo} have fewer profiles than the index promised?` },
   { from: "region_summary", ask: (e) => `Show me the BGC oxygen profiles for the ${e.region}` },
 ];

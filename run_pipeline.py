@@ -67,6 +67,30 @@ STAGES = [
     # and no model download, and it runs on a fresh clone.
     Stage("12", "lexical router tests (no model, no key, no network)",
           "api/test_router.py", is_check=True),
+    # Stage 13 has no build artefact either. The dashboard was the one surface
+    # with nothing asserting anything about it, and it is where the silent
+    # failures were: an axis colour Plotly 4 drops without a warning, two map
+    # markers that 404 only in a production build, a tab badge that called a
+    # configured model "no model". This suite reads the UI source as text, so
+    # it needs no Postgres, no npm and no browser.
+    Stage("13", "dashboard source checks (no database, no npm)",
+          "ui/test_ui.py", is_check=True),
+    # Stage 14 is the only stage that runs the dashboard rather than reading
+    # it. It drives headless Chrome over the DevTools Protocol against the
+    # PRODUCTION build -- D13.2's broken markers do not exist in the dev
+    # server -- and needs Chrome plus `npm install`. Without them it exits 2
+    # and is reported as skipped, never as ok.
+    Stage("14", "dashboard rendered in Chrome (needs npm + Chrome)",
+          "ui/test_render.py", is_check=True),
+    # Stage 15 has no build artefact either -- deploying is something a person
+    # does with the Vercel CLI, not something this file can do. What it leaves
+    # behind is configuration, and configuration is where the quiet failures
+    # live: an ignore file one line too long ships an API whose retrieval is
+    # off, and a second requirements freeze drifts from the first in silence.
+    # This suite reads that configuration and computes the upload set, so it
+    # needs no Postgres, no network and no Vercel account.
+    Stage("15", "deployment configuration checks (no database, no network)",
+          "api/test_deploy.py", is_check=True),
 ]
 
 
@@ -122,6 +146,12 @@ def run_stage(stage: Stage, fresh: bool) -> tuple[str, float, str]:
 
     lines = [ln for ln in out.stdout.splitlines() if ln.strip()]
     tail = lines[-1] if lines else ""
+    if out.returncode == 2:
+        # Stage 14 needs more than the others -- Chrome, and a built `ui/dist`
+        # -- and exits 2 when it cannot find them. That gets its own status and
+        # never "ok": a suite that ran nothing must not read like one that
+        # passed, and the detail column names the missing piece.
+        return "skipped", took, tail[:120]
     if out.returncode != 0:
         err = (out.stderr.strip().splitlines() or ["(no stderr)"])[-1]
         return "FAILED", took, f"{tail}  |  {err}"[:160]
@@ -171,7 +201,13 @@ def main():
     total = sum(t for _, _, t in results)
     ran = sum(1 for _, s, _ in results if s == "ok")
     cached = sum(1 for _, s, _ in results if s == "cached")
+    skipped = [st.id for st, s, _ in results if s == "skipped"]
     print(f"\n{ran} stage(s) ran, {cached} cached, {total:.1f}s total")
+    if skipped:
+        # Said again at the bottom, because a skipped check is a claim NOT
+        # made and the one line in the table is easy to read past.
+        print(f"stage(s) {', '.join(skipped)} were SKIPPED, not passed -- "
+              "see their detail line for what is missing.")
     print("\nthe database is ready:  psql -h localhost -d floatchat")
     print("ask it something     :  python api/chat.py \"how salty is the Bay of Bengal?\"")
     print("                        (needs ANTHROPIC_API_KEY or GEMINI_API_KEY;")

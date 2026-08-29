@@ -1,2 +1,13 @@
 node_modules/
 dist/
+
+# `vercel link` inside ui/ writes a .env.local holding a VERCEL_OIDC_TOKEN.
+#
+# This line is doing two jobs.  The obvious one is git.  The other is the
+# dashboard's UPLOAD filter: the CLI deploys ui/ as its own project (D15.6), so
+# the root .gitignore is outside the deploy root and does not apply, and there
+# is deliberately no ui/.vercelignore -- creating one would REPLACE this file
+# as the filter and let node_modules back in (D15.4).  So the credential is
+# kept out of the dashboard bundle by this line and only by this line (D17.7).
+.env*
+!.env.example

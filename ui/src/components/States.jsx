@@ -187,15 +187,18 @@ export class DisplayBoundary extends Component {
 }
 
 /**
- * There is no model to answer with.
+ * Nothing can answer a question here.
  *
  * A separate state from `ApiFailure` on purpose.  The API is up, the database
  * is up, and the eleven queries in the other tab all still work — telling
- * someone their database is down because their API key expired would send
- * them to fix the wrong thing.  The server's own diagnosis is shown verbatim;
- * it already names the variable to set (api/chat.py diagnose_provider_error).
+ * someone their database is down because a router failed to load would send
+ * them to fix the wrong thing.  The server's own diagnosis is shown verbatim.
+ *
+ * Since D16.8 the dashboard asks one engine, so there is no "ask this again
+ * the other way" button here any more: there is no other way, and a button
+ * offering one would be describing a path this panel cannot take.
  */
-export function ModelFailure({ error, onSwitchToCatalogue, onRetryLexical }) {
+export function ModelFailure({ error, onSwitchToCatalogue }) {
   return (
     <Panel tone="amber" title="No model answered">
       <p>{error.message}</p>
@@ -205,25 +208,15 @@ export function ModelFailure({ error, onSwitchToCatalogue, onRetryLexical }) {
         </pre>
       )}
       <div className="rounded border border-amber-300 bg-white/70 p-2 text-xs">
-        <p className="font-semibold">The data is fine. The model is not.</p>
+        <p className="font-semibold">The data is fine.</p>
         <p className="mt-1">
-          Nothing on this dashboard needs a key. The lexical router answers the same
-          question by matching your wording against written examples — no model — and every
-          catalogue query still runs from the other tab.
+          Nothing on this dashboard needs a key, and every catalogue query still runs from
+          the other tab — the same eleven queries, chosen by hand instead of by wording.
         </p>
       </div>
       <div className="flex flex-wrap gap-2">
         {/* The primary action is the path that works, not a consolation prize.
-            Asking again is one explicit click: the request above is NOT
-            re-answered behind the reader's back (D12.12). */}
-        {onRetryLexical && (
-          <button
-            onClick={onRetryLexical}
-            className="rounded bg-slate-800 px-3 py-1 text-xs font-medium text-white hover:bg-slate-700"
-          >
-            Ask this again without a model
-          </button>
-        )}
+            Nothing above is re-answered behind the reader's back (D12.12). */}
         {onSwitchToCatalogue && (
           <button
             onClick={onSwitchToCatalogue}

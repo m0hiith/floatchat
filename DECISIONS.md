@@ -1661,6 +1661,959 @@ pointing at the door.
 
 ---
 
+## Stage 13 — the dashboard checks itself
+
+Stage 13 was unclaimed; the deferred items with a written home were the Ollama
+transport (D12.1) and region centroids (D12.10). Neither was the thing most
+likely to embarrass this project in a demo. Item 3 of "where the project
+stands" was: **the dashboard's rendering has no automated tests**, and D12.13
+and D12.15 had each found honesty bugs by opening a browser that no check
+could see. This stage takes that list seriously by a third method and closes
+part of it.
+
+### D13.1 — A removed Plotly attribute, dropped in silence
+**The failure:** all four dual axes in `PlotlyChart.jsx` set
+`titlefont: { color }` to colour each axis title to its series — red for
+temperature, blue for salinity. On the two-axis depth profile and the
+counts-over-time chart, that colour is the only thing besides the legend that
+says which axis belongs to which trace. **Plotly removed the top-level
+`titlefont` in v4**; the axis title font now lives at `title.font`, and the old
+spelling is discarded without a warning. `package.json` pins
+`plotly.js-dist-min` at `4.0.0`. Confirmed against the pinned bundle rather than
+from memory: the string `titlefont` occurs five times in it and every one is
+`grouptitlefont`; the quoted attribute never appears, while the axis schema
+reads `title:{text,font,standoff}`.
+**Decided:** one `seriesAxis(series, rest)` helper builds all four axes, so the
+correct shape is written once, and `ui/test_ui.py` asserts the removed spelling
+never returns to UI *code* (comments may name it, and the one explaining this
+does).
+**Why it belongs in this log:** the chart rendered, the titles rendered, the
+units rendered. Only the colour was gone. That is rule 7 exactly — a thing that
+appears to do something and does not — and no amount of looking at a screenshot
+would tell you the colour was *meant* to be there.
+
+### D13.2 — Two map markers that only break in a production build
+**The failure:** `float_trajectory` marked its first and last cycle with
+`L.marker(...)` and no `icon`, which uses Leaflet's default. That default finds
+`marker-icon.png` by reading the probe rule `.leaflet-default-icon-path`, and
+failing that by looking for a `<link href$="leaflet.css">`. Under Vite **neither
+works**: `npm run build` emits the stylesheet as `assets/index-<hash>.css`, and
+inlines the probe rule's background as a base64 data URI that Leaflet's
+`/^(.*)marker-icon\.png$/` cannot strip. The image path collapses to `""`, the
+browser requests a bare `marker-icon.png`, and it 404s.
+**Verified, not reasoned:** `npm run build` was run and `dist/assets/` contains
+exactly two files — one CSS, one JS. No marker image is emitted at all.
+**Why it had survived:** it is invisible in `npm run dev`, on one query, in one
+mode. D12.13 opened a browser against the dev server, which is the half where
+it works. A demo served from a build would show two broken images.
+**Decided:** an `L.divIcon` pill labelled "first" and "last". A `divIcon` is DOM,
+so no bundler and no file is involved and the failure is structurally
+impossible. It also reads better than two identical unlabelled pins. Slate
+chrome deliberately: on this map colour already means `data_mode`, and a marker
+in one of those colours would read as data.
+
+### D13.3 — A badge with three states was being reported by a two-way test
+**The failure:** the Chat tab's badge read
+`usingModel && ai.retrieval?.available ? "RAG" : "no model"`. That is a boolean
+over a **three-valued** state, and it was false in both directions:
+- a configured, selected model with **no index** was badged **"no model"**;
+- a model was still badged **"RAG"** after the reader switched retrieval **off**,
+  because `useRetrieval` lived in `ChatPanel` and the header could not see it;
+- and a **third case surfaced while reading the diff of the fix**: the Catalogue
+  tab renders the same nav, but called `Header` without the path props at all,
+  so the Chat tab was badged "no model" on a server that had one — the same
+  false sentence, reached from the other tab. It had been there since the badge
+  was added.
+D12.13 fixed exactly this class of bug by lifting `chatPath` into `App` so the
+header could not contradict the replies. The retrieval switch was left behind,
+and it is half of the same claim.
+**Decided:** lift `useRetrieval` alongside `chatPath`; derive `usingModel` and
+`usingRag` once in `App`; badge three states — `RAG`, `model · <provider>`,
+`no model`. `usingRag` means *the model path is selected, an index is available,
+**and** retrieval is switched on*, not "an index exists".
+**And the check that should have caught it was pinned to the wrong thing.**
+`test_router.py` asserted the literal string
+`'usingModel && ai.retrieval?.available ? "RAG"'`. It was testing a spelling,
+not a property, so it passed while the property was false and then failed when
+the property was fixed. It now asserts the property, in three parts, and each
+part was confirmed to fail when the old two-way expression is restored.
+
+### D13.4 — Where the model goes away between two reads of `/meta`
+`chatPath` was set with `p ?? default`, so an explicit choice was never
+revisited. "Try again" re-reads `/meta`, and a key can stop working between two
+reads. A server that has lost its model would leave `model` selected: the
+composer would name an engine the server would not use, and the answer would
+come back badged `lexical` underneath it. Kept the explicit choice, but `model`
+is never left selected on a server reporting no `model_provider`.
+
+### D13.5 — Small honesty repairs found while reading
+- The retrieval checkbox rendered **ticked but disabled** beside the words
+  "retrieval unavailable". The server degrades `open_retriever` to `None`, so
+  nothing was actually wrong with the request — but a ticked box claims a
+  mechanism that is not running. Unavailable now reads as unticked.
+- `send()` cleared the composer even when the question came from a suggestion
+  chip or the "ask this again without a model" button, throwing away whatever
+  the reader had half-typed. Only a send *from* the composer clears it.
+- `api.js` documents four failure modes in its header and lists the `kind`
+  union on the field; `no-model` had been added to the prose and never to the
+  union, and the header still said "three". `ui/test_ui.py` now compares the
+  kinds thrown against the kinds listed, both ways.
+- `PlotlyChart.bars()` carried two stacked comments that contradicted each
+  other — "let each panel frame its own data" directly above "zero baseline,
+  always" — left over from a reversal. The code does the second. The first is
+  gone.
+
+### D13.6 — Checking a UI from Python, and what that cannot do
+**Decided:** `ui/test_ui.py`, 42 checks, reading `ui/src/*.js*` as text and
+`api/catalog.py` as a module. It needs **no Postgres, no network, no key, no
+npm and no browser** — the same claim Stage 12's suite makes, and it runs on a
+fresh clone with nothing installed.
+**Why source checks rather than the Playwright suite the log keeps promising:**
+rule 6. A browser-driving suite is a new dependency and this one is not, and
+every invariant it asserts is one that has *already been broken here at least
+once*. It is not a substitute for that suite; it is the part that can ship
+without asking.
+**What it checks that nothing did before:** every catalogue query has a display
+and no display names a query that no longer exists; `displays.js` is still the
+only UI file that knows a query name *in code* (comments are stripped first, so
+`TableView.jsx` explaining why `region_summary` is flipped stays legal); no
+removed Plotly attribute; every `L.marker` sets its own icon; `DATA_MODES` has
+three states, not two; dbar, PSU and °C are all still declared and pressure
+still inverts; every suggestion names a real query **and** a query with a
+non-empty example, so none can render `undefined` into a question someone might
+click; and the badge rules of D13.3.
+**Each check was mutation-tested.** The three central ones — the Plotly
+attribute, the default marker icon, and `usingRag` requiring the switch — were
+confirmed to fail when the bug is reintroduced, then the fix restored. A check
+whose target cannot be hit is an error, not a pass (rule 5).
+**What it cannot see, stated plainly:** whether anything *looks* right. It
+cannot see a chart, a colour, a layout or an overlap. D12.13's four bugs were
+found by looking, and three of the four would still be invisible to this suite.
+It closes the couplings, not the rendering.
+
+### D13.7 — What Stage 13 did NOT prove
+- **No browser was opened in this stage.** The Leaflet finding was confirmed by
+  running the production build and reading what it emitted, and the Plotly
+  finding by reading the pinned bundle's own schema. Both are stronger than a
+  screenshot for *these* bugs and weaker than one for everything else.
+- **The rendering is still untested**, and the Playwright suite is still the
+  honest fix. This stage lowers the number of ways the dashboard can lie; it
+  does not make it verified.
+- **Still no live model call from this machine.** Unchanged, and still the
+  highest-value thing to do before a demo.
+- **`float_trajectory`'s new endpoint markers have not been seen on screen.**
+  They are structurally sound — a `divIcon` cannot 404 — but their anchor
+  offset was chosen by reading, not by looking at the map.
+
+### Stage 13 result
+| | |
+|---|---:|
+| honesty bugs fixed | 3 (D13.3's badge, all three cases) |
+| silent no-ops fixed | 2 (D13.1 axis colour, D13.2 marker 404) |
+| checks pinned to a spelling, rewritten as properties | 1 (D13.3) |
+| new checks | 42 (`ui/test_ui.py`) + 2 (`api/test_router.py`) |
+| total checks | 428 |
+| new dependencies | 0 |
+| needs a key, a network, a daemon or a download | no, and `run_pipeline.py --check` proves it |
+
+---
+
+## Stage 14 — the dashboard, actually rendered
+
+Stage 13 closed the dashboard's couplings and was explicit about what it could
+not see — "whether anything *looks* right: no colour, no layout, no overlap"
+(D13.6) — and left two of its own fixes marked **not seen on screen** (D13.7).
+Item 3 of "where the project stands" had said the same thing for two stages.
+This stage runs the dashboard instead of reading it.
+
+### D14.1 — Drive the production build, never the dev server
+**This is the whole reason the stage exists in this shape.** D13.2's broken
+markers **cannot be reproduced under `npm run dev`**: the bug is in how Vite
+*emits* the stylesheet, so it appears only in `npm run build`. A browser suite
+pointed at the dev server — the obvious way to write one, and what D12.13 did
+by hand — would have passed while the demo was broken.
+**Decided:** `ui/test_render.py` runs `npm run build` and serves `dist/` as
+static files. `dist/` is rebuilt only when a source file is newer, the way
+every other stage skips work it has already done.
+
+### D14.2 — The API is proxied through the page's own origin
+The first version baked the API port into the bundle with `VITE_API_BASE` and
+served the page on **5173**, because `api/server.py` allows exactly two CORS
+origins and editing `DEV_ORIGINS` to make a test pass would be testing
+something other than the shipped server.
+**Both halves of that were wrong.** The fixed port re-created D12.13's trap —
+a suite that dies because something else owns a port. And the baked-in port
+made the build cache *unsound*: the API port is chosen free on every run, so a
+cached `dist/` pointed at the previous run's dead port and the suite failed for
+a reason with nothing to do with the dashboard. **It failed exactly that way
+during this stage**, which is how it was found.
+**Decided:** the static server forwards `/meta`, `/query`, `/ask`,
+`/regions.geojson` and `/health` to `uvicorn`. The page calls them relatively,
+so there is no cross-origin request, no CORS to satisfy, no production code
+edited to test it, no fixed port, and **no port inside the bundle**. Every port
+is picked free.
+**And the build cache now records what it was built *with*.** A timestamp alone
+cannot see that a bundle was built against a different API base; a stamp file
+in `dist/` records the input, and a mismatch rebuilds. A cache keyed on time
+alone was the actual bug.
+
+### D14.3 — `_fullLayout`, because it says what SURVIVED
+`ui/test_ui.py` can assert that the source no longer says `titlefont`. It
+cannot assert that the colour *arrives*. Plotly's `_fullLayout` is the computed
+layout — what was actually applied, not what was passed in — so an attribute
+this version ignores is simply absent from it.
+**This is the check that would have caught D13.1**, and it was confirmed by
+putting the bug back: with `titlefont`, all four axis titles compute to
+`#334155`, the default slate from `FONT`. With `title.font` they compute to
+`#dc2626` and `#2563eb`. The colour really had been silently dropped — read off
+the running chart, not inferred from the bundle.
+The same mechanism verifies an ARGO rule that had never been checked on screen:
+the rendered pressure axis has range `[2136.16, -136.16]`, **descending**, so
+pressure genuinely increases downward rather than merely being asked to.
+
+### D14.4 — D13.2, confirmed by the browser's own network log
+Putting the default marker back made the browser request
+`http://<origin>/marker-icon.png` and `marker-shadow.png`, **both 404**. The
+bare filenames are the proof: `Icon.Default.imagePath` had collapsed to `""`,
+exactly as predicted from reading Leaflet's `_detectIconPath`. With the fix,
+two `div` markers labelled "first" and "last", zero `<img>` markers, and no
+image requested at all.
+`/favicon.ico` is excluded from the 404 check and the reason is written down:
+the browser asks for it unprompted and the dashboard links none, so its 404
+says nothing about the app. Tiles are blocked outright, which is also what
+keeps this suite offline.
+
+### D14.5 — The driver reads its values off the controls
+The suite fills every **required** parameter from what the control itself
+offers — the first real option, the date input's own `min`/`max`. No region
+name, float id or date is written into it, for the same reason none is written
+into the UI: point it at a different database and it fills that database's
+values.
+**One correction worth recording.** Taking the *first* option takes regions
+alphabetically, which selected "Andaman or Burma Sea" — a region holding no
+profiles in this subset. The chart assertions then ran against a "no rows"
+panel and reported a missing chart. A check that lands on an empty result
+**passes through every branch it was written to test without ever drawing the
+thing**. The driver now picks the option the database holds the most data for,
+reading the count off the label the control already renders
+(`"Arabian Sea · 412 profiles"`) — still no hardcoded name.
+
+### D14.6 — A skipped check is not a passed check
+This suite needs more than the others: Chrome, and `ui/node_modules`. Exiting 0
+without them would be a quiet no-op (rule 7); exiting 1 would fail a clone that
+is not broken.
+**Decided:** exit **2**, which `run_pipeline.py` renders as its own status —
+`skipped`, never `ok` — with the missing piece named in the detail column and
+repeated in a line at the bottom, because one row in a table of nine is easy to
+read past. The browser path is also not hardcoded to the macOS bundle:
+`CHROME_PATH` wins, and six common locations are tried, so a machine that keeps
+one elsewhere gets a working suite rather than a silent skip.
+
+### D14.8 — The rejected-key path, driven because a screenshot raised it
+**Prompted by looking at the running dashboard**, which is the third time in
+three stages that looking has started something (D12.13, D12.15).
+
+The screen showed a question that had **failed** with "No model answered",
+beside an audit trail reading **"1 query ran."** — `compare_regions`, two rows,
+badged `lexical`. Those two halves of one screen disagree about whether
+anything touched the database, which is the exact class of bug this project is
+organised against.
+
+**Reproduced before being believed.** The scenario was driven against an API
+with a deliberately wrong key: the current code adds **nothing** to the trail,
+which goes on saying "Nothing has run yet", and there is exactly one user turn.
+The contradiction is not reproducible on this code, so the screenshot came from
+a build predating Stage 13. **No fix was made, because none was needed** — and
+that is worth an entry precisely because writing a fix would have been writing
+a fix for nothing.
+
+**What was built instead is the check.** The property is negative, easy to get
+wrong, and had been verified only by having looked once: *a call that failed
+must leave nothing behind*. Seventeen checks now drive the panel with a key
+that is set and rejected — the state D12.15 exists for — and assert that the
+failure panel names the variable to set, the trail stays empty and says so, the
+selector moves and announces it, the badge stops claiming a model, and the
+question is **not** re-answered behind the reader's back (D12.12). The same
+question is then re-asked on the lexical path, and the trail gains exactly one
+entry, badged `lexical`, drawing a two-trace chart.
+
+**The key is pinned wrong on purpose.** `REJECTED_KEY` sets `GEMINI_API_KEY` to
+a value that is set and invalid, and unsets `ANTHROPIC_API_KEY`. Left to the
+ambient environment these checks would take the model path on a correctly
+configured machine and spend money on a live call; pinned, they test the same
+thing for everyone.
+
+**Mutation-tested against the screenshot itself.** Making a failed ask append
+`compare_regions · 2 rows · lexical` to the trail — the screenshot, in code —
+turns three of these checks red, one of them reporting the panel's own
+"1 query ran."
+
+### D14.7 — What Stage 14 did NOT prove
+- **It asserts structure and computed style, not appearance.** It can prove an
+  axis title computes to `#dc2626`; it cannot prove two labels do not overlap,
+  that a legend is readable, or that a layout survives a narrow window. No
+  screenshot is compared against anything.
+- **One browser, one viewport, one platform.** Headless Chrome at 1600×1400 on
+  macOS. Nothing is checked on Firefox, Safari, or a phone.
+- **The chat panel is driven along one route only** (D14.8): a rejected key,
+  then the same question on the lexical router. A typed question, the other
+  suggestion chips, the slot panel and the refusal path are still verified by
+  `test_router.py`'s greps and by having looked once.
+- **Still no live model call from this machine.** Unchanged.
+
+### Stage 14 result
+| | |
+|---|---:|
+| what it drives | headless Chrome over CDP, against `npm run build` output |
+| bugs re-confirmed by reintroducing them | 2 (D13.1 computes `#334155`; D13.2 requests two 404s) |
+| ARGO rules now verified on the rendered axis | 1 (pressure increases downward) |
+| the rejected-key path | driven end to end with a key that is set and wrong (D14.8) |
+| new checks | 50 (`ui/test_render.py`) |
+| total checks | 478 |
+| new dependencies | 0 (`websockets` was already pinned; Chrome is not installed by this) |
+| needs a key or a network | no — tiles are blocked and every port is localhost |
+
+---
+
+## Stage 15 — deployed, or at least deployable
+
+Nothing here has been deployed. This stage produced the configuration that
+would deploy it, the two environment seams it needs, and a suite that checks
+both — and the suite is the reason it gets a stage number at all. Everything
+below was found by writing the configuration and then asking what about it
+could be wrong without saying so.
+
+### D15.1 — Stage 15, and `CLAUDE.md` was wrong about 14
+`CLAUDE.md`'s stage-numbering section said "Stage 14 is unclaimed". It is not:
+`ui/test_render.py` calls itself Stage 14, `run_pipeline.py` registers it as
+Stage 14, and this log closed it with a result table. The reconstruction was
+written before that stage landed and was never corrected — the exact failure
+D10.1 warns about, arriving from the other direction.
+**Decided:** deployment is Stage 15, and `CLAUDE.md` is corrected in the same
+commit. **Why:** the numbering rule works only if the two files agree; a stale
+"unclaimed" is worse than no note, because it reads as permission.
+
+### D15.2 — The DSN comes from the environment; the default still names the read-only role
+`api/catalog.py` hard-coded `postgresql://floatchat_ro:floatchat_ro@localhost`.
+A deployment needs a hosted Postgres, and the credentials for one do not belong
+in a committed file.
+**Decided:** `DSN = os.environ.get("FLOATCHAT_DSN") or <the local default>`.
+**Alternative:** a config module, or a `.env` loader. **Why not:** rule 6 —
+that is a dependency and a second place for the truth to live, to replace one
+`os.environ.get`. The name `catalog.DSN` stays module-level and rebindable
+because `api/test_server.py` reassigns it to simulate an unreachable database.
+**The part worth writing down:** the whole safety argument at the top of
+`catalog.py` assumes the connection has SELECT and nothing else, and an
+environment variable can hand it an owner. Nothing in the code can check that.
+What can is `api/test_catalog.py`, which attempts a DELETE on whatever DSN is
+in force — so run it *against the deployment* before believing the deployment
+is read-only. That is the check, and it is a manual step, and saying so is the
+honest version.
+
+### D15.3 — Deployed origins are listed; `*` is refused, not honoured
+`DEV_ORIGINS` was two localhost entries with a comment explaining that a
+wildcard "would still be a claim we have not thought about".
+**Decided:** `FLOATCHAT_ORIGINS`, comma-separated, appended to the dev origins.
+`*` raises at import. An entry without a scheme raises too.
+**Why the second one:** CORS matches origins by exact string, so
+`floatchat.vercel.app` matches nothing. It would not error — it would simply
+never allow the dashboard, and the failure would surface in a browser console
+during a demo rather than in a message at start-up. That is rule 7's failure
+mode wearing a different hat.
+**Known limitation:** Vercel gives every preview deployment its own hostname,
+so a preview UI is not in the list and cannot call the API. Use the production
+alias, or add the preview origin. Not solved; recorded.
+
+### D15.4 — `.vercelignore` REPLACES `.gitignore`, so it has to be complete
+The CLI uploads the working directory. With no `.vercelignore` it filters by
+`.gitignore` — which excludes all of `data/`, so the retrieval index would not
+ship. The fix is a `.vercelignore` that keeps `data/rag`; the trap is that
+creating one turns the `.gitignore` fallback **off entirely**, and everything
+it was quietly excluding comes back: `.venv` alone is 301 MB.
+**Decided:** a `.vercelignore` that lists all of it, and a check that computes
+the upload set from the working directory and fails over 20 MB. Measured with
+`.venv` un-ignored, the upload is 228.3 MB across 6,647 files; correct, it is
+1.1 MB across 26.
+**Why a computed set rather than a grep for `.venv`:** grepping the file tests
+how the file is *written*. Walking the tree tests what would be *sent*.
+
+### D15.5 — The index ships; it is not rebuilt on the platform
+`data/rag/index.faiss` and `manifest.json` are 706 KB, and `etl/build_index.py`
+needs Postgres and writes to disk — neither of which a build step should
+assume.
+**Decided:** ship the two files. **Why it is safe:** the manifest records
+`embedder.kind == "hashing"`, the keyless lexical embedder, which is
+deterministic and has no key to depend on.
+**The trap, stated because it is silent:** set `GEMINI_API_KEY` on the
+deployment and the embedder used at query time no longer matches the one that
+built the index. Retrieval would still return documents; they would be worse,
+and nothing would say so. Rebuild the index for the embedder you deploy with.
+**And:** `api/retrieval.py` resolves the index at *repo root* `/data/rag`,
+outside the function's own directory, so `includeFiles` in `vercel.json` is
+what actually puts it in the bundle. Without it `/ask` deploys, works, and
+reports `"no index built"` in `/meta` — an API with retrieval silently off.
+
+### D15.6 — Two Vercel projects, which with the CLI means two directories
+**Decided:** `vercel link` at the repo root for the API, `cd ui && vercel link`
+for the dashboard. **Why:** the CLI takes its root from where it is run, so the
+dashboard needs no "Root Directory" project setting and the API's
+`vercel.json` never has to describe a static build it does not own. The UI
+already reads `VITE_API_BASE` (D10.x) and `ui/vite.config.js` deliberately has
+no dev proxy, so the split needs no UI change at all.
+
+### D15.7 — A `builds` array, because zero-config would publish the test suites
+Vercel's zero-configuration Python runtime makes a serverless function of every
+`.py` file under `api/`. This repository keeps its checks there. Left alone,
+the deployment would expose `/catalog`, `/corpus`, `/embed`, `/router`,
+`/test_chat`, `/test_router` and five more as public routes.
+**Decided:** `vercel.json` names one build, `api/index.py`, which disables the
+detection, and one route that sends everything to it. `api/index.py` re-exports
+`server.app` — the same object, not a copy, asserted — so the deployed
+application cannot drift from the one Stage 10's 62 checks run against.
+**Alternative:** move the suites out of `api/`. **Why not:** they are where
+they belong; the platform's convention is what is unusual.
+
+### D15.8 — Build on Vercel, never `--prebuilt` from this machine
+`vercel build && vercel deploy --prebuilt` builds locally. The Python builder
+pip-installs at build time, so on darwin it resolves macOS wheels for `numpy`
+and `faiss-cpu`, uploads them, and the function raises `ImportError` on Linux
+at the first cold start.
+**Decided:** plain `vercel --prod`, remote build. Recorded here because the
+prebuilt path is faster, is the one you reach for second, and fails in a way
+that looks like a platform problem rather than a wheel problem.
+
+### D15.9 — A second requirements freeze, and the check that keeps it honest
+The root `requirements.txt` is a full freeze including `netCDF4`, `xarray` and
+`pandas`; installed it is 301 MB against a serverless function's ~250 MB
+uncompressed budget. The API imports none of the three.
+**Decided:** `api/requirements.txt` — the transitive closure of what `api/`
+actually imports, at the same versions, computed from installed metadata rather
+than left to the resolver. 41 pins against the root's 47; 127 MB.
+**The problem with a second freeze is that it can drift,** which is exactly
+what rule 6 pins versions to prevent, so `api/test_deploy.py` asserts it is a
+subset with identical versions, that the closure is complete, and — the real
+property — that **no third-party module imported anywhere under `api/` is
+missing from it**.
+**That check earned itself immediately.** The first draft dropped `uvicorn`
+deliberately, reasoning that Vercel serves the ASGI app itself. The check
+failed: `api/server.py`'s `__main__` block imports it. A freeze that omits an
+import its own source makes is wrong about the source, whether or not the
+missing line would ever execute in production. `uvicorn` is in, and costs
+1.5 MB.
+
+### D15.10 — What Stage 15 does NOT prove
+The list matters more than the checks, so it is not at the bottom of a
+footnote.
+- **Nothing has been deployed.** No Vercel account was touched, no CLI was run,
+  no URL exists. The CLI is not installed on this machine. Everything above is
+  configuration that has been checked against the repository, not against
+  Vercel.
+- **The Python version is the platform's choice.** The freeze is built against
+  3.13. If the runtime selects a version with no `faiss-cpu` or `numpy` wheel,
+  the build fails there — and the pins would need revisiting, the week of a
+  demo, which is precisely what rule 6 exists to avoid.
+- **The 127 MB figure is measured on darwin.** Linux wheels differ; `faiss-cpu`
+  in particular is larger. The margin against 250 MB is real but it is not
+  measured on the machine that matters.
+- **Cold start is unmeasured.** `/ask` imports `numpy` and `faiss` and then
+  runs a tool loop of several round trips. Nobody has timed it against the
+  platform's function timeout.
+- **`catalog.connect()` opens a connection per query.** That was correct for a
+  local uvicorn process and is a liability under serverless concurrency, where
+  each invocation is its own process. Use a pooled connection string; the code
+  was not changed, and this is a known limitation rather than a fixed one.
+- **No environment variable's production value can be checked from here** —
+  including whether `FLOATCHAT_DSN` names a read-only role (D15.2).
+
+### D15.11 — It was deployed, and three things the plan had not anticipated
+`vercel --prod` from the repo root, 41s, live at `argo-rose.vercel.app`.
+
+**What the deployment settles**, none of which D15.10 could:
+- **The function boots on Linux.** `GET /openapi.json` returns 200 in 0.63s, so
+  `numpy`, `faiss`, `psycopg`, `anthropic` and `google-genai` all imported from
+  `api/requirements.txt` on the platform's Python. The wheel question and the
+  "127 MB measured on darwin" caveat are answered *for this deployment*.
+- **D15.7 holds in production.** `/test_router`, `/catalog` and
+  `/api/test_router` return FastAPI's own `404 {"detail":"Not Found"}` — the
+  suites are not routes.
+- **D15.2's seam works, including its failure.** `/health` and `/meta` return
+  503 `{"detail":"connection to server at \"127.0.0.1\", port 5432 failed",
+  "dsn":"localhost:5432/floatchat"}`. That is correct in three ways at once: an
+  empty `FLOATCHAT_DSN` is falsy and falls back to the shipped default, the API
+  says the platform is down rather than showing an empty database (rule 2), and
+  it names the address it tried (D10.x's four failure modes, unedited, from a
+  machine 8,000 km away).
+
+**Three things the CLI did that this log had not predicted:**
+
+1. **`vercel link` offered to connect the GitHub repository, and it was
+   accepted.** That creates a *second* deploy path whose source is the git
+   tree — and `data/rag/` is not in the git tree, because `.gitignore` excludes
+   `data/`. A push to `master` therefore deploys an API whose retrieval is off,
+   reporting `"no index built"` in `/meta` and answering anyway. Two paths, one
+   commit, different artefacts, no warning: this is D15.5's silent failure with
+   a trigger attached to every push. **Not fixed in code**, because both fixes
+   are choices: disconnect the integration and stay CLI-only, or commit the two
+   706 KB index files so both paths ship them.
+2. **The git connection changed what linking means.** It wrote a *repo-level*
+   link — `.vercel/repo.json`, one project, `"directory": "."` — so
+   `vercel link` inside `ui/` resolved to the same `argo` project instead of
+   offering a new one, and wrote no `ui/.vercel` at all. D15.6's two projects
+   silently became one, and a `vercel --prod` from `ui/` would have replaced
+   the API with the dashboard at the same URL.
+3. **`vercel env add` accepted an empty value.** It printed `! Value is empty`,
+   offered "Leave as is", and saved. `FLOATCHAT_DSN` exists in production and
+   is `""`.
+
+**Still unproven after deploying:** whether `data/rag` actually shipped — it
+cannot be seen from outside, because `/meta` fails on the database before it
+reports `retrieval` — and the cold start of `/ask`, and D15.10's
+connection-per-query under concurrency. All three need a database first.
+
+### D15.12 — `vercel link` put a credential in the upload set
+It writes `.env.local` holding a `VERCEL_OIDC_TOKEN` and adds it to
+`.gitignore`. That does nothing here: `.vercelignore` **replaced** `.gitignore`
+as the upload filter (D15.4), so the token was inside the bundle, and nothing
+in the CLI's output says so. The deployment now live was built that way.
+**Decided:** `.env*` in `.vercelignore`, and a check that fails on any `.env*`
+or `project.json` in the computed upload set — the set, again, not a grep.
+Made to fail first: removing the line reports `['.env.local']`.
+**Why it generalises:** D15.4 said the danger of replacing the ignore filter
+was the 301 MB it lets back in. It was also everything a *tool* would add to
+`.gitignore` afterwards, expecting that to be enough.
+
+### Stage 15 result
+| | |
+|---|---:|
+| what it produces | `vercel.json`, `.vercelignore`, `api/index.py`, `api/requirements.txt` |
+| code changed | 2 seams: `catalog.DSN`, `server.deployed_origins()` |
+| new checks | 32 (`api/test_deploy.py`) |
+| total checks | 510 |
+| new dependencies | 0 |
+| the suite needs a key, a network or a Vercel account | no |
+| deployed | yes — `argo-rose.vercel.app`, boots, routes, 503s honestly |
+| answers a question about ARGO | **no** — there is no database behind it yet |
+
+---
+
+## Stage 16 — the chat panel is the front door
+
+A layout stage, and deliberately nothing more. The dashboard opened in the
+catalogue because for two stages the catalogue was the only half that could
+answer without a key. Stage 12 removed that reason and nobody moved the door.
+What follows is what it cost to move it without letting the emphasis change
+into a claim.
+
+### D16.1 — Stage 16, and the dashboard lands in Chat
+`CLAUDE.md` recorded Stage 16 as unclaimed and `DECISIONS.md` closed Stage 15;
+both agree, checked before the number was used.
+**Decided:** `App.jsx` opens in `mode = "chat"`. The chat panel gets a landing
+screen — heading, composer and suggestions centred together — instead of a card
+pinned above half a screen of blank page.
+**Alternative:** leave the default and merely restyle the chat tab.
+**Why not:** the tab a reader lands in *is* the argument the dashboard makes
+about itself. Landing in a parameter form says the form is the product and the
+question box is a demo; that was true at Stage 10 and stopped being true at
+Stage 12, when the chat tab started answering with no key, no network and no
+model. The reason for the old default expired three stages ago.
+
+### D16.2 — The catalogue is demoted, not removed
+**Decided:** the Catalogue tab keeps every control, every display and the same
+audit trail; it moves to second position and is one click from the chat panel,
+which links to it in words ("the same 11 queries, the same audit trail").
+**Alternative:** fold the catalogue away, or drop it, since chat reaches the
+same eleven queries.
+**Why not:** the catalogue is the evidence that the eleven queries answer
+without any model at all, and every rendered-display check in
+`ui/test_render.py` runs through it. A dashboard that can only be driven by
+asking questions cannot demonstrate that the questions are not what produce the
+numbers. **The check that keeps this honest is the second half of D16.4:** the
+suite opens the catalogue through the tab and asserts the form is complete, so
+"one click away" is re-checked rather than remembered.
+
+### D16.3 — The audit trail stays mounted beside the conversation
+**Decided:** the trail keeps its rail in chat mode (narrowed 21rem → 20rem);
+the conversation takes the rest and is capped at a reading width.
+**Alternative:** fold it behind a toggle, which is what a chat-first layout
+usually does with a side panel, and would have given the thread the full width.
+**Why not:** D10.5. It is not debug output, it is the evidence that the number
+on the chart came out of a query, and evidence you have to go looking for is
+evidence nobody reads. Promoting chat while hiding the trail would have made
+the dashboard look more like the thing it is arguing it is not.
+
+### D16.4 — The landing view is asserted on the page, not on the default
+A check for `useState("chat")` in the source is a check on how the default is
+*spelled*: it passes when the page renders the catalogue anyway (a stale
+`dist/`, a mode reset on a `/meta` reload) and fails when the same behaviour is
+reached another way. That is exactly the failure D13.3's badge check had.
+**Decided:** `ui/test_render.py` reads the rendered DOM — `__fc.landing()`
+returns whether the chat panel is on screen *and* whether the catalogue's
+`Run query` button is — and asserts both halves: chat loaded, form did not.
+**Made to fail first,** as rule 5 requires: flipping the default back to
+`"catalogue"` and rebuilding turns both into
+`FAIL … {'chat': False, 'form': True}`, and the third check (the catalogue is
+one click away) stays green, which is the discrimination the pair was written
+for. Restored, all three pass.
+
+### D16.5 — Nothing on the panel was reworded to suit the promotion
+The temptation in a stage like this is to make the front door read better.
+**Decided:** every sentence stays as it was. The landing screen still says
+there are no biogeochemical parameters before anything is asked, still names
+the units, still describes retrieval only on the path that uses it and the
+lexical router only when the router is selected, and the reply badges are
+untouched. The suggestion chips are still generated from the catalogue's own
+examples, so no question on the landing screen contains a value the dashboard
+invented (rule 2). The one sentence added is the link to the catalogue, and it
+claims only what D16.2 makes true.
+**Why it is worth a decision entry:** a promoted chat panel is precisely where
+"lexical" would quietly become "semantic" (rule 9).
+
+### D16.6 — The README's check total was two stages stale
+`README.md` said 478 checks in two places and 428 in a third. 478 was Stage
+14's total; Stage 15 added `api/test_deploy.py` and made it 510 in this log,
+and the README was never brought forward.
+**Decided:** count it rather than adjust it. The suites report
+28 + 28 + 45 + 62 + 125 + 98 + 42 + 53 + 32 = **513**, which is the number this
+log has always meant by "total checks" — `etl/load_db.py`'s 21 verification
+checks are counted separately, as they always have been, because they need the
+loaded database rather than only Postgres.
+**Also corrected:** the Known Limitations bullet claiming "the dashboard's
+rendering has no automated tests". It has had one since Stage 14. The honest
+limitation is narrower and is now what the bullet says: structure and computed
+style are read back, appearance is not.
+
+### D16.7 — The preset questions are measured, not chosen by taste
+The landing screen's chips were six questions written by hand at Stage 11 and
+never re-examined. Three of the seven queries that *draw something* had no chip
+at all, and nothing anywhere checked that a chip routed to the query it was
+written for or that the query came back with rows — a chip that misroutes or
+lands on an empty result is a trap laid for whoever clicks it first, and the
+first click at a demo is not yours.
+**Decided:** every drawing query gets a chip — two maps, a trajectory, two
+lines, two bars — and every question was routed through `api/router.py` and run
+against the database *before* it was written into `displays.js`. The measured
+result, printed by the suite on every run:
+
+| chip | query | rows |
+|---|---|---:|
+| Is the Bay of Bengal fresher than the Arabian Sea? | `compare_regions` | 2 |
+| Plot temperature against depth in the Arabian Sea | `depth_profile` | 41 |
+| Show me the trajectory of float 6903139 | `float_trajectory` | 200 |
+| Show me salinity profiles in the Bay of Bengal in March 2023 | `profiles_in_region` | 6 |
+| How many profiles per month in the Bay of Bengal? | `monthly_profile_counts` | 24 |
+| What are the surface conditions by region? | `surface_conditions` | 4 |
+| Which ARGO floats are nearest to 15°N, 68°E? | `nearest_profiles` | 77 |
+| Why does float 2902203 have fewer profiles than the index promised? | `missing_profiles` | 13 |
+| Show me the BGC oxygen profiles for the Arabian Sea | *refused* `no-bgc` | — |
+
+**Alternative:** hand-pick them and click each one once. **Why not:** rule 5.
+Clicking once proves it worked once; `ui/test_render.py` now reads the chips
+off the *rendered* page and asks `/ask` each one on every run, printing the
+misses rather than summarising them. **The values are still the catalogue's**
+— every chip interpolates `query.example`, so none of these questions contains
+a number this dashboard invented (rule 2).
+**The refusal is not an exception to "good answers only":** the BGC chip is on
+screen on purpose, and the check encodes exactly that — a refusal is a correct
+answer for that one chip and a miss for every other.
+
+### D16.8 — The model path is removed from the DASHBOARD, not from the project
+The composer offered `model · gemini` beside `lexical router · no model`. On
+this machine the key is the placeholder `YOUR_REAL_KEY`, so that button failed
+on every click; the panel handled it well (D12.12's explicit re-ask), which
+meant the dashboard's most prominent control was a well-handled failure.
+**Decided:** the dashboard asks the lexical router and nothing else. Removed
+from the UI: the engine selector, the retrieval checkbox, the three-state tab
+badge, the "switched to the lexical router" notice, the retrieved-notes panel
+and the "ask this again without a model" button. `provider: "lexical"` is now
+sent **explicitly on every call**, not inferred from what the server has
+configured.
+**Kept, untouched:** `api/chat.py`, `api/gemini.py`, `/ask` with
+`provider: "gemini" | "anthropic"`, and all 73 of their checks. The model path
+is the API's and the command line's; it is not the dashboard's.
+**Why the explicit provider matters more than the missing button:** a UI that
+sent `provider: null` would follow whatever key the API happened to have, so
+setting `GEMINI_API_KEY` on a deployment would silently change what answered
+underneath a badge still reading `lexical router · no model`. That is the
+sentence D12's badges exist to prevent, arriving from the server side.
+**Alternative:** keep the selector and default it to lexical. **Why not:** rule
+7 — a control that appears to do something must do it, and on the machine this
+is demonstrated from, that one cannot. **What it costs, stated plainly:** with
+a working key the dashboard no longer *shows* a model choosing a query. That
+demonstration now happens on the command line, and putting the selector back is
+one revert.
+
+### D16.9 — Ten checks asserted the two-path UI; seven replaced them
+`api/test_router.py` pinned the Stage 12 machinery — the selector moving after
+a failure, the re-ask button, the three-valued badge and its two ways of lying
+(D13.3). Those properties do not exist any more, and a check for a removed
+mechanism is not evidence of anything.
+**Decided:** replace, do not delete. The same question is asked of the new UI —
+*can what is on screen disagree with what answered?* — as seven checks: the
+provider is named in the request, there is exactly **one** `await ask(` call
+site so no fallback can exist, no selector remains, the chat tab reads the
+**router's** availability rather than `ai.available` (which is true when either
+path can answer), and the badge is single-valued. `ui/test_ui.py`'s three badge
+checks were rewritten the same way, and the render suite gained a DOM check
+that **no control naming a model exists on the page**, made to fail by adding
+one back.
+**And a gap closed while it was open:** the render suite drove the chat panel
+by clicking chips only (D14.8 said so). It now also **types a question into the
+composer** and sends it — the second answer in the thread, drawn as a map, both
+replies badged, both queries in the trail. The WMO it types is read from
+`/meta`, not written into the file, for the same reason the chips interpolate
+examples.
+
+### D16.10 — A check that skipped what it could not parse
+`api/test_retrieval.py` reads the suggestion list out of `displays.js` with a
+regex that matched only template literals. One new suggestion, written with a
+plain string because it interpolates nothing, was **silently unread**: eight of
+nine entries were checked and the suite reported a clean pass.
+**Decided:** accept both quotings, and — the part that matters — assert that
+the number of entries parsed equals the number declared. **Made to fail:**
+rewriting one `ask` to call a function instead of returning a literal reports
+`8 parsed of 9 declared`.
+**Why it belongs in this log:** it is rule 5's failure mode in its quietest
+form. The check did not break; it looked away, and reported the pass it got
+from what remained.
+
+### Stage 16 result
+| | |
+|---|---:|
+| what changed | which tab the page opens in, the chat layout, the preset questions, and the number of engines the dashboard offers |
+| preset questions | 9, every one routed and run before it was written down (D16.7) |
+| paths the dashboard offers | 1 — the lexical router, named in the request itself (D16.8) |
+| server-side model support removed | none — `api/chat.py`, `api/gemini.py` and `/ask` are untouched |
+| sentences reworded to flatter a path | 0 (D16.5) |
+| checks added | 13, each made to fail first |
+| checks replaced | 13 that pinned the two-path UI (D16.9) |
+| total checks | 523 |
+| new dependencies | 0 |
+| needs a key or a network | no — the chat phase runs against a key that is set and rejected, and answers anyway |
+
+---
+
+## Stage 17 — the deployment finished, and the second path it created
+
+Stage 15 deployed an API with no database behind it and left three things the
+CLI had done that its plan had not predicted (D15.11). Stage 17 is the rest of
+it: a hosted Postgres, the dashboard as its own project, and — the part worth a
+stage number — the checks for the failure modes that only exist because there
+are now **two deploy paths** and **two projects**.
+
+Nothing on a platform has been touched in this stage either. What is new is
+configuration, documentation and 18 checks, and the honest boundary is the same
+as D15.10's: this repository can check itself and cannot check Vercel.
+
+### D17.1 — Stage 17, and Vercel is kept rather than replaced
+The brief proposed Vercel for the frontend and **Render or Railway** for the
+backend. That is the right default for a Python API and it is not right here.
+**Decided:** both projects on Vercel, Postgres on Supabase.
+**Why:** the deciding argument is not cost — Render's free tier is also ₹0. It
+is that Render's free instance **sleeps after 15 minutes and takes ~50 s to
+wake**. A judge clicking a link and getting fifty seconds of blank page is the
+failure this project is organised against, and it is the only platform
+difference the *audience* can see. Against that, Stage 15's configuration is
+already written, already checked by 32 assertions, and has already been seen to
+boot on Linux (D15.11) — moving would discard all three to solve nothing.
+**The alternative that would force the move:** an AI workload that does not fit
+a serverless function. It does not exist here. The dashboard's answering engine
+is `api/router.py` — arithmetic over 110 written exemplars, no model, no
+network — and the vector index is a 536 KB file that ships in the bundle. There
+is no GPU service in this architecture because there is nothing to put on one.
+**Recorded as a fallback rather than dismissed:** `api/server.py` now reads
+`PORT` and `HOST` (D17.6), so `uvicorn api.server:app --host 0.0.0.0 --port
+$PORT` works unchanged the day the bundle stops fitting 250 MB.
+
+### D17.2 — The index is committed, which is D15.11's trap closed in the direction the brief forces
+D15.11 found that accepting the GitHub connection created a second deploy path
+whose source is the **git tree**, while `.gitignore` excluded `data/` — so a
+push deployed an API whose retrieval was off, reporting `"no index built"` in
+`/meta` and answering anyway. Two paths, one commit, different artefacts, no
+warning. It was left unfixed because both fixes were choices.
+**The brief chooses.** "GitHub: source control and deployment trigger" makes
+push-to-deploy a requirement, so disconnecting the integration is no longer
+available and the index has to be in the tree.
+**Decided:** `data/*` plus `!data/rag/`, and the two files committed.
+**Why it is not a binary blob with no provenance:** the manifest records
+`embedder.kind == "hashing"`, the keyless lexical embedder, which is
+deterministic and needs no key — `etl/build_index.py` reproduces both files
+from the database at any time.
+**Written that way for a reason:** git does not descend into an excluded
+*directory*, so `data/` with `!data/rag/` would not have worked. It looks
+correct and would have silently kept the index out — the same shape of failure
+as everything else in this stage.
+**And it is checked as a set, not as a grep** (D15.4's argument, second
+outing): `git ls-files --cached --others --exclude-standard -- data` must be
+exactly the two files. Made to fail by restoring `data/`: both checks caught it.
+
+### D17.3 — `db/roles.sql` had a published password and named a database that does not exist there
+Two things in that file were correct for localhost and wrong for a hosted
+database, and neither would have failed loudly:
+`CREATE ROLE floatchat_ro LOGIN PASSWORD 'floatchat_ro'` is a **committed
+credential** the moment the database accepts connections from the internet, and
+`GRANT CONNECT ON DATABASE floatchat` names a database that is called
+`postgres` on Supabase.
+**Decided:** a `\set ro_password` default overridable with `psql -v
+ro_password=...`, and `current_database()` instead of the literal name.
+**Alternative:** a second file for hosted databases. **Why not:** two files
+that can disagree, for one line each — the same argument D15.9 makes about two
+requirements freezes, which needed a check to stay honest.
+**The mechanical part worth writing down:** psql does **not** substitute
+variables inside a dollar-quoted body, so the `DO $$ ... $$` block this file
+used could not have taken the password at all. It is now a `format(...) \gexec`
+that either CREATEs or ALTERs, which is also idempotent — and `run_pipeline.py`
+tells you to apply it once while nothing stops you applying it twice.
+**Proven, not assumed:** local `pg_hba` is `trust`, so connecting with the
+right password proves nothing. The override was verified by re-deriving
+SCRAM-SHA-256's StoredKey from the candidate password against `pg_authid`: with
+`-v ro_password=...` in force the new password verifies and the old one does
+not, and applying the file with no variable restores the default exactly.
+
+### D17.4 — `.env.example`, and the check that stops it going stale
+Seven environment variables were read across `api/` and `etl/` and documented
+in three prose files, none of which is a list.
+**Decided:** `.env.example` and `ui/.env.example`, names and no values, both
+committed — which needed `!.env.example` after `.env*` in each `.gitignore`, or
+the rule protecting the credentials would have hidden the file documenting
+them.
+**Why it needs a check at all:** an example file is a promise that goes stale
+in one direction silently. A variable added to the code and not to the file is
+a setting nobody knows to configure until a demo. So `api/test_deploy.py`
+extracts every `os.environ` read under `api/`, `etl/` and `run_pipeline.py`,
+every `import.meta.env.VITE_*` under `ui/src`, and compares **both ways** —
+undocumented reads fail, and so do documented variables nothing reads.
+**And one more, because the file is committed:** every value is matched against
+the shapes of a real credential (`sk-`, `AIza`, a JWT, a 32-hex run). Pasting a
+working key into the example is D15.12 happening again by hand, and it would
+otherwise be caught by nobody.
+
+### D17.5 — The pooled connection string is the one line that matters
+D15.10 recorded that `catalog.connect()` opens a connection per query and that
+this is a liability under serverless, where every invocation is its own
+process. It is still true and the code is still unchanged.
+**Decided:** `FLOATCHAT_DSN` names the **transaction pooler** (Supabase port
+6543), and `DEPLOYMENT.md` says so in the one place a reader cannot skip.
+**Alternative:** a connection pool in `catalog.py`. **Why not now:** it is a
+real change to the file the whole safety argument lives in, for a property that
+the pooler already provides from outside — and rule 6 exists so that the week
+of a demo is not when that file changes.
+**Not fixed, stated:** a pooler is not a connection pool. Under enough
+concurrency this is still a connection per query; it is survivable rather than
+solved.
+
+### D17.6 — `PORT` and `HOST`, read rather than decorative
+`api/server.py`'s `__main__` block hard-coded `127.0.0.1:8000`. Vercel imports
+`app` and never reaches it, so on the chosen architecture the block is dead —
+but on any container host it is the start command, and a process that ignored
+an injected `PORT` would bind 8000, fail the platform's health check, and look
+like an application error rather than a binding one. That is rule 7's failure
+mode.
+**Decided:** `os.environ.get("PORT", "8000")` and `HOST` defaulting to
+`127.0.0.1` — the previous literals, so nothing local changes. A container must
+set `HOST=0.0.0.0`, and the documented start command passes it explicitly
+rather than relying on a default that would be wrong somewhere.
+
+### D17.7 — The dashboard is a second project, so it has a second ignore filter
+D15.12 found a `VERCEL_OIDC_TOKEN` inside the API's bundle because
+`.vercelignore` had **replaced** `.gitignore` as the upload filter. `vercel
+link` writes that file in **every** directory it is run in, and `ui/.env.local`
+already exists on this machine with a token in it.
+**The dashboard's filter is `ui/.gitignore`**, because the CLI deploys `ui/` as
+its own root and the repository's `.gitignore` is outside it. That file listed
+`node_modules/` and `dist/` and nothing else.
+**Decided:** `.env*` / `!.env.example` in `ui/.gitignore`, and deliberately
+**no `ui/.vercelignore`** — creating one would replace that file as the filter
+and let `node_modules` straight back in, which is D15.4 arriving a second time
+from the same direction.
+**Checked by computing the dashboard's upload set** the way D15.4 computes the
+API's: 0.25 MB across 24 files, no `.env`, no `node_modules`, no `dist`. The
+suite's ignore parser now honours `!` negations rather than treating them as
+plain names, because a parser that dropped the `!` would model the wrong
+upload — silently, and in the safe-looking direction.
+**Also decided, and it is a platform choice rather than a file:** both projects
+are imported in the **web console**, not linked with the CLI. D15.11's
+repo-level link means `cd ui && vercel link` resolves to the **API** project,
+and a `vercel --prod` from there would replace the API with the dashboard at
+the API's own URL.
+
+### D17.8 — No Dockerfile
+The brief allows one "if it is useful for this project".
+**Decided:** none. **Why:** neither chosen platform builds one — Vercel's
+Python builder installs `api/requirements.txt` itself and the dashboard is a
+static Vite build — so a Dockerfile would be a fourth description of the
+dependencies that nothing runs and nothing checks. That is exactly the drift
+rule 6 pins versions to prevent, and D15.9 already needed a check to keep
+*two* descriptions honest. The day the architecture moves to a container host
+is the day to add one.
+
+### D17.9 — What was NOT changed, and why that is the finding
+The brief asked for hardcoded localhost URLs, ports, keys and dev-only
+configuration to be fixed. The audit found **five** hardcoded localhosts and
+every one of them is correct where it is:
+
+- `ui/src/api.js` — the fallback when `VITE_API_BASE` is unset. Verified on the
+  real production build: with the variable set the fallback is **constant-folded
+  out of the bundle entirely**, and unset it produces the browser's own
+  "cannot reach" message naming the address it tried, which is D10.x's
+  `unreachable` state and not a silent one.
+- `api/server.py` `DEV_ORIGINS` — always allowed, deliberately, so a deployed
+  API stays reachable from a local dashboard (D15.3). Asserted by a check.
+- `api/catalog.py`'s default DSN — the local development database, and the
+  fallback that made the deployed API say `503 localhost:5432` honestly rather
+  than show an empty one (D15.11).
+- `etl/load_db.py` and `run_pipeline.py` — the pipeline. It builds the local
+  database from 155 MB of downloads and is not something a platform runs. The
+  hosted database is a **copy** of what it produces (`pg_dump` / `pg_restore`),
+  not a second build of it.
+
+**No API key, token or password is committed anywhere in the tree** — and after
+this stage that is a check rather than a claim: no `.env` but the two examples
+is visible to git, and no example value has the shape of a credential.
+**The one credential that was committed was `db/roles.sql`'s**, and D17.3 is
+that finding.
+
+### D17.10 — D15.5's silent trap does not exist, and now something says so
+D15.5 warned, in bold, that setting `GEMINI_API_KEY` on the deployment would
+leave the query-time embedder mismatched against the shipped index: "retrieval
+would still return documents; they would be worse, and nothing would say so."
+That warning was repeated into `CLAUDE.md`-adjacent prose and would have been
+repeated again into `DEPLOYMENT.md`.
+**It is wrong.** `retrieval.load()` reconstructs the embedder from the index's
+own manifest (`api/retrieval.py:183`) — which is exactly what the module's
+docstring says it is for, and which predates D15.5 by a stage. A key in the
+environment changes `embed.resolve()` and does not change what searches the
+index.
+**Found by running it, not by reading it.** With this machine's placeholder
+`GEMINI_API_KEY` set, a live `/meta` reported `embedder: hashing:1024:fitted`
+while `embed.resolve()` returned `gemini:gemini-embedding-001:768` — the two
+disagreeing is the proof, and a search returned Bay-of-Bengal documents with no
+network call.
+**Decided:** correct the claim wherever it was repeated, and add the check that
+holds the correction — a subprocess with a fabricated key, asserting that
+`resolve()` and `load()` disagree and that `load()` matches the manifest. Made
+to fail by rewriting `load()` to call `resolve()`: both checks caught it.
+**Why it is worth a decision entry rather than a quiet edit:** rule 5 says a
+claim is only true if something re-checks it, and this was a *limitation* that
+nothing re-checked. A false limitation is cheaper than a false capability and
+it is still false — it would have sent someone rebuilding an index to fix a
+problem they did not have.
+
+### Stage 17 result
+| | |
+|---|---:|
+| what it produces | `DEPLOYMENT.md`, `.env.example`, `ui/.env.example`, `ui/vercel.json` |
+| code changed | 2 lines in `api/server.py` (`HOST`/`PORT`), 3 in `db/roles.sql` |
+| architecture changed | none — Stage 15's two seams and one entrypoint are untouched |
+| functionality removed | none |
+| new checks | 20 (`api/test_deploy.py`, 32 → 52), each made to fail first |
+| total checks | 543 |
+| a documented limitation withdrawn | 1 (D17.10) |
+| new dependencies | 0 |
+| the suite needs a key, a network or an account | no |
+| deployed by this stage | **no** — every platform step is marked **you** in `DEPLOYMENT.md` |
+
+---
+
 ## Where the project stands
 
 Complete end to end, and answerable with or without a model: GDAC index ->
@@ -1668,8 +2621,11 @@ filter -> float selection -> NetCDF download -> parse -> regions -> Postgres ->
 query catalogue -> vector index over the database's own summaries -> a model
 that picks a query (Anthropic **and** Gemini behind one transport seam) **or a
 lexical router that picks one with no model at all** -> HTTP API -> dashboard
-with both front doors and one audit trail.
-**12 stages, 102 logged decisions, 405 automated checks, one command to rebuild.**
+with both front doors and one audit trail -- and, since Stage 17, a documented
+deployment of all three tiers whose configuration is checked on every run.
+**17 stages, 149 logged decisions, 543 automated checks, one command to rebuild.**
+(Both counts were stale here too -- `grep -c '^## Stage ' DECISIONS.md` and
+`grep -c '^### D[0-9]' DECISIONS.md` are where they now come from.)
 
 The dashboard is demonstrable on a machine with no API key, no network and no
 model download. The Catalogue tab always was. Since Stage 12 the Chat tab is
@@ -1678,16 +2634,24 @@ parameters from the question, and renders through the same `displays.js` spec �
 badged `lexical router · no model` on every reply, in the composer before you
 send, and in the audit trail beside the queries a model chose.
 
+This table was two stages stale until Stage 16 (D16.6) and is now written from
+what `run_pipeline.py --check` actually prints, suite by suite.  The 21
+database checks live inside `etl/load_db.py` and are counted separately from
+the 543, exactly as that command reports them.
+
 | check suite | count |
 |---|---:|
-| database verification (`etl/load_db.py`) | 21 |
 | query catalogue (`api/test_catalog.py`) | 28 |
 | tool loop (`api/test_chat.py`) | 28 |
 | Gemini adapter (`api/test_gemini.py`) | 45 |
 | HTTP API (`api/test_server.py`) | 62 |
-| retrieval, corpus, embedders and `/ask` (`api/test_retrieval.py`) | 125 |
+| retrieval, corpus, embedders and `/ask` (`api/test_retrieval.py`) | 132 |
 | lexical router, no model (`api/test_router.py`) | 96 |
-| **total** | **405** |
+| dashboard source (`ui/test_ui.py`) | 44 |
+| dashboard rendered in Chrome (`ui/test_render.py`) | 56 |
+| deployment configuration (`api/test_deploy.py`) | 52 |
+| **total** | **543** |
+| database verification (`etl/load_db.py`, counted apart) | 21 |
 
 **The measured numbers, in one place.** Everything below is produced by a suite
 that runs with no network and no credentials.
@@ -1726,10 +2690,15 @@ suggestion button so it is asked and answered rather than avoided.
    same questions, expected query names, a pass rate — does not exist. The
    pattern is now built twice and would transfer directly.
 
-3. **The dashboard's rendering has no automated tests.** Its *couplings* do:
-   every query has a display, every suggestion names a real query and a real
-   example key, the badge string exists, the fallback notice exists, retrieval
-   is only described on the path that uses it. But D12.13 found four bugs by
-   opening a browser that no server-side check could have seen, two of them
-   honesty bugs. A Playwright suite over D10.8's states remains the honest fix,
-   and the CDP driver written for D12.13 shows it needs no new dependency.
+3. **The dashboard is now rendered and read back on every run** — 33 checks
+   (`ui/test_render.py`, Stage 14) driving headless Chrome against the
+   *production build*, plus 42 source checks (`ui/test_ui.py`, Stage 13). Both
+   of Stage 13's own fixes are confirmed on screen, and the ARGO rule that
+   pressure increases downward is verified on the drawn axis for the first
+   time. **What is still not proven is appearance**: it reads structure and
+   computed style, so it can prove an axis title computes to `#dc2626` but not
+   that two labels do not overlap, that a legend is legible, or that the layout
+   survives a narrow window. One browser, one viewport. The chat panel is
+   driven along one route — a rejected key, then the same question on the
+   lexical router (D14.8) — but a typed question, the slot panel and the
+   refusal path are still verified by grep only.

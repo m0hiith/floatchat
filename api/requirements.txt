@@ -1,0 +1,65 @@
+# The API's dependencies, and only the API's.
+#
+# `requirements.txt` at the repo root is the full freeze: it builds the
+# database, and it carries netCDF4, xarray and pandas to do it.  Installed,
+# that tree is 301 MB against a serverless function's ~250 MB uncompressed
+# budget, so a deployment that reuses it does not fit.  This closure is 127 MB
+# and does (D15.9).
+#
+# It is a SUBSET, not a second opinion.  Every line below appears verbatim in
+# the root freeze at the same version, because two freezes that can disagree
+# eventually will -- and rule 6 pins exactly for the same reason.  The
+# transitive closure is listed rather than left to the resolver.
+#
+# Dropped, all of them ETL-only: cftime, netCDF4, pandas, python-dateutil, six, xarray
+#
+# `uvicorn` is NOT dropped, though the function never starts a server: the
+# `__main__` block of api/server.py imports it, and a freeze that omits an
+# import its own source makes is a freeze that is wrong about the source.  It
+# costs about 1.5 MB.  The first draft of this file dropped it and
+# api/test_deploy.py caught that, which is the entire argument for the check.
+#
+# Regenerate by walking installed metadata from the direct set
+# {fastapi, psycopg, psycopg-binary, numpy, faiss-cpu, anthropic, google-genai, uvicorn}; api/test_deploy.py re-proves the closure every run.
+
+annotated-doc==0.0.5
+annotated-types==0.8.0
+anthropic==1.2.0
+anyio==4.14.2
+certifi==2026.7.22
+cffi==2.1.1
+charset-normalizer==3.5.1
+click==8.5.0
+cryptography==50.0.1
+distro==1.9.0
+docstring_parser==0.18.0
+faiss-cpu==1.15.0
+fastapi==0.141.1
+google-auth==2.57.0
+google-genai==2.20.0
+h11==0.16.0
+httpcore2==2.12.0
+httpcore==1.0.9
+httpx2==2.12.0
+httpx==0.28.1
+idna==3.19
+jiter==0.16.0
+numpy==2.5.2
+packaging==26.3
+psycopg-binary==3.3.4
+psycopg==3.3.4
+pyasn1==0.6.4
+pyasn1_modules==0.4.2
+pycparser==3.0
+pydantic==2.13.5
+pydantic_core==2.46.5
+requests==2.34.2
+sniffio==1.3.1
+starlette==1.6.0
+tenacity==9.1.4
+truststore==0.10.4
+typing-inspection==0.4.4
+typing_extensions==4.16.0
+urllib3==2.7.0
+uvicorn==0.52.4
+websockets==16.1.1

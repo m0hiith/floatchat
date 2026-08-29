@@ -512,8 +512,16 @@ def main():
           drawn <= {q.name for q in catalog.QUERIES},
           str(sorted(drawn - {q.name for q in catalog.QUERIES})))
 
-    suggestions = re.findall(r"\{ from: \"(\w+)\", ask: \(([^)]*)\) => `([^`]*)`", src)
+    suggestions = re.findall(
+        r"\{ from: \"(\w+)\", ask: \(([^)]*)\) => [`\"]([^`\"]*)[`\"]", src)
     check("the chat suggestions exist at all", len(suggestions) >= 4, str(len(suggestions)))
+    # A pattern that skips what it cannot parse is a check that passes because
+    # it looked away: one suggestion written with a plain string instead of a
+    # template literal went unread here for a whole stage. Every entry in the
+    # list must be accounted for, or this section is not checking the list.
+    check("and every entry in the list was parsed, not skipped",
+          len(suggestions) == src.count('{ from: "'),
+          f"{len(suggestions)} parsed of {src.count('{ from: ')} declared")
     for name, _args, template in suggestions:
         query = catalog.BY_NAME.get(name)
         check(f"suggestion for {name:<20} names a real query", query is not None)

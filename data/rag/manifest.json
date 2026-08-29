@@ -1,0 +1,2548 @@
+{
+ "built_at": "2026-08-29T02:29:28+0530",
+ "embedder": {
+  "kind": "hashing",
+  "dim": 1024,
+  "n_documents": 131,
+  "idf": [
+   2.4170660972595215,
+   3.049588680267334,
+   3.1747517585754395,
+   2.8870697021484375,
+   3.049588680267334,
+   3.8033604621887207,
+   2.5155062675476074,
+   1.5007753372192383,
+   2.747307777404785,
+   1.6632941961288452,
+   3.2437446117401123,
+   1.120627999305725,
+   2.219240188598633,
+   4.784189701080322,
+   4.091042518615723,
+   1.182321548461914,
+   3.8033604621887207,
+   3.1747517585754395,
+   3.8033604621887207,
+   5.8828020095825195,
+   3.049588680267334,
+   3.397895336151123,
+   3.685577392578125,
+   2.663926124572754,
+   2.076139450073242,
+   1.0,
+   2.9383630752563477,
+   4.091042518615723,
+   3.049588680267334,
+   4.091042518615723,
+   3.685577392578125,
+   4.273364067077637,
+   2.9383630752563477,
+   3.1747517585754395,
+   2.219240188598633,
+   2.5505974292755127,
+   5.18965482711792,
+   4.49650764465332,
+   1.6343066692352295,
+   4.273364067077637,
+   2.7047481536865234,
+   3.580216884613037,
+   3.936891794204712,
+   2.448814868927002,
+   3.397895336151123,
+   2.7047481536865234,
+   2.7047481536865234,
+   2.791759490966797,
+   3.049588680267334,
+   2.9383630752563477,
+   3.31785249710083,
+   2.8870697021484375,
+   3.936891794204712,
+   3.110213279724121,
+   4.784189701080322,
+   3.2437446117401123,
+   2.9924302101135254,
+   1.8938179016113281,
+   5.8828020095825195,
+   3.8033604621887207,
+   4.784189701080322,
+   2.7047481536865234,
+   2.663926124572754,
+   2.5155062675476074,
+   2.8382794857025146,
+   1.2480729818344116,
+   3.110213279724121,
+   3.2437446117401123,
+   4.273364067077637,
+   2.8382794857025146,
+   4.273364067077637,
+   2.3564414978027344,
+   2.6247053146362305,
+   3.2437446117401123,
+   2.9383630752563477,
+   2.011600971221924,
+   3.685577392578125,
+   3.936891794204712,
+   4.091042518615723,
+   2.448814868927002,
+   3.580216884613037,
+   4.273364067077637,
+   3.049588680267334,
+   3.4849066734313965,
+   4.091042518615723,
+   1.0152674913406372,
+   2.747307777404785,
+   3.31785249710083,
+   3.685577392578125,
+   3.1747517585754395,
+   2.791759490966797,
+   2.299283027648926,
+   4.273364067077637,
+   2.299283027648926,
+   2.6247053146362305,
+   3.936891794204712,
+   3.2437446117401123,
+   4.49650764465332,
+   1.1643030643463135,
+   4.784189701080322,
+   4.091042518615723,
+   3.110213279724121,
+   2.299283027648926,
+   2.6247053146362305,
+   3.1747517585754395,
+   4.49650764465332,
+   1.1643030643463135,
+   1.15541410446167,
+   4.091042518615723,
+   4.784189701080322,
+   2.9383630752563477,
+   2.9924302101135254,
+   1.0,
+   1.0,
+   2.791759490966797,
+   3.110213279724121,
+   2.8870697021484375,
+   3.936891794204712,
+   3.110213279724121,
+   4.273364067077637,
+   4.784189701080322,
+   3.1747517585754395,
+   2.9383630752563477,
+   3.397895336151123,
+   2.8870697021484375,
+   1.120627999305725,
+   3.685577392578125,
+   4.091042518615723,
+   3.110213279724121,
+   3.049588680267334,
+   4.784189701080322,
+   2.5505974292755127,
+   1.9509763717651367,
+   1.7084146738052368,
+   2.9383630752563477,
+   3.1747517585754395,
+   4.784189701080322,
+   4.091042518615723,
+   2.386294364929199,
+   2.6247053146362305,
+   1.7239189147949219,
+   1.3080909252166748,
+   3.936891794204712,
+   1.1378698348999023,
+   2.1692299842834473,
+   2.6247053146362305,
+   3.4849066734313965,
+   4.273364067077637,
+   3.8033604621887207,
+   2.9383630752563477,
+   1.1292117834091187,
+   3.1747517585754395,
+   3.31785249710083,
+   3.397895336151123,
+   3.580216884613037,
+   1.1378698348999023,
+   2.9383630752563477,
+   3.4849066734313965,
+   2.327453851699829,
+   2.011600971221924,
+   2.747307777404785,
+   3.4849066734313965,
+   1.1643030643463135,
+   3.936891794204712,
+   2.3564414978027344,
+   3.1747517585754395,
+   2.9924302101135254,
+   3.685577392578125,
+   4.49650764465332,
+   4.49650764465332,
+   1.2480729818344116,
+   4.273364067077637,
+   2.8870697021484375,
+   3.2437446117401123,
+   4.273364067077637,
+   2.4170660972595215,
+   2.663926124572754,
+   2.5505974292755127,
+   2.8870697021484375,
+   2.6247053146362305,
+   2.8870697021484375,
+   1.9125100374221802,
+   3.397895336151123,
+   2.48160457611084,
+   2.791759490966797,
+   3.1747517585754395,
+   1.267681360244751,
+   3.110213279724121,
+   1.0465199947357178,
+   3.2437446117401123,
+   1.1292117834091187,
+   2.663926124572754,
+   4.273364067077637,
+   2.8382794857025146,
+   2.791759490966797,
+   3.4849066734313965,
+   2.5505974292755127,
+   3.8033604621887207,
+   3.580216884613037,
+   4.091042518615723,
+   3.685577392578125,
+   4.273364067077637,
+   3.1747517585754395,
+   3.31785249710083,
+   4.273364067077637,
+   4.49650764465332,
+   3.4849066734313965,
+   1.0465199947357178,
+   3.1747517585754395,
+   3.936891794204712,
+   3.936891794204712,
+   4.091042518615723,
+   1.9125100374221802,
+   2.245215892791748,
+   4.784189701080322,
+   4.091042518615723,
+   4.784189701080322,
+   2.5505974292755127,
+   2.7047481536865234,
+   2.8870697021484375,
+   3.049588680267334,
+   2.5505974292755127,
+   3.2437446117401123,
+   4.49650764465332,
+   3.4849066734313965,
+   2.145132303237915,
+   3.049588680267334,
+   3.2437446117401123,
+   3.31785249710083,
+   3.936891794204712,
+   3.936891794204712,
+   2.8382794857025146,
+   2.032654285430908,
+   2.299283027648926,
+   2.663926124572754,
+   1.9509763717651367,
+   2.747307777404785,
+   5.8828020095825195,
+   3.936891794204712,
+   1.7084146738052368,
+   3.397895336151123,
+   5.18965482711792,
+   2.9924302101135254,
+   2.1216018199920654,
+   2.9383630752563477,
+   2.791759490966797,
+   4.49650764465332,
+   2.0986123085021973,
+   1.7884573936462402,
+   4.784189701080322,
+   2.791759490966797,
+   4.091042518615723,
+   2.663926124572754,
+   3.049588680267334,
+   2.7047481536865234,
+   2.8870697021484375,
+   2.5869650840759277,
+   3.1747517585754395,
+   2.791759490966797,
+   2.193922519683838,
+   3.1747517585754395,
+   4.49650764465332,
+   4.784189701080322,
+   1.2006707191467285,
+   3.1747517585754395,
+   2.791759490966797,
+   3.8033604621887207,
+   2.791759490966797,
+   4.784189701080322,
+   4.273364067077637,
+   2.48160457611084,
+   3.4849066734313965,
+   4.273364067077637,
+   3.049588680267334,
+   4.273364067077637,
+   2.8870697021484375,
+   4.273364067077637,
+   2.791759490966797,
+   4.091042518615723,
+   4.273364067077637,
+   3.2437446117401123,
+   1.2480729818344116,
+   3.2437446117401123,
+   3.2437446117401123,
+   1.2578290700912476,
+   2.48160457611084,
+   1.2193628549575806,
+   4.784189701080322,
+   3.580216884613037,
+   1.1914540529251099,
+   2.9383630752563477,
+   4.49650764465332,
+   1.2578290700912476,
+   3.685577392578125,
+   3.2437446117401123,
+   3.8033604621887207,
+   2.8382794857025146,
+   2.663926124572754,
+   3.049588680267334,
+   2.8382794857025146,
+   4.49650764465332,
+   4.784189701080322,
+   2.8382794857025146,
+   3.936891794204712,
+   3.8033604621887207,
+   3.2437446117401123,
+   2.8870697021484375,
+   1.15541410446167,
+   3.2437446117401123,
+   4.091042518615723,
+   3.936891794204712,
+   3.397895336151123,
+   2.5869650840759277,
+   3.397895336151123,
+   2.8870697021484375,
+   3.110213279724121,
+   2.5869650840759277,
+   3.8033604621887207,
+   4.091042518615723,
+   3.4849066734313965,
+   1.2384110689163208,
+   3.685577392578125,
+   2.9924302101135254,
+   3.2437446117401123,
+   3.8033604621887207,
+   2.448814868927002,
+   2.8870697021484375,
+   2.5505974292755127,
+   3.397895336151123,
+   4.49650764465332,
+   3.1747517585754395,
+   3.685577392578125,
+   2.7047481536865234,
+   4.273364067077637,
+   3.685577392578125,
+   2.5869650840759277,
+   3.580216884613037,
+   4.49650764465332,
+   5.8828020095825195,
+   2.0541605949401855,
+   3.2437446117401123,
+   2.9383630752563477,
+   3.8033604621887207,
+   1.0229895114898682,
+   3.110213279724121,
+   2.791759490966797,
+   1.0076045989990234,
+   1.771928071975708,
+   3.8033604621887207,
+   3.936891794204712,
+   4.091042518615723,
+   4.273364067077637,
+   3.4849066734313965,
+   3.4849066734313965,
+   2.245215892791748,
+   3.110213279724121,
+   3.110213279724121,
+   1.2288415431976318,
+   3.2437446117401123,
+   2.9924302101135254,
+   2.7047481536865234,
+   3.31785249710083,
+   3.8033604621887207,
+   4.091042518615723,
+   2.9383630752563477,
+   2.8382794857025146,
+   2.7047481536865234,
+   3.2437446117401123,
+   1.8223588466644287,
+   4.091042518615723,
+   1.7884573936462402,
+   1.8938179016113281,
+   2.663926124572754,
+   3.4849066734313965,
+   4.091042518615723,
+   3.31785249710083,
+   2.663926124572754,
+   2.9383630752563477,
+   5.18965482711792,
+   1.0386148691177368,
+   2.747307777404785,
+   1.5520685911178589,
+   4.49650764465332,
+   3.2437446117401123,
+   2.9924302101135254,
+   3.685577392578125,
+   2.9924302101135254,
+   2.7047481536865234,
+   2.747307777404785,
+   2.9924302101135254,
+   1.15541410446167,
+   3.8033604621887207,
+   3.4849066734313965,
+   3.397895336151123,
+   2.791759490966797,
+   3.580216884613037,
+   5.18965482711792,
+   3.4849066734313965,
+   2.6247053146362305,
+   3.31785249710083,
+   3.4849066734313965,
+   2.9924302101135254,
+   3.580216884613037,
+   4.49650764465332,
+   3.049588680267334,
+   3.110213279724121,
+   3.2437446117401123,
+   2.9924302101135254,
+   3.1747517585754395,
+   3.1747517585754395,
+   3.1747517585754395,
+   4.091042518615723,
+   3.685577392578125,
+   3.1747517585754395,
+   2.8382794857025146,
+   2.8382794857025146,
+   1.7084146738052368,
+   2.9383630752563477,
+   5.18965482711792,
+   1.2776317596435547,
+   2.747307777404785,
+   1.120627999305725,
+   3.936891794204712,
+   2.245215892791748,
+   4.49650764465332,
+   2.8870697021484375,
+   3.397895336151123,
+   2.245215892791748,
+   2.5155062675476074,
+   1.054488182067871,
+   5.18965482711792,
+   2.9383630752563477,
+   3.936891794204712,
+   2.8382794857025146,
+   4.49650764465332,
+   1.0465199947357178,
+   2.3564414978027344,
+   3.936891794204712,
+   2.8382794857025146,
+   3.31785249710083,
+   4.091042518615723,
+   3.2437446117401123,
+   1.1914540529251099,
+   4.49650764465332,
+   2.663926124572754,
+   3.397895336151123,
+   4.784189701080322,
+   2.6247053146362305,
+   1.9125100374221802,
+   2.0986123085021973,
+   3.2437446117401123,
+   2.9383630752563477,
+   2.5155062675476074,
+   2.8870697021484375,
+   4.49650764465332,
+   1.2288415431976318,
+   1.8223588466644287,
+   3.8033604621887207,
+   2.48160457611084,
+   4.091042518615723,
+   3.049588680267334,
+   3.936891794204712,
+   1.1036784648895264,
+   2.791759490966797,
+   3.685577392578125,
+   2.791759490966797,
+   4.273364067077637,
+   1.0,
+   3.110213279724121,
+   4.49650764465332,
+   3.110213279724121,
+   3.397895336151123,
+   1.2006707191467285,
+   1.0870113372802734,
+   3.4849066734313965,
+   3.580216884613037,
+   3.1747517585754395,
+   2.3564414978027344,
+   1.0229895114898682,
+   4.091042518615723,
+   1.2384110689163208,
+   3.049588680267334,
+   3.049588680267334,
+   3.580216884613037,
+   1.2578290700912476,
+   3.2437446117401123,
+   2.271883964538574,
+   2.6247053146362305,
+   1.2193628549575806,
+   2.5505974292755127,
+   3.397895336151123,
+   4.091042518615723,
+   4.273364067077637,
+   2.6247053146362305,
+   2.791759490966797,
+   3.31785249710083,
+   3.685577392578125,
+   2.0541605949401855,
+   2.747307777404785,
+   3.2437446117401123,
+   3.4849066734313965,
+   2.299283027648926,
+   4.273364067077637,
+   5.8828020095825195,
+   3.936891794204712,
+   2.271883964538574,
+   4.091042518615723,
+   2.9383630752563477,
+   3.4849066734313965,
+   3.685577392578125,
+   4.784189701080322,
+   3.049588680267334,
+   3.31785249710083,
+   3.580216884613037,
+   3.31785249710083,
+   4.273364067077637,
+   1.287682056427002,
+   3.8033604621887207,
+   2.9924302101135254,
+   4.273364067077637,
+   2.7047481536865234,
+   3.936891794204712,
+   2.791759490966797,
+   2.193922519683838,
+   2.5869650840759277,
+   3.936891794204712,
+   3.8033604621887207,
+   3.049588680267334,
+   3.049588680267334,
+   2.8870697021484375,
+   3.31785249710083,
+   4.273364067077637,
+   1.4284546375274658,
+   1.173271656036377,
+   3.049588680267334,
+   4.49650764465332,
+   2.219240188598633,
+   1.1643030643463135,
+   1.2006707191467285,
+   5.18965482711792,
+   3.936891794204712,
+   1.2578290700912476,
+   4.49650764465332,
+   2.791759490966797,
+   3.936891794204712,
+   2.1216018199920654,
+   4.091042518615723,
+   3.4849066734313965,
+   4.784189701080322,
+   4.49650764465332,
+   1.7239189147949219,
+   2.5155062675476074,
+   4.273364067077637,
+   2.4170660972595215,
+   2.5869650840759277,
+   3.4849066734313965,
+   4.49650764465332,
+   3.31785249710083,
+   1.9909815788269043,
+   3.1747517585754395,
+   3.110213279724121,
+   3.685577392578125,
+   2.9924302101135254,
+   2.7047481536865234,
+   2.5869650840759277,
+   3.110213279724121,
+   3.936891794204712,
+   3.049588680267334,
+   1.173271656036377,
+   3.1747517585754395,
+   3.110213279724121,
+   1.8052644729614258,
+   2.8870697021484375,
+   3.4849066734313965,
+   3.685577392578125,
+   2.8382794857025146,
+   4.784189701080322,
+   3.31785249710083,
+   3.397895336151123,
+   2.6247053146362305,
+   2.9383630752563477,
+   2.5155062675476074,
+   1.15541410446167,
+   5.8828020095825195,
+   3.580216884613037,
+   2.8870697021484375,
+   3.936891794204712,
+   4.273364067077637,
+   4.273364067077637,
+   3.31785249710083,
+   2.8382794857025146,
+   2.48160457611084,
+   3.2437446117401123,
+   2.9924302101135254,
+   1.1292117834091187,
+   1.4883527755737305,
+   1.2776317596435547,
+   1.4883527755737305,
+   1.15541410446167,
+   4.784189701080322,
+   2.5155062675476074,
+   3.397895336151123,
+   4.273364067077637,
+   1.1036784648895264,
+   4.273364067077637,
+   3.049588680267334,
+   1.173271656036377,
+   3.2437446117401123,
+   1.0706175565719604,
+   2.9383630752563477,
+   4.49650764465332,
+   5.8828020095825195,
+   4.49650764465332,
+   2.48160457611084,
+   2.193922519683838,
+   1.120627999305725,
+   3.936891794204712,
+   2.747307777404785,
+   3.31785249710083,
+   3.936891794204712,
+   3.936891794204712,
+   3.936891794204712,
+   4.273364067077637,
+   2.9924302101135254,
+   2.9383630752563477,
+   4.784189701080322,
+   1.173271656036377,
+   2.448814868927002,
+   4.273364067077637,
+   1.0386148691177368,
+   1.1378698348999023,
+   3.936891794204712,
+   3.8033604621887207,
+   2.3564414978027344,
+   3.397895336151123,
+   3.580216884613037,
+   4.784189701080322,
+   3.31785249710083,
+   3.397895336151123,
+   4.273364067077637,
+   4.091042518615723,
+   2.5869650840759277,
+   2.386294364929199,
+   3.936891794204712,
+   3.1747517585754395,
+   3.049588680267334,
+   2.327453851699829,
+   4.49650764465332,
+   3.936891794204712,
+   3.8033604621887207,
+   1.2288415431976318,
+   2.791759490966797,
+   4.784189701080322,
+   1.2776317596435547,
+   2.8382794857025146,
+   3.685577392578125,
+   2.245215892791748,
+   1.0953102111816406,
+   3.049588680267334,
+   3.4849066734313965,
+   2.5869650840759277,
+   1.15541410446167,
+   2.5869650840759277,
+   1.120627999305725,
+   1.5787367820739746,
+   4.49650764465332,
+   1.0465199947357178,
+   3.1747517585754395,
+   4.091042518615723,
+   3.4849066734313965,
+   3.110213279724121,
+   3.110213279724121,
+   3.580216884613037,
+   2.448814868927002,
+   3.8033604621887207,
+   2.663926124572754,
+   4.784189701080322,
+   4.49650764465332,
+   4.784189701080322,
+   3.685577392578125,
+   4.273364067077637,
+   3.936891794204712,
+   2.9924302101135254,
+   2.9924302101135254,
+   1.0229895114898682,
+   1.2006707191467285,
+   2.8870697021484375,
+   3.580216884613037,
+   3.31785249710083,
+   3.685577392578125,
+   2.6247053146362305,
+   2.9383630752563477,
+   3.1747517585754395,
+   2.0986123085021973,
+   3.397895336151123,
+   2.8382794857025146,
+   3.580216884613037,
+   1.0706175565719604,
+   4.091042518615723,
+   1.173271656036377,
+   2.011600971221924,
+   3.31785249710083,
+   3.2437446117401123,
+   3.397895336151123,
+   3.685577392578125,
+   3.4849066734313965,
+   2.9924302101135254,
+   2.663926124572754,
+   2.4170660972595215,
+   2.6247053146362305,
+   1.5653138160705566,
+   4.091042518615723,
+   2.271883964538574,
+   1.267681360244751,
+   1.1466034650802612,
+   1.7396671772003174,
+   2.245215892791748,
+   2.193922519683838,
+   2.6247053146362305,
+   1.2384110689163208,
+   4.784189701080322,
+   4.49650764465332,
+   3.685577392578125,
+   2.7047481536865234,
+   3.110213279724121,
+   2.0986123085021973,
+   1.15541410446167,
+   3.4849066734313965,
+   1.6061358451843262,
+   3.049588680267334,
+   1.5260931253433228,
+   3.049588680267334,
+   1.267681360244751,
+   4.273364067077637,
+   2.448814868927002,
+   2.193922519683838,
+   3.049588680267334,
+   2.386294364929199,
+   3.685577392578125,
+   2.219240188598633,
+   3.4849066734313965,
+   4.273364067077637,
+   1.2480729818344116,
+   3.049588680267334,
+   2.5155062675476074,
+   1.0152674913406372,
+   1.1914540529251099,
+   1.9707789421081543,
+   3.1747517585754395,
+   4.784189701080322,
+   2.8382794857025146,
+   2.8382794857025146,
+   3.31785249710083,
+   4.091042518615723,
+   3.580216884613037,
+   3.580216884613037,
+   2.747307777404785,
+   3.397895336151123,
+   3.4849066734313965,
+   1.2288415431976318,
+   2.791759490966797,
+   4.49650764465332,
+   3.8033604621887207,
+   3.397895336151123,
+   4.273364067077637,
+   3.8033604621887207,
+   3.049588680267334,
+   4.273364067077637,
+   2.8870697021484375,
+   1.2006707191467285,
+   2.5869650840759277,
+   2.271883964538574,
+   3.110213279724121,
+   3.8033604621887207,
+   3.580216884613037,
+   2.1692299842834473,
+   4.784189701080322,
+   3.31785249710083,
+   3.1747517585754395,
+   4.784189701080322,
+   3.110213279724121,
+   3.580216884613037,
+   1.9909815788269043,
+   3.110213279724121,
+   2.663926124572754,
+   1.0787808895111084,
+   3.31785249710083,
+   4.091042518615723,
+   3.31785249710083,
+   3.31785249710083,
+   2.747307777404785,
+   1.0152674913406372,
+   2.6247053146362305,
+   3.580216884613037,
+   4.273364067077637,
+   2.791759490966797,
+   3.936891794204712,
+   3.4849066734313965,
+   3.049588680267334,
+   3.2437446117401123,
+   3.936891794204712,
+   2.386294364929199,
+   4.49650764465332,
+   2.747307777404785,
+   2.7047481536865234,
+   2.791759490966797,
+   3.31785249710083,
+   1.9125100374221802,
+   4.49650764465332,
+   3.685577392578125,
+   3.685577392578125,
+   1.9509763717651367,
+   2.48160457611084,
+   2.032654285430908,
+   3.31785249710083,
+   1.8754687309265137,
+   2.9924302101135254,
+   4.49650764465332,
+   2.9383630752563477,
+   3.685577392578125,
+   2.9924302101135254,
+   3.580216884613037,
+   2.193922519683838,
+   2.663926124572754,
+   2.9924302101135254,
+   3.049588680267334,
+   3.936891794204712,
+   2.48160457611084,
+   2.9383630752563477,
+   2.1692299842834473,
+   2.448814868927002,
+   1.2384110689163208,
+   2.5155062675476074,
+   3.580216884613037,
+   3.049588680267334,
+   2.7047481536865234,
+   2.5505974292755127,
+   3.110213279724121,
+   2.448814868927002,
+   2.9924302101135254,
+   3.1747517585754395,
+   3.4849066734313965,
+   1.2776317596435547,
+   1.173271656036377,
+   3.4849066734313965,
+   4.784189701080322,
+   3.936891794204712,
+   1.0076045989990234,
+   3.580216884613037,
+   1.9125100374221802,
+   3.049588680267334,
+   2.1216018199920654,
+   3.2437446117401123,
+   3.110213279724121,
+   3.31785249710083,
+   2.219240188598633,
+   2.48160457611084,
+   1.1036784648895264,
+   2.663926124572754,
+   3.4849066734313965,
+   2.9924302101135254,
+   3.2437446117401123,
+   3.936891794204712,
+   1.2288415431976318,
+   4.784189701080322,
+   2.6247053146362305,
+   1.2776317596435547,
+   2.747307777404785,
+   3.1747517585754395,
+   4.273364067077637,
+   2.747307777404785,
+   5.18965482711792,
+   2.9383630752563477,
+   3.397895336151123,
+   1.1036784648895264,
+   2.48160457611084,
+   2.8870697021484375,
+   2.219240188598633,
+   3.397895336151123,
+   2.8870697021484375,
+   2.8870697021484375,
+   4.273364067077637,
+   3.049588680267334,
+   3.110213279724121,
+   5.18965482711792,
+   2.271883964538574,
+   2.448814868927002,
+   3.685577392578125,
+   4.273364067077637,
+   2.6247053146362305,
+   1.15541410446167,
+   4.091042518615723,
+   2.9383630752563477,
+   3.31785249710083,
+   2.448814868927002,
+   3.1747517585754395,
+   3.1747517585754395,
+   3.685577392578125,
+   4.091042518615723,
+   2.076139450073242,
+   1.4401507377624512,
+   2.8870697021484375,
+   3.936891794204712,
+   2.8870697021484375,
+   3.936891794204712,
+   2.0541605949401855,
+   4.091042518615723,
+   3.1747517585754395,
+   2.386294364929199,
+   3.936891794204712,
+   3.049588680267334,
+   2.663926124572754,
+   2.5155062675476074,
+   3.049588680267334,
+   2.1692299842834473,
+   2.193922519683838,
+   2.5155062675476074,
+   3.31785249710083,
+   2.791759490966797,
+   2.6247053146362305,
+   3.685577392578125,
+   2.747307777404785,
+   2.8870697021484375,
+   3.580216884613037,
+   1.2384110689163208,
+   2.663926124572754,
+   1.7556675672531128,
+   2.386294364929199,
+   2.48160457611084,
+   3.2437446117401123,
+   1.9707789421081543,
+   2.747307777404785,
+   4.091042518615723,
+   1.2480729818344116,
+   2.5155062675476074,
+   2.7047481536865234,
+   4.091042518615723,
+   2.791759490966797,
+   2.663926124572754,
+   4.273364067077637,
+   3.936891794204712,
+   4.49650764465332,
+   4.49650764465332,
+   3.1747517585754395,
+   2.48160457611084,
+   1.0307716131210327,
+   4.273364067077637,
+   3.8033604621887207,
+   2.193922519683838,
+   1.0706175565719604,
+   2.9924302101135254,
+   2.747307777404785,
+   3.8033604621887207,
+   3.1747517585754395,
+   2.299283027648926,
+   2.663926124572754,
+   3.685577392578125,
+   3.31785249710083,
+   3.397895336151123,
+   1.173271656036377,
+   4.784189701080322,
+   3.049588680267334,
+   2.8382794857025146,
+   3.2437446117401123,
+   1.6343066692352295,
+   3.110213279724121,
+   3.685577392578125,
+   2.9924302101135254,
+   3.1747517585754395,
+   3.31785249710083,
+   2.663926124572754,
+   4.49650764465332,
+   2.7047481536865234,
+   2.791759490966797,
+   3.4849066734313965,
+   5.8828020095825195,
+   3.8033604621887207,
+   4.784189701080322,
+   3.8033604621887207,
+   3.685577392578125,
+   3.685577392578125,
+   2.011600971221924,
+   2.48160457611084,
+   2.6247053146362305,
+   3.1747517585754395,
+   2.7047481536865234,
+   4.273364067077637,
+   1.8397506475448608,
+   2.448814868927002,
+   4.49650764465332,
+   3.580216884613037,
+   3.8033604621887207,
+   2.7047481536865234,
+   2.8870697021484375,
+   2.0986123085021973,
+   4.091042518615723,
+   3.110213279724121,
+   3.685577392578125,
+   1.1466034650802612,
+   3.049588680267334,
+   3.580216884613037,
+   3.397895336151123,
+   3.2437446117401123,
+   3.8033604621887207,
+   3.580216884613037,
+   3.397895336151123,
+   1.0870113372802734,
+   2.245215892791748,
+   2.9383630752563477,
+   3.4849066734313965,
+   4.784189701080322,
+   2.791759490966797,
+   4.49650764465332,
+   3.4849066734313965,
+   2.663926124572754,
+   2.5869650840759277,
+   2.791759490966797,
+   3.397895336151123,
+   1.1378698348999023,
+   3.31785249710083,
+   3.31785249710083,
+   3.31785249710083,
+   3.2437446117401123,
+   2.8870697021484375
+  ]
+ },
+ "embedder_name": "hashing:1024:fitted",
+ "dim": 1024,
+ "n_documents": 131,
+ "counts": {
+  "dataset": 1,
+  "region": 9,
+  "region_month": 92,
+  "float": 10,
+  "query": 11,
+  "glossary": 6,
+  "dropped": 2
+ },
+ "documents": [
+  {
+   "doc_id": "dataset",
+   "kind": "dataset",
+   "title": "What this FloatChat database contains",
+   "text": "This database holds 928 ARGO float profiles containing 481,181 measured levels, covering 2023-01-01 to 2024-12-31 in the North Indian Ocean. Nothing outside that date window exists here. It was built from the GDAC global profile index dated 20260828172414, which held 3,397,664 rows; 12,372 survived the study filter and 2,575 profiles were present in the downloaded NetCDF files. Measurements are pressure in decibars, temperature in degrees Celsius, and practical salinity in PSU. There are no biogeochemical parameters: no oxygen, no chlorophyll, no nitrate, no pH, no BGC floats of any kind. Levels whose QC flag was outside 1,2,5,8 were removed during ingest, so every value here is good-QC data. Loaded 2026-08-29 02:29:01.498401+05:30.",
+   "source": "SELECT loaded_at::text AS loaded_at, gdac_index_date,\n           window_start::date::text AS window_start,\n           window_end::date::text AS window_end,\n           good_qc_flags, index_rows_total, index_rows_kept,\n           profiles_in_files, profiles_written, levels_written\n    FROM ingest_run",
+   "keys": {
+    "start": "2023-01-01",
+    "end": "2024-12-31"
+   }
+  },
+  {
+   "doc_id": "region:Andaman or Burma Sea",
+   "kind": "region",
+   "title": "Region: Andaman or Burma Sea",
+   "text": "Andaman or Burma Sea is a named ocean region with IHO S-23 MRGID 4274 (source: IHO Limits of Oceans and Seas, Special Publication 23; published by Flanders Marine Institute (VLIZ), Marine Regions, https://www.marineregions.org/). Its stored outline spans longitude 92.39 to 99.14 east and latitude 5.53 to 17.75 north. No profiles in this database fall inside Andaman or Burma Sea. It is a region the boundary set knows about, not a region these ten floats visited. Any question about Andaman or Burma Sea has no data behind it.",
+   "source": "SELECT r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n           r.min_lon, r.min_lat, r.max_lon, r.max_lat,\n           count(p.profile_id) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           max(p.pres_max) AS deepest_dbar\n    FROM regions r\n    LEFT JOIN profile_regions pr ON pr.region = r.name\n    LEFT JOIN profiles p ON p.profile_id = pr.profile_id\n    GROUP BY r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n             r.min_lon, r.min_lat, r.max_lon, r.max_lat\n    ORDER BY r.name",
+   "keys": {
+    "region": "Andaman or Burma Sea",
+    "profiles": 0
+   }
+  },
+  {
+   "doc_id": "region:Arabian Sea",
+   "kind": "region",
+   "title": "Region: Arabian Sea",
+   "text": "Arabian Sea is a named ocean region with IHO S-23 MRGID 4268 (source: IHO Limits of Oceans and Seas, Special Publication 23; published by Flanders Marine Institute (VLIZ), Marine Regions, https://www.marineregions.org/). Its stored outline spans longitude 51.02 to 74.34 east and latitude -0.70 to 25.60 north. It holds 299 profiles from 5 floats, between 2023-01-04 and 2024-12-31, reaching 2036.4 dbar at the deepest. Its mean near-surface (0-10 dbar) temperature is 28.28 degrees C and its mean near-surface salinity is 35.428 PSU, over 1,222 levels.",
+   "source": "SELECT r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n           r.min_lon, r.min_lat, r.max_lon, r.max_lat,\n           count(p.profile_id) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           max(p.pres_max) AS deepest_dbar\n    FROM regions r\n    LEFT JOIN profile_regions pr ON pr.region = r.name\n    LEFT JOIN profiles p ON p.profile_id = pr.profile_id\n    GROUP BY r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n             r.min_lon, r.min_lat, r.max_lon, r.max_lat\n    ORDER BY r.name",
+   "keys": {
+    "region": "Arabian Sea",
+    "profiles": 299
+   }
+  },
+  {
+   "doc_id": "region:Bay of Bengal",
+   "kind": "region",
+   "title": "Region: Bay of Bengal",
+   "text": "Bay of Bengal is a named ocean region with IHO S-23 MRGID 4273 (source: IHO Limits of Oceans and Seas, Special Publication 23; published by Flanders Marine Institute (VLIZ), Marine Regions, https://www.marineregions.org/). Its stored outline spans longitude 78.90 to 95.05 east and latitude 5.75 to 24.38 north. It holds 209 profiles from 3 floats, between 2023-01-06 and 2024-12-28, reaching 2035.4 dbar at the deepest. Its mean near-surface (0-10 dbar) temperature is 29.18 degrees C and its mean near-surface salinity is 32.872 PSU, over 2,104 levels.",
+   "source": "SELECT r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n           r.min_lon, r.min_lat, r.max_lon, r.max_lat,\n           count(p.profile_id) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           max(p.pres_max) AS deepest_dbar\n    FROM regions r\n    LEFT JOIN profile_regions pr ON pr.region = r.name\n    LEFT JOIN profiles p ON p.profile_id = pr.profile_id\n    GROUP BY r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n             r.min_lon, r.min_lat, r.max_lon, r.max_lat\n    ORDER BY r.name",
+   "keys": {
+    "region": "Bay of Bengal",
+    "profiles": 209
+   }
+  },
+  {
+   "doc_id": "region:Gulf of Aden",
+   "kind": "region",
+   "title": "Region: Gulf of Aden",
+   "text": "Gulf of Aden is a named ocean region with IHO S-23 MRGID 4265 (source: IHO Limits of Oceans and Seas, Special Publication 23; published by Flanders Marine Institute (VLIZ), Marine Regions, https://www.marineregions.org/). Its stored outline spans longitude 42.51 to 51.29 east and latitude 10.38 to 15.22 north. It holds 268 profiles from 1 floats, between 2023-05-17 and 2024-12-31, reaching 2052.2 dbar at the deepest. Its mean near-surface (0-10 dbar) temperature is 29.22 degrees C and its mean near-surface salinity is 36.287 PSU, over 1,977 levels.",
+   "source": "SELECT r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n           r.min_lon, r.min_lat, r.max_lon, r.max_lat,\n           count(p.profile_id) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           max(p.pres_max) AS deepest_dbar\n    FROM regions r\n    LEFT JOIN profile_regions pr ON pr.region = r.name\n    LEFT JOIN profiles p ON p.profile_id = pr.profile_id\n    GROUP BY r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n             r.min_lon, r.min_lat, r.max_lon, r.max_lat\n    ORDER BY r.name",
+   "keys": {
+    "region": "Gulf of Aden",
+    "profiles": 268
+   }
+  },
+  {
+   "doc_id": "region:Gulf of Oman",
+   "kind": "region",
+   "title": "Region: Gulf of Oman",
+   "text": "Gulf of Oman is a named ocean region with IHO S-23 MRGID 4267 (source: IHO Limits of Oceans and Seas, Special Publication 23; published by Flanders Marine Institute (VLIZ), Marine Regions, https://www.marineregions.org/). Its stored outline spans longitude 56.27 to 61.78 east and latitude 22.47 to 25.94 north. No profiles in this database fall inside Gulf of Oman. It is a region the boundary set knows about, not a region these ten floats visited. Any question about Gulf of Oman has no data behind it.",
+   "source": "SELECT r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n           r.min_lon, r.min_lat, r.max_lon, r.max_lat,\n           count(p.profile_id) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           max(p.pres_max) AS deepest_dbar\n    FROM regions r\n    LEFT JOIN profile_regions pr ON pr.region = r.name\n    LEFT JOIN profiles p ON p.profile_id = pr.profile_id\n    GROUP BY r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n             r.min_lon, r.min_lat, r.max_lon, r.max_lat\n    ORDER BY r.name",
+   "keys": {
+    "region": "Gulf of Oman",
+    "profiles": 0
+   }
+  },
+  {
+   "doc_id": "region:Indian Ocean",
+   "kind": "region",
+   "title": "Region: Indian Ocean",
+   "text": "Indian Ocean is a named ocean region with IHO S-23 MRGID 1904 (source: IHO Limits of Oceans and Seas, Special Publication 23; published by Flanders Marine Institute (VLIZ), Marine Regions, https://www.marineregions.org/). Its stored outline spans longitude 20.00 to 146.90 east and latitude -60.00 to 10.45 north. It holds 152 profiles from 2 floats, between 2023-01-02 and 2024-12-30, reaching 2005.1 dbar at the deepest. Its mean near-surface (0-10 dbar) temperature is 29.13 degrees C and its mean near-surface salinity is 34.353 PSU, over 1,411 levels.",
+   "source": "SELECT r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n           r.min_lon, r.min_lat, r.max_lon, r.max_lat,\n           count(p.profile_id) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           max(p.pres_max) AS deepest_dbar\n    FROM regions r\n    LEFT JOIN profile_regions pr ON pr.region = r.name\n    LEFT JOIN profiles p ON p.profile_id = pr.profile_id\n    GROUP BY r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n             r.min_lon, r.min_lat, r.max_lon, r.max_lat\n    ORDER BY r.name",
+   "keys": {
+    "region": "Indian Ocean",
+    "profiles": 152
+   }
+  },
+  {
+   "doc_id": "region:Laccadive Sea",
+   "kind": "region",
+   "title": "Region: Laccadive Sea",
+   "text": "Laccadive Sea is a named ocean region with IHO S-23 MRGID 4269 (source: IHO Limits of Oceans and Seas, Special Publication 23; published by Flanders Marine Institute (VLIZ), Marine Regions, https://www.marineregions.org/). Its stored outline spans longitude 71.98 to 80.59 east and latitude -0.69 to 14.79 north. No profiles in this database fall inside Laccadive Sea. It is a region the boundary set knows about, not a region these ten floats visited. Any question about Laccadive Sea has no data behind it.",
+   "source": "SELECT r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n           r.min_lon, r.min_lat, r.max_lon, r.max_lat,\n           count(p.profile_id) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           max(p.pres_max) AS deepest_dbar\n    FROM regions r\n    LEFT JOIN profile_regions pr ON pr.region = r.name\n    LEFT JOIN profiles p ON p.profile_id = pr.profile_id\n    GROUP BY r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n             r.min_lon, r.min_lat, r.max_lon, r.max_lat\n    ORDER BY r.name",
+   "keys": {
+    "region": "Laccadive Sea",
+    "profiles": 0
+   }
+  },
+  {
+   "doc_id": "region:Persian Gulf",
+   "kind": "region",
+   "title": "Region: Persian Gulf",
+   "text": "Persian Gulf is a named ocean region with IHO S-23 MRGID 4266 (source: IHO Limits of Oceans and Seas, Special Publication 23; published by Flanders Marine Institute (VLIZ), Marine Regions, https://www.marineregions.org/). Its stored outline spans longitude 47.70 to 57.34 east and latitude 23.96 to 31.18 north. No profiles in this database fall inside Persian Gulf. It is a region the boundary set knows about, not a region these ten floats visited. Any question about Persian Gulf has no data behind it.",
+   "source": "SELECT r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n           r.min_lon, r.min_lat, r.max_lon, r.max_lat,\n           count(p.profile_id) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           max(p.pres_max) AS deepest_dbar\n    FROM regions r\n    LEFT JOIN profile_regions pr ON pr.region = r.name\n    LEFT JOIN profiles p ON p.profile_id = pr.profile_id\n    GROUP BY r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n             r.min_lon, r.min_lat, r.max_lon, r.max_lat\n    ORDER BY r.name",
+   "keys": {
+    "region": "Persian Gulf",
+    "profiles": 0
+   }
+  },
+  {
+   "doc_id": "region:Red Sea",
+   "kind": "region",
+   "title": "Region: Red Sea",
+   "text": "Red Sea is a named ocean region with IHO S-23 MRGID 4264 (source: IHO Limits of Oceans and Seas, Special Publication 23; published by Flanders Marine Institute (VLIZ), Marine Regions, https://www.marineregions.org/). Its stored outline spans longitude 33.64 to 43.51 east and latitude 12.46 to 28.14 north. No profiles in this database fall inside Red Sea. It is a region the boundary set knows about, not a region these ten floats visited. Any question about Red Sea has no data behind it.",
+   "source": "SELECT r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n           r.min_lon, r.min_lat, r.max_lon, r.max_lat,\n           count(p.profile_id) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           max(p.pres_max) AS deepest_dbar\n    FROM regions r\n    LEFT JOIN profile_regions pr ON pr.region = r.name\n    LEFT JOIN profiles p ON p.profile_id = pr.profile_id\n    GROUP BY r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n             r.min_lon, r.min_lat, r.max_lon, r.max_lat\n    ORDER BY r.name",
+   "keys": {
+    "region": "Red Sea",
+    "profiles": 0
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2023-01-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, January 2023",
+   "text": "In January 2023, the Arabian Sea has 6 profiles from 2 floats, reaching 1987.9 dbar. Mean near-surface temperature 25.35 degrees C, mean near-surface salinity 36.418 PSU. Date range 2023-01-01 to 2023-01-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2023-01-01",
+    "end": "2023-01-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2023-02-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, February 2023",
+   "text": "In February 2023, the Arabian Sea has 4 profiles from 2 floats, reaching 1989.6 dbar. Mean near-surface temperature 25.80 degrees C, mean near-surface salinity 35.992 PSU. Date range 2023-02-01 to 2023-02-28.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2023-02-01",
+    "end": "2023-02-28"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2023-03-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, March 2023",
+   "text": "In March 2023, the Arabian Sea has 7 profiles from 2 floats, reaching 1990.0 dbar. Mean near-surface temperature 27.31 degrees C, mean near-surface salinity 35.583 PSU. Date range 2023-03-01 to 2023-03-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2023-03-01",
+    "end": "2023-03-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2023-04-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, April 2023",
+   "text": "In April 2023, the Arabian Sea has 6 profiles from 2 floats, reaching 1985.9 dbar. Mean near-surface temperature 28.78 degrees C, mean near-surface salinity 36.082 PSU. Date range 2023-04-01 to 2023-04-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2023-04-01",
+    "end": "2023-04-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2023-05-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, May 2023",
+   "text": "In May 2023, the Arabian Sea has 8 profiles from 3 floats, reaching 2000.1 dbar. Mean near-surface temperature 30.91 degrees C, mean near-surface salinity 34.655 PSU. Date range 2023-05-01 to 2023-05-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2023-05-01",
+    "end": "2023-05-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2023-06-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, June 2023",
+   "text": "In June 2023, the Arabian Sea has 9 profiles from 3 floats, reaching 1991.1 dbar. Mean near-surface temperature 29.64 degrees C, mean near-surface salinity 36.057 PSU. Date range 2023-06-01 to 2023-06-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2023-06-01",
+    "end": "2023-06-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2023-07-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, July 2023",
+   "text": "In July 2023, the Arabian Sea has 8 profiles from 3 floats, reaching 2000.6 dbar. Mean near-surface temperature 28.09 degrees C, mean near-surface salinity 33.060 PSU. Date range 2023-07-01 to 2023-07-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2023-07-01",
+    "end": "2023-07-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2023-08-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, August 2023",
+   "text": "In August 2023, the Arabian Sea has 9 profiles from 3 floats, reaching 2000.9 dbar. Mean near-surface temperature 27.39 degrees C, mean near-surface salinity 33.316 PSU. Date range 2023-08-01 to 2023-08-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2023-08-01",
+    "end": "2023-08-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2023-09-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, September 2023",
+   "text": "In September 2023, the Arabian Sea has 9 profiles from 3 floats, reaching 2001.0 dbar. Mean near-surface temperature 28.25 degrees C, mean near-surface salinity 35.534 PSU. Date range 2023-09-01 to 2023-09-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2023-09-01",
+    "end": "2023-09-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2023-10-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, October 2023",
+   "text": "In October 2023, the Arabian Sea has 18 profiles from 4 floats, reaching 2004.3 dbar. Mean near-surface temperature 29.49 degrees C, mean near-surface salinity 36.094 PSU. Date range 2023-10-01 to 2023-10-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2023-10-01",
+    "end": "2023-10-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2023-11-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, November 2023",
+   "text": "In November 2023, the Arabian Sea has 19 profiles from 4 floats, reaching 2000.4 dbar. Mean near-surface temperature 29.53 degrees C, mean near-surface salinity 35.557 PSU. Date range 2023-11-01 to 2023-11-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2023-11-01",
+    "end": "2023-11-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2023-12-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, December 2023",
+   "text": "In December 2023, the Arabian Sea has 15 profiles from 4 floats, reaching 2000.2 dbar. Mean near-surface temperature 27.89 degrees C, mean near-surface salinity 35.531 PSU. Date range 2023-12-01 to 2023-12-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2023-12-01",
+    "end": "2023-12-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2024-01-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, January 2024",
+   "text": "In January 2024, the Arabian Sea has 15 profiles from 4 floats, reaching 1999.9 dbar. Mean near-surface temperature 27.26 degrees C, mean near-surface salinity 35.971 PSU. Date range 2024-01-01 to 2024-01-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2024-01-01",
+    "end": "2024-01-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2024-02-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, February 2024",
+   "text": "In February 2024, the Arabian Sea has 28 profiles from 5 floats, reaching 2003.1 dbar. Mean near-surface temperature 27.38 degrees C, mean near-surface salinity 35.801 PSU. Date range 2024-02-01 to 2024-02-29.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2024-02-01",
+    "end": "2024-02-29"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2024-03-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, March 2024",
+   "text": "In March 2024, the Arabian Sea has 12 profiles from 4 floats, reaching 2000.9 dbar. Mean near-surface temperature 27.71 degrees C, mean near-surface salinity 34.651 PSU. Date range 2024-03-01 to 2024-03-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2024-03-01",
+    "end": "2024-03-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2024-04-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, April 2024",
+   "text": "In April 2024, the Arabian Sea has 12 profiles from 4 floats, reaching 2000.9 dbar. Mean near-surface temperature 29.29 degrees C, mean near-surface salinity 34.626 PSU. Date range 2024-04-01 to 2024-04-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2024-04-01",
+    "end": "2024-04-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2024-05-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, May 2024",
+   "text": "In May 2024, the Arabian Sea has 13 profiles from 4 floats, reaching 2000.4 dbar. Mean near-surface temperature 30.79 degrees C, mean near-surface salinity 35.152 PSU. Date range 2024-05-01 to 2024-05-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2024-05-01",
+    "end": "2024-05-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2024-06-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, June 2024",
+   "text": "In June 2024, the Arabian Sea has 12 profiles from 4 floats, reaching 2000.6 dbar. Mean near-surface temperature 30.61 degrees C, mean near-surface salinity 35.310 PSU. Date range 2024-06-01 to 2024-06-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2024-06-01",
+    "end": "2024-06-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2024-07-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, July 2024",
+   "text": "In July 2024, the Arabian Sea has 12 profiles from 4 floats, reaching 2000.8 dbar. Mean near-surface temperature 28.59 degrees C, mean near-surface salinity 35.124 PSU. Date range 2024-07-01 to 2024-07-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2024-07-01",
+    "end": "2024-07-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2024-08-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, August 2024",
+   "text": "In August 2024, the Arabian Sea has 12 profiles from 4 floats, reaching 2001.0 dbar. Mean near-surface temperature 28.01 degrees C, mean near-surface salinity 35.484 PSU. Date range 2024-08-01 to 2024-08-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2024-08-01",
+    "end": "2024-08-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2024-09-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, September 2024",
+   "text": "In September 2024, the Arabian Sea has 22 profiles from 5 floats, reaching 2036.4 dbar. Mean near-surface temperature 26.85 degrees C, mean near-surface salinity 35.636 PSU. Date range 2024-09-01 to 2024-09-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2024-09-01",
+    "end": "2024-09-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2024-10-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, October 2024",
+   "text": "In October 2024, the Arabian Sea has 19 profiles from 5 floats, reaching 2006.6 dbar. Mean near-surface temperature 28.12 degrees C, mean near-surface salinity 35.524 PSU. Date range 2024-10-01 to 2024-10-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2024-10-01",
+    "end": "2024-10-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2024-11-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, November 2024",
+   "text": "In November 2024, the Arabian Sea has 11 profiles from 4 floats, reaching 2000.3 dbar. Mean near-surface temperature 29.13 degrees C, mean near-surface salinity 34.576 PSU. Date range 2024-11-01 to 2024-11-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2024-11-01",
+    "end": "2024-11-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Arabian Sea:2024-12-01",
+   "kind": "region_month",
+   "title": "Arabian Sea, December 2024",
+   "text": "In December 2024, the Arabian Sea has 13 profiles from 4 floats, reaching 2000.7 dbar. Mean near-surface temperature 27.59 degrees C, mean near-surface salinity 33.787 PSU. Date range 2024-12-01 to 2024-12-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Arabian Sea",
+    "start": "2024-12-01",
+    "end": "2024-12-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2023-01-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, January 2023",
+   "text": "In January 2023, the Bay of Bengal has 6 profiles from 2 floats, reaching 1983.9 dbar. Mean near-surface temperature 26.79 degrees C, mean near-surface salinity 32.611 PSU. Date range 2023-01-01 to 2023-01-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2023-01-01",
+    "end": "2023-01-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2023-02-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, February 2023",
+   "text": "In February 2023, the Bay of Bengal has 6 profiles from 2 floats, reaching 1983.5 dbar. Mean near-surface temperature 27.02 degrees C, mean near-surface salinity 32.285 PSU. Date range 2023-02-01 to 2023-02-28.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2023-02-01",
+    "end": "2023-02-28"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2023-03-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, March 2023",
+   "text": "In March 2023, the Bay of Bengal has 6 profiles from 2 floats, reaching 1980.8 dbar. Mean near-surface temperature 28.27 degrees C, mean near-surface salinity 32.332 PSU. Date range 2023-03-01 to 2023-03-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2023-03-01",
+    "end": "2023-03-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2023-04-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, April 2023",
+   "text": "In April 2023, the Bay of Bengal has 6 profiles from 2 floats, reaching 1985.9 dbar. Mean near-surface temperature 30.11 degrees C, mean near-surface salinity 32.715 PSU. Date range 2023-04-01 to 2023-04-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2023-04-01",
+    "end": "2023-04-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2023-05-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, May 2023",
+   "text": "In May 2023, the Bay of Bengal has 6 profiles from 2 floats, reaching 1983.2 dbar. Mean near-surface temperature 30.23 degrees C, mean near-surface salinity 32.718 PSU. Date range 2023-05-01 to 2023-05-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2023-05-01",
+    "end": "2023-05-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2023-06-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, June 2023",
+   "text": "In June 2023, the Bay of Bengal has 6 profiles from 2 floats, reaching 1983.9 dbar. Mean near-surface temperature 29.99 degrees C, mean near-surface salinity 32.939 PSU. Date range 2023-06-01 to 2023-06-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2023-06-01",
+    "end": "2023-06-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2023-07-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, July 2023",
+   "text": "In July 2023, the Bay of Bengal has 7 profiles from 2 floats, reaching 1982.6 dbar. Mean near-surface temperature 29.42 degrees C, mean near-surface salinity 32.991 PSU. Date range 2023-07-01 to 2023-07-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2023-07-01",
+    "end": "2023-07-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2023-08-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, August 2023",
+   "text": "In August 2023, the Bay of Bengal has 6 profiles from 2 floats, reaching 2000.8 dbar. Mean near-surface temperature 29.15 degrees C, mean near-surface salinity 32.931 PSU. Date range 2023-08-01 to 2023-08-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2023-08-01",
+    "end": "2023-08-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2023-09-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, September 2023",
+   "text": "In September 2023, the Bay of Bengal has 10 profiles from 3 floats, reaching 2012.1 dbar. Mean near-surface temperature 28.84 degrees C, mean near-surface salinity 33.125 PSU. Date range 2023-09-01 to 2023-09-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2023-09-01",
+    "end": "2023-09-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2023-10-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, October 2023",
+   "text": "In October 2023, the Bay of Bengal has 20 profiles from 3 floats, reaching 2013.4 dbar. Mean near-surface temperature 28.93 degrees C, mean near-surface salinity 33.169 PSU. Date range 2023-10-01 to 2023-10-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2023-10-01",
+    "end": "2023-10-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2023-11-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, November 2023",
+   "text": "In November 2023, the Bay of Bengal has 9 profiles from 3 floats, reaching 2013.7 dbar. Mean near-surface temperature 29.46 degrees C, mean near-surface salinity 32.833 PSU. Date range 2023-11-01 to 2023-11-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2023-11-01",
+    "end": "2023-11-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2023-12-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, December 2023",
+   "text": "In December 2023, the Bay of Bengal has 10 profiles from 3 floats, reaching 2029.1 dbar. Mean near-surface temperature 28.77 degrees C, mean near-surface salinity 32.467 PSU. Date range 2023-12-01 to 2023-12-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2023-12-01",
+    "end": "2023-12-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2024-01-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, January 2024",
+   "text": "In January 2024, the Bay of Bengal has 10 profiles from 3 floats, reaching 2029.7 dbar. Mean near-surface temperature 28.33 degrees C, mean near-surface salinity 32.586 PSU. Date range 2024-01-01 to 2024-01-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2024-01-01",
+    "end": "2024-01-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2024-02-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, February 2024",
+   "text": "In February 2024, the Bay of Bengal has 8 profiles from 3 floats, reaching 2034.2 dbar. Mean near-surface temperature 28.31 degrees C, mean near-surface salinity 32.867 PSU. Date range 2024-02-01 to 2024-02-29.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2024-02-01",
+    "end": "2024-02-29"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2024-03-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, March 2024",
+   "text": "In March 2024, the Bay of Bengal has 10 profiles from 3 floats, reaching 2008.0 dbar. Mean near-surface temperature 28.75 degrees C, mean near-surface salinity 32.759 PSU. Date range 2024-03-01 to 2024-03-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2024-03-01",
+    "end": "2024-03-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2024-04-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, April 2024",
+   "text": "In April 2024, the Bay of Bengal has 9 profiles from 3 floats, reaching 2006.1 dbar. Mean near-surface temperature 30.30 degrees C, mean near-surface salinity 32.437 PSU. Date range 2024-04-01 to 2024-04-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2024-04-01",
+    "end": "2024-04-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2024-05-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, May 2024",
+   "text": "In May 2024, the Bay of Bengal has 10 profiles from 3 floats, reaching 2035.4 dbar. Mean near-surface temperature 31.09 degrees C, mean near-surface salinity 32.832 PSU. Date range 2024-05-01 to 2024-05-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2024-05-01",
+    "end": "2024-05-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2024-06-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, June 2024",
+   "text": "In June 2024, the Bay of Bengal has 9 profiles from 3 floats, reaching 2025.6 dbar. Mean near-surface temperature 29.71 degrees C, mean near-surface salinity 33.046 PSU. Date range 2024-06-01 to 2024-06-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2024-06-01",
+    "end": "2024-06-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2024-07-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, July 2024",
+   "text": "In July 2024, the Bay of Bengal has 9 profiles from 3 floats, reaching 2030.6 dbar. Mean near-surface temperature 29.31 degrees C, mean near-surface salinity 33.129 PSU. Date range 2024-07-01 to 2024-07-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2024-07-01",
+    "end": "2024-07-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2024-08-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, August 2024",
+   "text": "In August 2024, the Bay of Bengal has 9 profiles from 3 floats, reaching 1984.1 dbar. Mean near-surface temperature 29.42 degrees C, mean near-surface salinity 33.509 PSU. Date range 2024-08-01 to 2024-08-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2024-08-01",
+    "end": "2024-08-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2024-09-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, September 2024",
+   "text": "In September 2024, the Bay of Bengal has 9 profiles from 3 floats, reaching 2031.7 dbar. Mean near-surface temperature 29.18 degrees C, mean near-surface salinity 33.258 PSU. Date range 2024-09-01 to 2024-09-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2024-09-01",
+    "end": "2024-09-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2024-10-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, October 2024",
+   "text": "In October 2024, the Bay of Bengal has 10 profiles from 3 floats, reaching 2029.5 dbar. Mean near-surface temperature 29.76 degrees C, mean near-surface salinity 32.569 PSU. Date range 2024-10-01 to 2024-10-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2024-10-01",
+    "end": "2024-10-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2024-11-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, November 2024",
+   "text": "In November 2024, the Bay of Bengal has 9 profiles from 3 floats, reaching 2033.9 dbar. Mean near-surface temperature 29.72 degrees C, mean near-surface salinity 32.976 PSU. Date range 2024-11-01 to 2024-11-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2024-11-01",
+    "end": "2024-11-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Bay of Bengal:2024-12-01",
+   "kind": "region_month",
+   "title": "Bay of Bengal, December 2024",
+   "text": "In December 2024, the Bay of Bengal has 9 profiles from 3 floats, reaching 2005.6 dbar. Mean near-surface temperature 28.66 degrees C, mean near-surface salinity 32.966 PSU. Date range 2024-12-01 to 2024-12-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Bay of Bengal",
+    "start": "2024-12-01",
+    "end": "2024-12-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2023-05-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, May 2023",
+   "text": "In May 2023, the Gulf of Aden has 8 profiles from 1 floats, reaching 739.0 dbar. Mean near-surface temperature 30.98 degrees C, mean near-surface salinity 36.574 PSU. Date range 2023-05-01 to 2023-05-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2023-05-01",
+    "end": "2023-05-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2023-06-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, June 2023",
+   "text": "In June 2023, the Gulf of Aden has 15 profiles from 1 floats, reaching 819.6 dbar. Mean near-surface temperature 31.34 degrees C, mean near-surface salinity 36.651 PSU. Date range 2023-06-01 to 2023-06-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2023-06-01",
+    "end": "2023-06-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2023-07-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, July 2023",
+   "text": "In July 2023, the Gulf of Aden has 15 profiles from 1 floats, reaching 1258.8 dbar. Mean near-surface temperature 30.26 degrees C, mean near-surface salinity 36.701 PSU. Date range 2023-07-01 to 2023-07-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2023-07-01",
+    "end": "2023-07-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2023-08-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, August 2023",
+   "text": "In August 2023, the Gulf of Aden has 16 profiles from 1 floats, reaching 1241.3 dbar. Mean near-surface temperature 29.98 degrees C, mean near-surface salinity 36.721 PSU. Date range 2023-08-01 to 2023-08-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2023-08-01",
+    "end": "2023-08-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2023-09-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, September 2023",
+   "text": "In September 2023, the Gulf of Aden has 15 profiles from 1 floats, reaching 1241.3 dbar. Mean near-surface temperature 31.97 degrees C, mean near-surface salinity 36.780 PSU. Date range 2023-09-01 to 2023-09-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2023-09-01",
+    "end": "2023-09-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2023-10-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, October 2023",
+   "text": "In October 2023, the Gulf of Aden has 15 profiles from 1 floats, reaching 1231.7 dbar. Mean near-surface temperature 30.66 degrees C, mean near-surface salinity 36.743 PSU. Date range 2023-10-01 to 2023-10-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2023-10-01",
+    "end": "2023-10-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2023-11-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, November 2023",
+   "text": "In November 2023, the Gulf of Aden has 14 profiles from 1 floats, reaching 1232.8 dbar. Mean near-surface temperature 28.46 degrees C, mean near-surface salinity 36.526 PSU. Date range 2023-11-01 to 2023-11-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2023-11-01",
+    "end": "2023-11-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2023-12-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, December 2023",
+   "text": "In December 2023, the Gulf of Aden has 15 profiles from 1 floats, reaching 1227.9 dbar. Mean near-surface temperature 26.86 degrees C, mean near-surface salinity 36.225 PSU. Date range 2023-12-01 to 2023-12-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2023-12-01",
+    "end": "2023-12-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2024-01-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, January 2024",
+   "text": "In January 2024, the Gulf of Aden has 15 profiles from 1 floats, reaching 1251.1 dbar. Mean near-surface temperature 26.50 degrees C, mean near-surface salinity 36.070 PSU. Date range 2024-01-01 to 2024-01-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2024-01-01",
+    "end": "2024-01-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2024-02-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, February 2024",
+   "text": "In February 2024, the Gulf of Aden has 9 profiles from 1 floats, reaching 1246.8 dbar. Mean near-surface temperature 27.02 degrees C, mean near-surface salinity 35.919 PSU. Date range 2024-02-01 to 2024-02-29.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2024-02-01",
+    "end": "2024-02-29"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2024-03-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, March 2024",
+   "text": "In March 2024, the Gulf of Aden has 15 profiles from 1 floats, reaching 1401.7 dbar. Mean near-surface temperature 27.98 degrees C, mean near-surface salinity 35.852 PSU. Date range 2024-03-01 to 2024-03-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2024-03-01",
+    "end": "2024-03-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2024-04-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, April 2024",
+   "text": "In April 2024, the Gulf of Aden has 14 profiles from 1 floats, reaching 2028.1 dbar. Mean near-surface temperature 29.17 degrees C, mean near-surface salinity 35.884 PSU. Date range 2024-04-01 to 2024-04-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2024-04-01",
+    "end": "2024-04-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2024-05-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, May 2024",
+   "text": "In May 2024, the Gulf of Aden has 15 profiles from 1 floats, reaching 2030.9 dbar. Mean near-surface temperature 31.21 degrees C, mean near-surface salinity 36.118 PSU. Date range 2024-05-01 to 2024-05-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2024-05-01",
+    "end": "2024-05-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2024-06-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, June 2024",
+   "text": "In June 2024, the Gulf of Aden has 14 profiles from 1 floats, reaching 1986.9 dbar. Mean near-surface temperature 31.98 degrees C, mean near-surface salinity 36.224 PSU. Date range 2024-06-01 to 2024-06-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2024-06-01",
+    "end": "2024-06-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2024-07-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, July 2024",
+   "text": "In July 2024, the Gulf of Aden has 15 profiles from 1 floats, reaching 2025.8 dbar. Mean near-surface temperature 30.30 degrees C, mean near-surface salinity 36.383 PSU. Date range 2024-07-01 to 2024-07-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2024-07-01",
+    "end": "2024-07-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2024-08-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, August 2024",
+   "text": "In August 2024, the Gulf of Aden has 15 profiles from 1 floats, reaching 2030.8 dbar. Mean near-surface temperature 28.18 degrees C, mean near-surface salinity 36.242 PSU. Date range 2024-08-01 to 2024-08-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2024-08-01",
+    "end": "2024-08-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2024-09-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, September 2024",
+   "text": "In September 2024, the Gulf of Aden has 4 profiles from 1 floats, reaching 2011.8 dbar. Mean near-surface temperature 27.11 degrees C, mean near-surface salinity 35.979 PSU. Date range 2024-09-01 to 2024-09-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2024-09-01",
+    "end": "2024-09-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2024-10-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, October 2024",
+   "text": "In October 2024, the Gulf of Aden has 9 profiles from 1 floats, reaching 2021.7 dbar. Mean near-surface temperature 28.01 degrees C, mean near-surface salinity 36.029 PSU. Date range 2024-10-01 to 2024-10-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2024-10-01",
+    "end": "2024-10-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2024-11-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, November 2024",
+   "text": "In November 2024, the Gulf of Aden has 15 profiles from 1 floats, reaching 2052.2 dbar. Mean near-surface temperature 27.79 degrees C, mean near-surface salinity 35.769 PSU. Date range 2024-11-01 to 2024-11-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2024-11-01",
+    "end": "2024-11-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Gulf of Aden:2024-12-01",
+   "kind": "region_month",
+   "title": "Gulf of Aden, December 2024",
+   "text": "In December 2024, the Gulf of Aden has 15 profiles from 1 floats, reaching 2017.5 dbar. Mean near-surface temperature 26.69 degrees C, mean near-surface salinity 36.019 PSU. Date range 2024-12-01 to 2024-12-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Gulf of Aden",
+    "start": "2024-12-01",
+    "end": "2024-12-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2023-01-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, January 2023",
+   "text": "In January 2023, the Indian Ocean has 7 profiles from 2 floats, reaching 2003.1 dbar. Mean near-surface temperature 28.17 degrees C, mean near-surface salinity 34.081 PSU. Date range 2023-01-01 to 2023-01-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2023-01-01",
+    "end": "2023-01-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2023-02-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, February 2023",
+   "text": "In February 2023, the Indian Ocean has 5 profiles from 2 floats, reaching 2001.9 dbar. Mean near-surface temperature 28.32 degrees C, mean near-surface salinity 33.974 PSU. Date range 2023-02-01 to 2023-02-28.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2023-02-01",
+    "end": "2023-02-28"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2023-03-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, March 2023",
+   "text": "In March 2023, the Indian Ocean has 8 profiles from 2 floats, reaching 2003.1 dbar. Mean near-surface temperature 28.99 degrees C, mean near-surface salinity 34.155 PSU. Date range 2023-03-01 to 2023-03-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2023-03-01",
+    "end": "2023-03-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2023-04-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, April 2023",
+   "text": "In April 2023, the Indian Ocean has 6 profiles from 2 floats, reaching 2001.9 dbar. Mean near-surface temperature 29.67 degrees C, mean near-surface salinity 34.319 PSU. Date range 2023-04-01 to 2023-04-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2023-04-01",
+    "end": "2023-04-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2023-05-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, May 2023",
+   "text": "In May 2023, the Indian Ocean has 6 profiles from 2 floats, reaching 2003.0 dbar. Mean near-surface temperature 28.63 degrees C, mean near-surface salinity 34.908 PSU. Date range 2023-05-01 to 2023-05-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2023-05-01",
+    "end": "2023-05-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2023-06-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, June 2023",
+   "text": "In June 2023, the Indian Ocean has 6 profiles from 2 floats, reaching 2003.3 dbar. Mean near-surface temperature 29.01 degrees C, mean near-surface salinity 35.186 PSU. Date range 2023-06-01 to 2023-06-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2023-06-01",
+    "end": "2023-06-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2023-07-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, July 2023",
+   "text": "In July 2023, the Indian Ocean has 6 profiles from 2 floats, reaching 2003.6 dbar. Mean near-surface temperature 28.89 degrees C, mean near-surface salinity 35.340 PSU. Date range 2023-07-01 to 2023-07-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2023-07-01",
+    "end": "2023-07-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2023-08-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, August 2023",
+   "text": "In August 2023, the Indian Ocean has 6 profiles from 2 floats, reaching 2002.1 dbar. Mean near-surface temperature 28.77 degrees C, mean near-surface salinity 35.230 PSU. Date range 2023-08-01 to 2023-08-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2023-08-01",
+    "end": "2023-08-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2023-09-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, September 2023",
+   "text": "In September 2023, the Indian Ocean has 6 profiles from 2 floats, reaching 2003.0 dbar. Mean near-surface temperature 28.77 degrees C, mean near-surface salinity 34.920 PSU. Date range 2023-09-01 to 2023-09-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2023-09-01",
+    "end": "2023-09-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2023-10-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, October 2023",
+   "text": "In October 2023, the Indian Ocean has 8 profiles from 2 floats, reaching 2003.4 dbar. Mean near-surface temperature 28.55 degrees C, mean near-surface salinity 34.289 PSU. Date range 2023-10-01 to 2023-10-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2023-10-01",
+    "end": "2023-10-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2023-11-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, November 2023",
+   "text": "In November 2023, the Indian Ocean has 6 profiles from 2 floats, reaching 2003.3 dbar. Mean near-surface temperature 28.58 degrees C, mean near-surface salinity 34.314 PSU. Date range 2023-11-01 to 2023-11-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2023-11-01",
+    "end": "2023-11-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2023-12-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, December 2023",
+   "text": "In December 2023, the Indian Ocean has 6 profiles from 2 floats, reaching 2004.1 dbar. Mean near-surface temperature 29.33 degrees C, mean near-surface salinity 34.033 PSU. Date range 2023-12-01 to 2023-12-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2023-12-01",
+    "end": "2023-12-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2024-01-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, January 2024",
+   "text": "In January 2024, the Indian Ocean has 6 profiles from 2 floats, reaching 2002.2 dbar. Mean near-surface temperature 29.41 degrees C, mean near-surface salinity 34.015 PSU. Date range 2024-01-01 to 2024-01-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2024-01-01",
+    "end": "2024-01-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2024-02-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, February 2024",
+   "text": "In February 2024, the Indian Ocean has 6 profiles from 2 floats, reaching 2003.5 dbar. Mean near-surface temperature 29.97 degrees C, mean near-surface salinity 33.920 PSU. Date range 2024-02-01 to 2024-02-29.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2024-02-01",
+    "end": "2024-02-29"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2024-03-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, March 2024",
+   "text": "In March 2024, the Indian Ocean has 6 profiles from 2 floats, reaching 2001.6 dbar. Mean near-surface temperature 30.21 degrees C, mean near-surface salinity 34.081 PSU. Date range 2024-03-01 to 2024-03-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2024-03-01",
+    "end": "2024-03-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2024-04-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, April 2024",
+   "text": "In April 2024, the Indian Ocean has 7 profiles from 2 floats, reaching 2003.8 dbar. Mean near-surface temperature 29.75 degrees C, mean near-surface salinity 34.203 PSU. Date range 2024-04-01 to 2024-04-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2024-04-01",
+    "end": "2024-04-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2024-05-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, May 2024",
+   "text": "In May 2024, the Indian Ocean has 7 profiles from 2 floats, reaching 2003.4 dbar. Mean near-surface temperature 29.66 degrees C, mean near-surface salinity 33.882 PSU. Date range 2024-05-01 to 2024-05-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2024-05-01",
+    "end": "2024-05-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2024-06-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, June 2024",
+   "text": "In June 2024, the Indian Ocean has 6 profiles from 2 floats, reaching 2003.9 dbar. Mean near-surface temperature 29.59 degrees C, mean near-surface salinity 34.472 PSU. Date range 2024-06-01 to 2024-06-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2024-06-01",
+    "end": "2024-06-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2024-07-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, July 2024",
+   "text": "In July 2024, the Indian Ocean has 6 profiles from 2 floats, reaching 2004.0 dbar. Mean near-surface temperature 29.11 degrees C, mean near-surface salinity 34.042 PSU. Date range 2024-07-01 to 2024-07-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2024-07-01",
+    "end": "2024-07-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2024-08-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, August 2024",
+   "text": "In August 2024, the Indian Ocean has 7 profiles from 2 floats, reaching 2003.7 dbar. Mean near-surface temperature 29.06 degrees C, mean near-surface salinity 34.568 PSU. Date range 2024-08-01 to 2024-08-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2024-08-01",
+    "end": "2024-08-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2024-09-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, September 2024",
+   "text": "In September 2024, the Indian Ocean has 6 profiles from 2 floats, reaching 2003.9 dbar. Mean near-surface temperature 29.72 degrees C, mean near-surface salinity 34.577 PSU. Date range 2024-09-01 to 2024-09-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2024-09-01",
+    "end": "2024-09-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2024-10-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, October 2024",
+   "text": "In October 2024, the Indian Ocean has 6 profiles from 2 floats, reaching 2005.1 dbar. Mean near-surface temperature 29.39 degrees C, mean near-surface salinity 34.053 PSU. Date range 2024-10-01 to 2024-10-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2024-10-01",
+    "end": "2024-10-31"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2024-11-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, November 2024",
+   "text": "In November 2024, the Indian Ocean has 6 profiles from 2 floats, reaching 2003.4 dbar. Mean near-surface temperature 29.41 degrees C, mean near-surface salinity 34.008 PSU. Date range 2024-11-01 to 2024-11-30.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2024-11-01",
+    "end": "2024-11-30"
+   }
+  },
+  {
+   "doc_id": "region_month:Indian Ocean:2024-12-01",
+   "kind": "region_month",
+   "title": "Indian Ocean, December 2024",
+   "text": "In December 2024, the Indian Ocean has 7 profiles from 2 floats, reaching 2003.4 dbar. Mean near-surface temperature 28.31 degrees C, mean near-surface salinity 33.953 PSU. Date range 2024-12-01 to 2024-12-31.",
+   "source": "SELECT pr.region,\n           date_trunc('month', p.juld)::date::text AS month_start,\n           (date_trunc('month', p.juld) + interval '1 month'\n                                        - interval '1 day')::date::text AS month_end,\n           to_char(p.juld, 'FMMonth YYYY') AS month_label,\n           count(*) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           max(p.pres_max) AS deepest_dbar\n    FROM profiles p\n    JOIN profile_regions pr ON pr.profile_id = p.profile_id\n    GROUP BY pr.region, date_trunc('month', p.juld), to_char(p.juld, 'FMMonth YYYY')\n    ORDER BY pr.region, month_start",
+   "keys": {
+    "region": "Indian Ocean",
+    "start": "2024-12-01",
+    "end": "2024-12-31"
+   }
+  },
+  {
+   "doc_id": "float:2902201",
+   "kind": "float",
+   "title": "Float 2902201 (incois)",
+   "text": "ARGO float WMO 2902201 is operated through the incois data centre, profiler type 846, delayed-mode status mixed. It contributed 73 profiles to this database out of 73 the GDAC index listed for it, between 2023-01-10 and 2024-12-30. Of those, 39 are delayed-mode (D), 0 are real-time adjusted (A) and 34 are raw real-time (R). It travelled between latitude 16.17 N and 19.50 N and longitude 58.36 E to 64.27 E, reaching 2000.6 dbar. Regions visited: Arabian Sea (73). It was chosen for this demo set because: Indian DAC caught mid-transition: 39 D, 34 R.",
+   "source": "SELECT f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n           f.selection_reason, f.n_profiles_index, f.approx_area,\n           count(p.profile_id) AS profiles,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           min(p.lat) AS min_lat, max(p.lat) AS max_lat,\n           min(p.lon) AS min_lon, max(p.lon) AS max_lon,\n           max(p.pres_max) AS deepest_dbar,\n           count(*) FILTER (WHERE p.data_mode = 'D') AS delayed,\n           count(*) FILTER (WHERE p.data_mode = 'A') AS adjusted,\n           count(*) FILTER (WHERE p.data_mode = 'R') AS realtime,\n           count(*) FILTER (WHERE NOT p.in_study_box) AS outside_box\n    FROM floats f\n    LEFT JOIN profiles p USING (wmo)\n    GROUP BY f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n             f.selection_reason, f.n_profiles_index, f.approx_area\n    ORDER BY f.wmo",
+   "keys": {
+    "wmo": "2902201"
+   }
+  },
+  {
+   "doc_id": "float:2902203",
+   "kind": "float",
+   "title": "Float 2902203 (incois)",
+   "text": "ARGO float WMO 2902203 is operated through the incois data centre, profiler type 846, delayed-mode status D-only. It contributed 61 profiles to this database out of 74 the GDAC index listed for it, between 2023-05-11 and 2024-12-31. Of those, 61 are delayed-mode (D), 0 are real-time adjusted (A) and 0 are raw real-time (R). It travelled between latitude 14.28 N and 17.33 N and longitude 65.92 E to 67.84 E, reaching 2001.0 dbar. Regions visited: Arabian Sea (61). It was chosen for this demo set because: Indian DAC, fully delayed-mode.",
+   "source": "SELECT f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n           f.selection_reason, f.n_profiles_index, f.approx_area,\n           count(p.profile_id) AS profiles,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           min(p.lat) AS min_lat, max(p.lat) AS max_lat,\n           min(p.lon) AS min_lon, max(p.lon) AS max_lon,\n           max(p.pres_max) AS deepest_dbar,\n           count(*) FILTER (WHERE p.data_mode = 'D') AS delayed,\n           count(*) FILTER (WHERE p.data_mode = 'A') AS adjusted,\n           count(*) FILTER (WHERE p.data_mode = 'R') AS realtime,\n           count(*) FILTER (WHERE NOT p.in_study_box) AS outside_box\n    FROM floats f\n    LEFT JOIN profiles p USING (wmo)\n    GROUP BY f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n             f.selection_reason, f.n_profiles_index, f.approx_area\n    ORDER BY f.wmo",
+   "keys": {
+    "wmo": "2902203"
+   }
+  },
+  {
+   "doc_id": "float:2902273",
+   "kind": "float",
+   "title": "Float 2902273 (incois)",
+   "text": "ARGO float WMO 2902273 is operated through the incois data centre, profiler type 846, delayed-mode status R-only. It contributed 69 profiles to this database out of 69 the GDAC index listed for it, between 2023-01-04 and 2024-12-24. Of those, 0 are delayed-mode (D), 69 are real-time adjusted (A) and 0 are raw real-time (R). It travelled between latitude 16.28 N and 18.40 N and longitude 65.63 E to 67.55 E, reaching 1991.7 dbar. Regions visited: Arabian Sea (69). It was chosen for this demo set because: Indian DAC, real-time only -- the uncalibrated counterpart to 2902203.",
+   "source": "SELECT f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n           f.selection_reason, f.n_profiles_index, f.approx_area,\n           count(p.profile_id) AS profiles,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           min(p.lat) AS min_lat, max(p.lat) AS max_lat,\n           min(p.lon) AS min_lon, max(p.lon) AS max_lon,\n           max(p.pres_max) AS deepest_dbar,\n           count(*) FILTER (WHERE p.data_mode = 'D') AS delayed,\n           count(*) FILTER (WHERE p.data_mode = 'A') AS adjusted,\n           count(*) FILTER (WHERE p.data_mode = 'R') AS realtime,\n           count(*) FILTER (WHERE NOT p.in_study_box) AS outside_box\n    FROM floats f\n    LEFT JOIN profiles p USING (wmo)\n    GROUP BY f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n             f.selection_reason, f.n_profiles_index, f.approx_area\n    ORDER BY f.wmo",
+   "keys": {
+    "wmo": "2902273"
+   }
+  },
+  {
+   "doc_id": "float:2902397",
+   "kind": "float",
+   "title": "Float 2902397 (aoml)",
+   "text": "ARGO float WMO 2902397 is operated through the aoml data centre, profiler type 854, delayed-mode status D-only. It contributed 76 profiles to this database out of 76 the GDAC index listed for it, between 2023-01-02 and 2024-12-30. Of those, 76 are delayed-mode (D), 0 are real-time adjusted (A) and 0 are raw real-time (R). It travelled between latitude -3.75 N and -0.48 N and longitude 73.60 E to 84.24 E, reaching 1883.4 dbar. Regions visited: Indian Ocean (76). It was chosen for this demo set because: equatorial band, delayed-mode, a third DAC.",
+   "source": "SELECT f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n           f.selection_reason, f.n_profiles_index, f.approx_area,\n           count(p.profile_id) AS profiles,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           min(p.lat) AS min_lat, max(p.lat) AS max_lat,\n           min(p.lon) AS min_lon, max(p.lon) AS max_lon,\n           max(p.pres_max) AS deepest_dbar,\n           count(*) FILTER (WHERE p.data_mode = 'D') AS delayed,\n           count(*) FILTER (WHERE p.data_mode = 'A') AS adjusted,\n           count(*) FILTER (WHERE p.data_mode = 'R') AS realtime,\n           count(*) FILTER (WHERE NOT p.in_study_box) AS outside_box\n    FROM floats f\n    LEFT JOIN profiles p USING (wmo)\n    GROUP BY f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n             f.selection_reason, f.n_profiles_index, f.approx_area\n    ORDER BY f.wmo",
+   "keys": {
+    "wmo": "2902397"
+   }
+  },
+  {
+   "doc_id": "float:2902766",
+   "kind": "float",
+   "title": "Float 2902766 (csio)",
+   "text": "ARGO float WMO 2902766 is operated through the csio data centre, profiler type 841, delayed-mode status D-only. It contributed 76 profiles to this database out of 76 the GDAC index listed for it, between 2023-01-09 and 2024-12-28. Of those, 76 are delayed-mode (D), 0 are real-time adjusted (A) and 0 are raw real-time (R). It travelled between latitude 13.34 N and 16.64 N and longitude 86.17 E to 89.49 E, reaching 1986.7 dbar. Regions visited: Bay of Bengal (76). It was chosen for this demo set because: solidly Bay of Bengal at 15.2N 88.0E, delayed-mode.",
+   "source": "SELECT f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n           f.selection_reason, f.n_profiles_index, f.approx_area,\n           count(p.profile_id) AS profiles,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           min(p.lat) AS min_lat, max(p.lat) AS max_lat,\n           min(p.lon) AS min_lon, max(p.lon) AS max_lon,\n           max(p.pres_max) AS deepest_dbar,\n           count(*) FILTER (WHERE p.data_mode = 'D') AS delayed,\n           count(*) FILTER (WHERE p.data_mode = 'A') AS adjusted,\n           count(*) FILTER (WHERE p.data_mode = 'R') AS realtime,\n           count(*) FILTER (WHERE NOT p.in_study_box) AS outside_box\n    FROM floats f\n    LEFT JOIN profiles p USING (wmo)\n    GROUP BY f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n             f.selection_reason, f.n_profiles_index, f.approx_area\n    ORDER BY f.wmo",
+   "keys": {
+    "wmo": "2902766"
+   }
+  },
+  {
+   "doc_id": "float:2902770",
+   "kind": "float",
+   "title": "Float 2902770 (csio)",
+   "text": "ARGO float WMO 2902770 is operated through the csio data centre, profiler type 841, delayed-mode status D-only. It contributed 72 profiles to this database out of 72 the GDAC index listed for it, between 2023-01-06 and 2024-12-21. Of those, 72 are delayed-mode (D), 0 are real-time adjusted (A) and 0 are raw real-time (R). It travelled between latitude 10.25 N and 14.06 N and longitude 86.19 E to 90.60 E, reaching 2000.8 dbar. Regions visited: Bay of Bengal (72). It was chosen for this demo set because: second Bay of Bengal track (12.3N 89.1E) for a region query with >1 float.",
+   "source": "SELECT f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n           f.selection_reason, f.n_profiles_index, f.approx_area,\n           count(p.profile_id) AS profiles,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           min(p.lat) AS min_lat, max(p.lat) AS max_lat,\n           min(p.lon) AS min_lon, max(p.lon) AS max_lon,\n           max(p.pres_max) AS deepest_dbar,\n           count(*) FILTER (WHERE p.data_mode = 'D') AS delayed,\n           count(*) FILTER (WHERE p.data_mode = 'A') AS adjusted,\n           count(*) FILTER (WHERE p.data_mode = 'R') AS realtime,\n           count(*) FILTER (WHERE NOT p.in_study_box) AS outside_box\n    FROM floats f\n    LEFT JOIN profiles p USING (wmo)\n    GROUP BY f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n             f.selection_reason, f.n_profiles_index, f.approx_area\n    ORDER BY f.wmo",
+   "keys": {
+    "wmo": "2902770"
+   }
+  },
+  {
+   "doc_id": "float:2903143",
+   "kind": "float",
+   "title": "Float 2903143 (aoml)",
+   "text": "ARGO float WMO 2903143 is operated through the aoml data centre, profiler type 876, delayed-mode status R-only. It contributed 76 profiles to this database out of 74 the GDAC index listed for it, between 2023-01-03 and 2024-12-22. Of those, 0 are delayed-mode (D), 0 are real-time adjusted (A) and 76 are raw real-time (R). It travelled between latitude -10.62 N and -3.27 N and longitude 72.80 E to 82.89 E, reaching 2005.1 dbar. Regions visited: Indian Ocean (76). It was chosen for this demo set because: equatorial, real-time only, profiler type 876 -- the rarest instrument in the set. 2 of its profiles sit outside the declared study box and are flagged in_study_box = false rather than clipped.",
+   "source": "SELECT f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n           f.selection_reason, f.n_profiles_index, f.approx_area,\n           count(p.profile_id) AS profiles,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           min(p.lat) AS min_lat, max(p.lat) AS max_lat,\n           min(p.lon) AS min_lon, max(p.lon) AS max_lon,\n           max(p.pres_max) AS deepest_dbar,\n           count(*) FILTER (WHERE p.data_mode = 'D') AS delayed,\n           count(*) FILTER (WHERE p.data_mode = 'A') AS adjusted,\n           count(*) FILTER (WHERE p.data_mode = 'R') AS realtime,\n           count(*) FILTER (WHERE NOT p.in_study_box) AS outside_box\n    FROM floats f\n    LEFT JOIN profiles p USING (wmo)\n    GROUP BY f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n             f.selection_reason, f.n_profiles_index, f.approx_area\n    ORDER BY f.wmo",
+   "keys": {
+    "wmo": "2903143"
+   }
+  },
+  {
+   "doc_id": "float:6903139",
+   "kind": "float",
+   "title": "Float 6903139 (coriolis)",
+   "text": "ARGO float WMO 6903139 is operated through the coriolis data centre, profiler type 844, delayed-mode status mixed. It contributed 289 profiles to this database out of 289 the GDAC index listed for it, between 2023-05-17 and 2024-12-31. Of those, 191 are delayed-mode (D), 98 are real-time adjusted (A) and 0 are raw real-time (R). It travelled between latitude 10.52 N and 14.61 N and longitude 43.98 E to 52.90 E, reaching 2052.2 dbar. Regions visited: Gulf of Aden (268), Arabian Sea (21). It was chosen for this demo set because: richest trajectory in the box (289 profiles) and both modes in one float.",
+   "source": "SELECT f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n           f.selection_reason, f.n_profiles_index, f.approx_area,\n           count(p.profile_id) AS profiles,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           min(p.lat) AS min_lat, max(p.lat) AS max_lat,\n           min(p.lon) AS min_lon, max(p.lon) AS max_lon,\n           max(p.pres_max) AS deepest_dbar,\n           count(*) FILTER (WHERE p.data_mode = 'D') AS delayed,\n           count(*) FILTER (WHERE p.data_mode = 'A') AS adjusted,\n           count(*) FILTER (WHERE p.data_mode = 'R') AS realtime,\n           count(*) FILTER (WHERE NOT p.in_study_box) AS outside_box\n    FROM floats f\n    LEFT JOIN profiles p USING (wmo)\n    GROUP BY f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n             f.selection_reason, f.n_profiles_index, f.approx_area\n    ORDER BY f.wmo",
+   "keys": {
+    "wmo": "6903139"
+   }
+  },
+  {
+   "doc_id": "float:6990608",
+   "kind": "float",
+   "title": "Float 6990608 (incois)",
+   "text": "ARGO float WMO 6990608 is operated through the incois data centre, profiler type 844, delayed-mode status D-only. It contributed 61 profiles to this database out of 61 the GDAC index listed for it, between 2023-09-27 and 2024-12-26. Of those, 61 are delayed-mode (D), 0 are real-time adjusted (A) and 0 are raw real-time (R). It travelled between latitude 5.97 N and 9.95 N and longitude 85.67 E to 89.88 E, reaching 2035.4 dbar. Regions visited: Bay of Bengal (61). It was chosen for this demo set because: Bay of Bengal AND Indian DAC -- the two coverage axes at once.",
+   "source": "SELECT f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n           f.selection_reason, f.n_profiles_index, f.approx_area,\n           count(p.profile_id) AS profiles,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           min(p.lat) AS min_lat, max(p.lat) AS max_lat,\n           min(p.lon) AS min_lon, max(p.lon) AS max_lon,\n           max(p.pres_max) AS deepest_dbar,\n           count(*) FILTER (WHERE p.data_mode = 'D') AS delayed,\n           count(*) FILTER (WHERE p.data_mode = 'A') AS adjusted,\n           count(*) FILTER (WHERE p.data_mode = 'R') AS realtime,\n           count(*) FILTER (WHERE NOT p.in_study_box) AS outside_box\n    FROM floats f\n    LEFT JOIN profiles p USING (wmo)\n    GROUP BY f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n             f.selection_reason, f.n_profiles_index, f.approx_area\n    ORDER BY f.wmo",
+   "keys": {
+    "wmo": "6990608"
+   }
+  },
+  {
+   "doc_id": "float:7901136",
+   "kind": "float",
+   "title": "Float 7901136 (incois)",
+   "text": "ARGO float WMO 7901136 is operated through the incois data centre, profiler type 836, delayed-mode status D-only. It contributed 75 profiles to this database out of 75 the GDAC index listed for it, between 2023-10-26 and 2024-12-27. Of those, 75 are delayed-mode (D), 0 are real-time adjusted (A) and 0 are raw real-time (R). It travelled between latitude 15.52 N and 17.36 N and longitude 67.52 E to 69.01 E, reaching 2004.3 dbar. Regions visited: Arabian Sea (75). It was chosen for this demo set because: profiler type 836, not the 846 the other incois floats use.",
+   "source": "SELECT f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n           f.selection_reason, f.n_profiles_index, f.approx_area,\n           count(p.profile_id) AS profiles,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           min(p.lat) AS min_lat, max(p.lat) AS max_lat,\n           min(p.lon) AS min_lon, max(p.lon) AS max_lon,\n           max(p.pres_max) AS deepest_dbar,\n           count(*) FILTER (WHERE p.data_mode = 'D') AS delayed,\n           count(*) FILTER (WHERE p.data_mode = 'A') AS adjusted,\n           count(*) FILTER (WHERE p.data_mode = 'R') AS realtime,\n           count(*) FILTER (WHERE NOT p.in_study_box) AS outside_box\n    FROM floats f\n    LEFT JOIN profiles p USING (wmo)\n    GROUP BY f.wmo, f.dac, f.profiler_type, f.dm_status, f.institution,\n             f.selection_reason, f.n_profiles_index, f.approx_area\n    ORDER BY f.wmo",
+   "keys": {
+    "wmo": "7901136"
+   }
+  },
+  {
+   "doc_id": "query:profiles_in_region",
+   "kind": "query",
+   "title": "Query: profiles_in_region",
+   "text": "Catalogue query 'profiles_in_region'. List individual ARGO profiles inside a named region and date range, newest first. Use for 'show me profiles in X'. Parameters: region (region): Named ocean region (IHO boundary); start (date): Inclusive start of the date range; end (date): Inclusive end of the date range; limit (int, optional): Maximum rows to return. Example call: profiles_in_region(region='Bay of Bengal', start='2023-03-01', end='2023-03-31'). This is one of the 11 hand-written parameterised queries; the model chooses it and fills its parameters, and never writes SQL.",
+   "source": "api/catalog.py QUERIES",
+   "keys": {
+    "query": "profiles_in_region"
+   }
+  },
+  {
+   "doc_id": "query:region_summary",
+   "kind": "query",
+   "title": "Query: region_summary",
+   "text": "Catalogue query 'region_summary'. One-row summary of a region and date range: how many profiles and floats, the dates actually covered, and the depth reached. Parameters: region (region): Named ocean region (IHO boundary); start (date): Inclusive start of the date range; end (date): Inclusive end of the date range. Example call: region_summary(region='Arabian Sea', start='2023-01-01', end='2024-12-31'). This is one of the 11 hand-written parameterised queries; the model chooses it and fills its parameters, and never writes SQL.",
+   "source": "api/catalog.py QUERIES",
+   "keys": {
+    "query": "region_summary"
+   }
+  },
+  {
+   "doc_id": "query:monthly_profile_counts",
+   "kind": "query",
+   "title": "Query: monthly_profile_counts",
+   "text": "Catalogue query 'monthly_profile_counts'. Profiles per calendar month in a region. Use for 'how did X change over time'. Parameters: region (region): Named ocean region (IHO boundary); start (date): Inclusive start of the date range; end (date): Inclusive end of the date range. Example call: monthly_profile_counts(region='Bay of Bengal', start='2023-01-01', end='2024-12-31'). This is one of the 11 hand-written parameterised queries; the model chooses it and fills its parameters, and never writes SQL.",
+   "source": "api/catalog.py QUERIES",
+   "keys": {
+    "query": "monthly_profile_counts"
+   }
+  },
+  {
+   "doc_id": "query:depth_profile",
+   "kind": "query",
+   "title": "Query: depth_profile",
+   "text": "Catalogue query 'depth_profile'. Mean temperature and salinity against depth for a region and date range, averaged into fixed-width pressure bins. This is the query behind 'show me the temperature profile in X'. Parameters: region (region): Named ocean region (IHO boundary); start (date): Inclusive start of the date range; end (date): Inclusive end of the date range; bin_dbar (int, optional): Pressure bin width in decibars; max_dbar (number, optional): Deepest pressure to include. Example call: depth_profile(region='Arabian Sea', start='2023-01-01', end='2023-12-31'). This is one of the 11 hand-written parameterised queries; the model chooses it and fills its parameters, and never writes SQL.",
+   "source": "api/catalog.py QUERIES",
+   "keys": {
+    "query": "depth_profile"
+   }
+  },
+  {
+   "doc_id": "query:surface_conditions",
+   "kind": "query",
+   "title": "Query: surface_conditions",
+   "text": "Catalogue query 'surface_conditions'. Mean near-surface (0-10 dbar by default) temperature and salinity per region over a date range. Use to compare regions. Parameters: start (date): Inclusive start of the date range; end (date): Inclusive end of the date range; max_dbar (number, optional): Deepest pressure counted as 'surface'. Example call: surface_conditions(start='2023-01-01', end='2024-12-31'). This is one of the 11 hand-written parameterised queries; the model chooses it and fills its parameters, and never writes SQL.",
+   "source": "api/catalog.py QUERIES",
+   "keys": {
+    "query": "surface_conditions"
+   }
+  },
+  {
+   "doc_id": "query:float_trajectory",
+   "kind": "query",
+   "title": "Query: float_trajectory",
+   "text": "Catalogue query 'float_trajectory'. Every surfacing position of one float, in time order. Use for 'where did float X go'. Parameters: wmo (wmo): ARGO float WMO identifier; limit (int, optional): Maximum rows to return. Example call: float_trajectory(wmo='6903139'). This is one of the 11 hand-written parameterised queries; the model chooses it and fills its parameters, and never writes SQL.",
+   "source": "api/catalog.py QUERIES",
+   "keys": {
+    "query": "float_trajectory"
+   }
+  },
+  {
+   "doc_id": "query:nearest_profiles",
+   "kind": "query",
+   "title": "Query: nearest_profiles",
+   "text": "Catalogue query 'nearest_profiles'. Profiles within a great-circle radius of a point, nearest first. Use for 'profiles near <place>' once the place has coordinates. Parameters: lat (number): Latitude in degrees north; lon (number): Longitude in degrees east; radius_km (number, optional): Search radius in kilometres; limit (int, optional): Maximum rows to return. Example call: nearest_profiles(lat=15.0, lon=68.0, radius_km=300). This is one of the 11 hand-written parameterised queries; the model chooses it and fills its parameters, and never writes SQL.",
+   "source": "api/catalog.py QUERIES",
+   "keys": {
+    "query": "nearest_profiles"
+   }
+  },
+  {
+   "doc_id": "query:compare_regions",
+   "kind": "query",
+   "title": "Query: compare_regions",
+   "text": "Catalogue query 'compare_regions'. Side-by-side mean temperature and salinity for two regions in one depth band. Use for 'is X saltier than Y'. Parameters: region_a (region): First region; region_b (region): Second region; start (date): Inclusive start of the date range; end (date): Inclusive end of the date range; min_dbar (number, optional): Shallowest pressure in the band; max_dbar (number, optional): Deepest pressure in the band. Example call: compare_regions(region_a='Bay of Bengal', region_b='Arabian Sea', start='2023-01-01', end='2024-12-31'). This is one of the 11 hand-written parameterised queries; the model chooses it and fills its parameters, and never writes SQL.",
+   "source": "api/catalog.py QUERIES",
+   "keys": {
+    "query": "compare_regions"
+   }
+  },
+  {
+   "doc_id": "query:float_inventory",
+   "kind": "query",
+   "title": "Query: float_inventory",
+   "text": "Catalogue query 'float_inventory'. Every float in the database with its DAC, why it was selected, and its profile counts. Parameters: no parameters. Example call: float_inventory(no arguments needed). This is one of the 11 hand-written parameterised queries; the model chooses it and fills its parameters, and never writes SQL.",
+   "source": "api/catalog.py QUERIES",
+   "keys": {
+    "query": "float_inventory"
+   }
+  },
+  {
+   "doc_id": "query:data_provenance",
+   "kind": "query",
+   "title": "Query: data_provenance",
+   "text": "Catalogue query 'data_provenance'. For one float: how many profiles are delayed-mode vs real-time, which copy of each value was used, and how deep it went. Use when asked how trustworthy or how calibrated the data is. Parameters: wmo (wmo): ARGO float WMO identifier. Example call: data_provenance(wmo='2902203'). This is one of the 11 hand-written parameterised queries; the model chooses it and fills its parameters, and never writes SQL.",
+   "source": "api/catalog.py QUERIES",
+   "keys": {
+    "query": "data_provenance"
+   }
+  },
+  {
+   "doc_id": "query:missing_profiles",
+   "kind": "query",
+   "title": "Query: missing_profiles",
+   "text": "Catalogue query 'missing_profiles'. Why profiles are absent: the profiles this pipeline refused, with the reason. Use when a count looks lower than expected. Parameters: wmo (wmo, optional): ARGO float WMO identifier. Example call: missing_profiles(wmo='2902203'). This is one of the 11 hand-written parameterised queries; the model chooses it and fills its parameters, and never writes SQL.",
+   "source": "api/catalog.py QUERIES",
+   "keys": {
+    "query": "missing_profiles"
+   }
+  },
+  {
+   "doc_id": "glossary:data_mode",
+   "kind": "glossary",
+   "title": "DATA_MODE: R, A and D are three states",
+   "text": "Every ARGO profile has a DATA_MODE. R means real-time: raw, automatic QC only. A means real-time with adjustments applied. D means delayed-mode: a scientist has calibrated it, and it is the most trustworthy. This database holds 110 R profiles, 167 A profiles and 651 D profiles. Three states, not two -- the GDAC index filename can only ever distinguish two of them, so mode is read from the file.",
+   "source": "SELECT data_mode, count(*) AS profiles\n    FROM profiles GROUP BY data_mode ORDER BY data_mode",
+   "keys": {
+    "query": "data_provenance"
+   }
+  },
+  {
+   "doc_id": "glossary:psal_source",
+   "kind": "glossary",
+   "title": "Which copy of the salinity was used",
+   "text": "ARGO files carry a raw parameter and an adjusted copy. This pipeline prefers the adjusted copy, falls back to raw, and records which it used in psal_source: adjusted 690 profiles, raw 110, raw_fallback 119, empty 9. raw_fallback means DATA_MODE claimed an adjusted copy that existed in name only and was empty; a naive 'if D then use ADJUSTED' would have blanked those profiles and called the result data.",
+   "source": "SELECT psal_source, count(*) AS profiles\n    FROM profiles GROUP BY psal_source ORDER BY count(*) DESC",
+   "keys": {
+    "query": "data_provenance"
+   }
+  },
+  {
+   "doc_id": "glossary:qc_flags",
+   "kind": "glossary",
+   "title": "QC flags, and why salinity loses more levels",
+   "text": "ARGO quality-control flags run 1 (good) to 9 (missing). This pipeline accepts 1,2,5,8 and rejects 3 and 4. Flag 3 is 'probably bad' and it is not data. Levels failing QC were removed at ingest, so every value stored here is good-QC data and counts are counts of good data only. Flags surviving in the database: psal flag 1: 429,982 levels; temp flag 1: 480,932 levels. Salinity loses far more levels to QC than temperature does; that asymmetry is a property of the instrument, not of this pipeline.",
+   "source": "SELECT 'temp' AS parameter, temp_qc AS flag, count(*) AS levels\n    FROM levels WHERE temp_qc IS NOT NULL GROUP BY temp_qc\n    UNION ALL\n    SELECT 'psal', psal_qc, count(*) FROM levels WHERE psal_qc IS NOT NULL GROUP BY psal_qc\n    ORDER BY 1, 2",
+   "keys": {}
+  },
+  {
+   "doc_id": "glossary:pressure",
+   "kind": "glossary",
+   "title": "Pressure in decibars, not depth in metres",
+   "text": "Measurements are recorded against pressure in decibars (dbar), which is what this schema stores and what every axis says. Depth in metres is never computed; one decibar is roughly one metre of seawater, but the conversion is latitude dependent and this project does not do it. Stored pressures run 0.0 dbar to 2052.2 dbar across 481,181 levels. Profiles are plotted with pressure increasing downward. 51,199 levels have a pressure and a temperature but no salinity reading, and 249 have no temperature; those are absent values, not zeros.",
+   "source": "SELECT min(pres) AS min_pres, max(pres) AS max_pres, count(*) AS levels,\n           count(*) FILTER (WHERE psal IS NULL) AS levels_without_salinity,\n           count(*) FILTER (WHERE temp IS NULL) AS levels_without_temperature\n    FROM levels",
+   "keys": {
+    "query": "depth_profile"
+   }
+  },
+  {
+   "doc_id": "glossary:study_box",
+   "kind": "glossary",
+   "title": "Profiles outside the study box are kept and flagged",
+   "text": "Some profiles sit outside the declared study box and are kept, flagged in_study_box = false, rather than clipped mid-trajectory: float 2903143: 2 profiles, latitude -10.62 N to -10.07 N. A float that drifts out of the box is still the same float, and cutting its track would misrepresent where it went.",
+   "source": "SELECT p.wmo, count(*) AS profiles, min(p.lat) AS min_lat, max(p.lat) AS max_lat\n    FROM profiles p WHERE NOT p.in_study_box GROUP BY p.wmo ORDER BY p.wmo",
+   "keys": {
+    "query": "float_trajectory"
+   }
+  },
+  {
+   "doc_id": "glossary:regions",
+   "kind": "glossary",
+   "title": "Where the region names come from",
+   "text": "Region names are not in ARGO data. They come from IHO S-23 sea-area polygons, each stored with its MRGID so the boundary is traceable. The 9 named regions are: Andaman or Burma Sea, Arabian Sea, Bay of Bengal, Gulf of Aden, Gulf of Oman, Indian Ocean, Laccadive Sea, Persian Gulf, Red Sea. The stored outlines drop island holes (8827 in total) and are simplified to fit a core Postgres polygon; that simplification was verified to change no profile's region assignment and is re-verified on every load. The floats.approx_area column is an advisory longitude cut used only to pick candidate floats by eye, and nothing derived from it enters an answer.",
+   "source": "SELECT r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n           r.min_lon, r.min_lat, r.max_lon, r.max_lat,\n           count(p.profile_id) AS profiles,\n           count(DISTINCT p.wmo) AS floats,\n           min(p.juld)::date::text AS first_profile,\n           max(p.juld)::date::text AS last_profile,\n           max(p.pres_max) AS deepest_dbar\n    FROM regions r\n    LEFT JOIN profile_regions pr ON pr.region = r.name\n    LEFT JOIN profiles p ON p.profile_id = pr.profile_id\n    GROUP BY r.name, r.mrgid, r.source, r.holes_dropped, r.vertices_stored,\n             r.min_lon, r.min_lat, r.max_lon, r.max_lat\n    ORDER BY r.name",
+   "keys": {}
+  },
+  {
+   "doc_id": "dropped:no level survived QC",
+   "kind": "dropped",
+   "title": "Refused profiles: no level survived QC",
+   "text": "13 profiles were refused by the pipeline for the reason 'no level survived QC', affecting float(s) 2902203; 13 of them were promised by the GDAC index. Example detail: data_mode=D n_levels=59. They are recorded in the dropped_profiles table with a name and a reason rather than dropped silently, so a profile count that looks low can be explained instead of argued about. The missing_profiles query lists them.",
+   "source": "SELECT d.reason, count(*) AS profiles,\n           count(*) FILTER (WHERE d.was_indexed) AS was_indexed,\n           string_agg(DISTINCT d.wmo, ', ' ORDER BY d.wmo) AS floats,\n           min(d.detail) AS example_detail\n    FROM dropped_profiles d GROUP BY d.reason ORDER BY count(*) DESC",
+   "keys": {
+    "query": "missing_profiles"
+   }
+  },
+  {
+   "doc_id": "dropped:bad time/position QC",
+   "kind": "dropped",
+   "title": "Refused profiles: bad time/position QC",
+   "text": "1 profiles were refused by the pipeline for the reason 'bad time/position QC', affecting float(s) 7901136; 0 of them were promised by the GDAC index. Example detail: JULD_QC=1 POSITION_QC=4. They are recorded in the dropped_profiles table with a name and a reason rather than dropped silently, so a profile count that looks low can be explained instead of argued about. The missing_profiles query lists them.",
+   "source": "SELECT d.reason, count(*) AS profiles,\n           count(*) FILTER (WHERE d.was_indexed) AS was_indexed,\n           string_agg(DISTINCT d.wmo, ', ' ORDER BY d.wmo) AS floats,\n           min(d.detail) AS example_detail\n    FROM dropped_profiles d GROUP BY d.reason ORDER BY count(*) DESC",
+   "keys": {
+    "query": "missing_profiles"
+   }
+  }
+ ]
+}

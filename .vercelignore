@@ -1,0 +1,42 @@
+# What the Vercel CLI uploads.
+#
+# The CLI takes the working directory, not a git tree.  If this file exists it
+# REPLACES .gitignore as the upload filter -- so everything .gitignore was
+# quietly keeping out has to be listed again here, or a deployment carries
+# 380 MB it cannot use.  That precedence is the whole reason this file is not
+# one line long (D15.4).
+
+# 301 MB, built for darwin, useless to a Linux build.
+.venv
+
+# The dashboard is a separate Vercel project, deployed from ui/ (D15.6).
+ui
+
+# Tool and editor state.
+__pycache__
+*.pyc
+.git
+.claude
+.vercel
+.DS_Store
+
+# `vercel link` writes .env.local, and it holds a VERCEL_OIDC_TOKEN.  The CLI
+# added it to .gitignore, which does nothing here -- this file replaced that
+# filter (D15.4).  A credential does not belong in a function bundle, and
+# api/test_deploy.py now fails if one is in the upload set (D15.12).
+.env*
+
+# The ARGO working set: 177 MB of pipeline inputs the API never opens.
+# data/rag is deliberately NOT listed.  Its two files are the only thing under
+# data/ the running API reads (api/retrieval.py:47), they weigh 706 KB, and
+# without them /ask answers "no index built" (D15.5).
+data/index
+data/parsed
+data/profiles
+data/regions
+
+# The pipeline itself.  Nothing under these paths runs on a serverless
+# function, and nothing under api/ opens a file in them.
+etl
+db
+run_pipeline.py

@@ -5,10 +5,17 @@
  * had to be complete and provable before anything routed into it, so every
  * query type has a defined visual output a human can reach with no model in
  * the loop.  Stage 11 switches it on beside that, and the arrangement is the
- * argument: **Catalogue** and **Chat** are two front doors to one catalogue,
+ * argument: **Chat** and **Catalogue** are two front doors to one catalogue,
  * and they share an audit trail.  A query the model chose and a query a human
  * chose land in the same list, drawn by the same displays.js mapping, from
  * rows returned by the same read-only role.
+ *
+ * Stage 16 changes which door is open when you arrive.  The page lands in
+ * Chat; the catalogue is one click away and loses nothing.  That is an
+ * emphasis change and it is deliberately not more than one: both paths still
+ * run the same eleven queries, the audit trail is still mounted beside the
+ * conversation rather than folded away, and the badge still names the engine
+ * that answered.
  *
  * Everything the page knows — regions, floats, the date window, which
  * parameters exist and what values they accept, whether there is a model at
@@ -35,10 +42,12 @@ export default function App() {
   const [values, setValues] = useState({});
   const [result, setResult] = useState({ status: "idle" });
   const [audit, setAudit] = useState([]);
-  const [mode, setMode] = useState("catalogue");
-  // Which engine the Chat tab will use. Held here, not in ChatPanel, because
-  // the header reports it too.
-  const [chatPath, setChatPath] = useState(null);
+  // Chat is the front door (D16.1). The catalogue keeps everything it had and
+  // is one click away, but it is no longer what a reader lands in. It was the
+  // default while it was the only path that could answer without a key; since
+  // Stage 12 the chat tab answers without one too, so landing a reader in a
+  // parameter form was showing them the second-best door first.
+  const [mode, setMode] = useState("chat");
 
   // One trail, two sources. `seq` is assigned here so a batch of queries from
   // a single question keeps its order without either caller counting.
@@ -53,9 +62,6 @@ export default function App() {
       const data = await getMeta();
       setMeta(data);
       setSelected((s) => s ?? data.queries[0]?.name ?? null);
-      // Default to whichever path can actually answer. With no model
-      // credentials that is the lexical router, which is why Stage 12 exists.
-      setChatPath((p) => p ?? (data.ai?.model_provider ? "model" : "lexical"));
     } catch (error) {
       // Nothing is rendered half-loaded. No dropdowns at all is correct here:
       // empty dropdowns would claim the database is empty.
@@ -77,6 +83,16 @@ export default function App() {
   );
   const spec = selected ? displayFor(selected) : null;
   const missing = query ? missingRequired(query.params, values) : [];
+
+  // What would answer the next question, derived once and read by the tab
+  // badge, the composer and the badge on every reply rather than each deciding
+  // for itself. Since D16.8 there is exactly one answer to that question in
+  // this dashboard: the lexical router. `canAnswer` therefore reads the
+  // ROUTER's availability, not `ai.available` -- `ai.available` is true when
+  // *either* path can answer, and a model this UI will not call is not a
+  // reason to offer a chat box that cannot answer either.
+  const ai = meta?.ai ?? {};
+  const canAnswer = !!ai.router?.available;
 
   function pick(name) {
     setSelected(name);
@@ -134,17 +150,20 @@ export default function App() {
 
   if (mode === "chat") {
     return (
-      <div className="mx-auto flex h-screen max-w-[110rem] flex-col gap-4 p-4">
-        <Header meta={meta} mode={mode} onMode={setMode} chatPath={chatPath} />
-        <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_21rem]">
+      <div className="mx-auto flex h-screen max-w-[110rem] flex-col gap-3 p-3 sm:p-4">
+        <Header meta={meta} mode={mode} onMode={setMode} canAnswer={canAnswer} />
+        {/* The conversation takes the width it can and the trail keeps a fixed
+            rail. The trail stays MOUNTED here rather than folding behind a
+            control: it is the evidence that every number came out of a query,
+            and evidence you have to go looking for is evidence nobody reads
+            (D10.5). What Stage 16 changed is the emphasis, not the audit. */}
+        <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <main className="min-h-0">
             <ChatPanel
               meta={meta}
               outlines={outlines}
               onQueries={addAudit}
               onSwitchToCatalogue={() => setMode("catalogue")}
-              path={chatPath ?? "lexical"}
-              onPath={setChatPath}
             />
           </main>
           <div className="min-h-0 lg:max-h-full">
@@ -157,7 +176,10 @@ export default function App() {
 
   return (
     <div className="mx-auto flex h-screen max-w-[110rem] flex-col gap-4 p-4">
-      <Header meta={meta} mode={mode} onMode={setMode} />
+      {/* The badge describes what the Chat tab WOULD answer with, so it is
+          passed here too: this tab must not describe the other one wrongly,
+          which is how D13.3's false sentence was reached from this side. */}
+      <Header meta={meta} mode={mode} onMode={setMode} canAnswer={canAnswer} />
 
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-[19rem_minmax(0,1fr)_21rem]">
         {/* left: the picker and its controls */}
@@ -270,50 +292,51 @@ export default function App() {
   );
 }
 
-function Header({ meta, mode, onMode, chatPath }) {
+/**
+ * `canAnswer` is passed in, never re-derived here.  It describes what would
+ * answer RIGHT NOW, and since D16.8 that is one engine: the lexical router.
+ *
+ * The badge is a single state for the same reason it used to be three -- it
+ * has to be true.  When the dashboard could pick between engines it said which
+ * one was selected (RAG / model · X / no model, D13.3); now that it cannot, it
+ * says the only thing left to say, in the same words the reply badge uses.
+ */
+function Header({ meta, mode, onMode, canAnswer }) {
   const ai = meta?.ai;
-  // What would answer right now -- the live selection, not merely what exists.
-  const usingModel = chatPath === "model" && !!ai?.model_provider;
+  const badge = { text: "no model", tone: "bg-slate-200 text-slate-600" };
   return (
     <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-lg border border-slate-300 bg-white px-4 py-2.5">
       <div className="flex items-center gap-3">
         <h1 className="text-base font-semibold text-slate-900">FloatChat</h1>
         {meta && (
           <nav className="flex rounded-md border border-slate-300 p-0.5 text-xs">
-            <Tab active={mode === "catalogue"} onClick={() => onMode("catalogue")}>
-              Catalogue
-            </Tab>
-            {/* The chat tab is offered only when /meta says a model can answer.
-                A tab that always errors is worse than a tab that is not there,
-                and the reason is on the tab itself rather than behind a click. */}
+            {/* Chat first, because chat is what the page opens in (D16.1).
+                The tab is offered whenever the ROUTER can answer, which needs
+                no key and no network -- not whenever `ai.available` is true,
+                because that is also true on a server whose only working path
+                is the model this dashboard no longer calls (D16.8). */}
             <Tab
               active={mode === "chat"}
               onClick={() => onMode("chat")}
-              title={ai?.available ? undefined : ai?.reason}
-              muted={!ai?.available}
+              title={canAnswer ? undefined : ai?.router?.reason}
+              muted={!canAnswer}
             >
               Chat
-              {/* Only claim retrieval when the path that would answer uses it.
-                  With no model credentials the lexical router answers and
-                  retrieval is not in play, so the badge names the router. */}
-              {ai?.available && (
-                <span className={`ml-1.5 rounded px-1 py-px text-[10px] font-medium ${
-                  usingModel && ai.retrieval?.available
-                    ? "bg-emerald-100 text-emerald-800"
-                    : "bg-slate-200 text-slate-600"
-                }`}>
-                  {usingModel && ai.retrieval?.available ? "RAG" : "no model"}
+              {canAnswer && (
+                <span className={`ml-1.5 rounded px-1 py-px text-[10px] font-medium ${badge.tone}`}>
+                  {badge.text}
                 </span>
               )}
+            </Tab>
+            <Tab active={mode === "catalogue"} onClick={() => onMode("catalogue")}>
+              Catalogue
             </Tab>
           </nav>
         )}
         <span className="hidden text-xs text-slate-500 xl:inline">
           {mode === "chat"
-            ? (usingModel
-                ? "the model picks a catalogue query; it never writes SQL"
-                : "a lexical router picks the query — no model in this path")
-            : "the query catalogue, with the AI switched off"}
+            ? "a lexical router picks the query — no model in this path"
+            : "the query catalogue, the same queries by hand"}
         </span>
       </div>
       {meta ? (

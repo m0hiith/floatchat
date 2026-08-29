@@ -18,6 +18,28 @@ const GRID = "#e2e8f0";
 
 const axisTitle = (label, unit) => (unit ? `${label} (${unit})` : label);
 
+/**
+ * An axis labelled and coloured for one series.
+ *
+ * Both charts below put two series on two axes, and the axis colour is the only
+ * thing besides the legend that says which trace an axis belongs to.  The
+ * colour has to go in `title.font`: Plotly's older top-level `titlefont` was
+ * removed in v4 and is now dropped without a warning, so the axis kept its
+ * title and quietly lost its colour.  A quiet no-op is the failure mode this
+ * project is organised against (rule 7), so the shape is written once here and
+ * `ui/test_ui.py` asserts the removed spelling never comes back.
+ */
+function seriesAxis(series, rest = {}) {
+  return {
+    title: {
+      text: axisTitle(series.label, series.unit),
+      font: { color: series.colour },
+    },
+    tickfont: { color: series.colour },
+    ...rest,
+  };
+}
+
 function baseLayout() {
   return {
     font: FONT,
@@ -56,18 +78,12 @@ function depthLine(rows, spec) {
       autorange: spec.axis.invert ? "reversed" : true,
       gridcolor: GRID, zeroline: false,
     },
-    xaxis: {
-      title: { text: axisTitle(spec.series[0].label, spec.series[0].unit) },
-      titlefont: { color: spec.series[0].colour },
-      tickfont: { color: spec.series[0].colour },
+    xaxis: seriesAxis(spec.series[0], {
       gridcolor: GRID, zeroline: false, side: "bottom",
-    },
-    xaxis2: {
-      title: { text: axisTitle(spec.series[1].label, spec.series[1].unit) },
-      titlefont: { color: spec.series[1].colour },
-      tickfont: { color: spec.series[1].colour },
+    }),
+    xaxis2: seriesAxis(spec.series[1], {
       overlaying: "x", side: "top", showgrid: false, zeroline: false,
-    },
+    }),
     legend: { orientation: "h", y: -0.14, x: 0 },
   };
   return { data, layout };
@@ -92,18 +108,10 @@ function timeLine(rows, spec) {
   const layout = {
     ...baseLayout(),
     xaxis: { title: { text: spec.axis.label }, type: "date", gridcolor: GRID },
-    yaxis: {
-      title: { text: axisTitle(spec.series[0].label, spec.series[0].unit) },
-      titlefont: { color: spec.series[0].colour },
-      tickfont: { color: spec.series[0].colour },
-      gridcolor: GRID, rangemode: "tozero",
-    },
-    yaxis2: {
-      title: { text: axisTitle(spec.series[1].label, spec.series[1].unit) },
-      titlefont: { color: spec.series[1].colour },
-      tickfont: { color: spec.series[1].colour },
+    yaxis: seriesAxis(spec.series[0], { gridcolor: GRID, rangemode: "tozero" }),
+    yaxis2: seriesAxis(spec.series[1], {
       overlaying: "y", side: "right", showgrid: false, rangemode: "tozero",
-    },
+    }),
   };
   return { data, layout };
 }
@@ -147,9 +155,9 @@ function bars(rows, spec) {
     layout[`yaxis${i + 1}`] = {
       title: { text: axisTitle(s.label, s.unit) },
       gridcolor: GRID,
-      // Salinity near 35 against a zero baseline is a flat row of identical
-      // bars.  Let each panel frame its own data instead.
-      // Zero baseline, always. See the note on the text labels above.
+      // Zero baseline, always. Framing each panel around its own data would
+      // make a 2.5 PSU gap look enormous; the printed value on each bar is
+      // what carries the comparison instead. See the note on the labels above.
       rangemode: "tozero",
       automargin: true,
     };

@@ -37,6 +37,38 @@ function popupHtml(row, spec, ctx) {
     <table>${lines}</table></div>`;
 }
 
+/**
+ * The two ends of a trajectory, drawn with no image file.
+ *
+ * `L.marker` with no `icon` uses Leaflet's default, which finds
+ * `marker-icon.png` by reading the probe rule `.leaflet-default-icon-path` and,
+ * failing that, by looking for a `<link href$="leaflet.css">`.  Under Vite
+ * neither works: the stylesheet is emitted as `assets/index-<hash>.css`, and
+ * the probe rule's background is inlined as a base64 data URI that Leaflet's
+ * `/^(.*)marker-icon\.png$/` cannot strip.  The image path collapses to `""`,
+ * the browser requests a bare `marker-icon.png`, and the only query that draws
+ * these -- `float_trajectory` -- shows two broken images.  It survives
+ * `npm run dev` and breaks in `npm run build`, which is the worse half.
+ *
+ * A `divIcon` is DOM, so no bundler and no file is involved, and it can say
+ * "first" and "last" in words instead of dropping two identical pins.  Slate
+ * chrome, deliberately: on this map colour already means `data_mode`, and a
+ * marker in one of those colours would read as data.
+ */
+function endpointMarker(row, spec, label) {
+  const icon = L.divIcon({
+    className: "",
+    html: `<div style="font:600 10px ui-sans-serif,system-ui,sans-serif;
+                       background:#0f172a;color:#fff;border:1px solid #fff;
+                       border-radius:9999px;padding:2px 7px;white-space:nowrap;
+                       box-shadow:0 1px 3px rgba(0,0,0,.4)">${label}</div>`,
+    iconSize: null,          // let the pill size itself to its text
+    iconAnchor: [22, 24],    // sit above the point rather than on top of it
+  });
+  return L.marker([row[spec.lat], row[spec.lon]], { icon, title: `${label} cycle` })
+    .bindPopup(`<b>${label} cycle</b><br>cycle ${row.cycle} · ${row.date}`);
+}
+
 function markerFor(row, spec, ctx) {
   const colour = spec.colorBy ? DATA_MODES[row[spec.colorBy]]?.colour ?? "#0ea5e9" : "#0ea5e9";
   return L.circleMarker([row[spec.lat], row[spec.lon]], {
@@ -92,12 +124,8 @@ export default function MapView({ rows, spec, bound, outlines, extent, context =
       L.polyline(ordered.map((r) => [r[spec.lat], r[spec.lon]]), {
         color: "#0f172a", weight: 1.5, opacity: 0.6,
       }).addTo(layer);
-      const first = ordered[0];
-      const last = ordered[ordered.length - 1];
-      L.marker([first[spec.lat], first[spec.lon]], { title: "first cycle" })
-        .bindPopup(`<b>First cycle</b><br>cycle ${first.cycle} · ${first.date}`).addTo(layer);
-      L.marker([last[spec.lat], last[spec.lon]], { title: "last cycle" })
-        .bindPopup(`<b>Last cycle</b><br>cycle ${last.cycle} · ${last.date}`).addTo(layer);
+      endpointMarker(ordered[0], spec, "first").addTo(layer);
+      endpointMarker(ordered[ordered.length - 1], spec, "last").addTo(layer);
     }
 
     // Drawn from the bound parameters, so it survives a zero-row result.

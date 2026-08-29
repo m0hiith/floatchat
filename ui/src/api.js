@@ -1,8 +1,8 @@
 /**
  * The only place the UI talks to the network.
  *
- * Three failure modes, kept apart on purpose, because the dashboard has to
- * render them differently:
+ * Four failure modes, kept apart on purpose, because the dashboard has to
+ * render them differently (there were three until the second 503 arrived):
  *
  *   unreachable  the fetch itself failed -- wrong port, server not started.
  *                We name the URL we tried.  This must never look like an
@@ -27,7 +27,9 @@ export const API_BASE =
 export class ApiError extends Error {
   constructor(kind, message, extra = {}) {
     super(message);
-    this.kind = kind;           // "unreachable" | "unavailable" | "refused" | "bad"
+    // Every kind this module throws. `no-model` was added with the second 503
+    // and never reached this list; ui/test_ui.py now compares the two.
+    this.kind = kind;  // "unreachable" | "unavailable" | "no-model" | "refused" | "bad"
     Object.assign(this, extra);
   }
 }

@@ -21,8 +21,16 @@ profiles, 481,181 measured levels, the North Indian Ocean, 2023–2024.
 
 The pipeline: GDAC index → filter → float selection → NetCDF → parse → IHO
 regions → Postgres → an 11-query catalogue → a FAISS index over summaries the
-database writes about itself → a model that picks a query → an HTTP API → a
-dashboard with a catalogue tab and a chat tab sharing one audit trail.
+database writes about itself → a model *or* a model-free lexical router that
+picks a query → an HTTP API → a dashboard that opens in the chat tab, with the
+catalogue one click away and one audit trail shared between them.
+
+**The dashboard asks the lexical router and nothing else (D16.8).** The model
+path is real, tested and reachable — through `/ask` with an explicit
+`provider`, and through `api/chat.py` on the command line — but no button in
+the UI takes it, and the UI names `lexical` in every request rather than
+letting the server's environment decide. Put the selector back only with a
+decision entry saying why.
 
 ---
 
@@ -57,10 +65,15 @@ what corrected them. Numbered `D<stage>.<n>`. These are the author's defence
 notes; a decision that is not written down did not happen.
 
 **5. A claim is only true if something re-checks it on every run.**
-405 checks across seven suites, none of which need a network or an API key. If a
+543 checks across ten suites, none of which need a network or an API key. If a
 property matters — the region assignment, the funnel, the QC asymmetry, the
 Bay of Bengal being fresher than the Arabian Sea — it is asserted, not
 commented. `python run_pipeline.py --check`.
+**Assert the property, never the spelling.** A check pinned to a literal source
+string tests how something is written, so it passes while the property is false
+and fails when the property is fixed — which is what D13.3's badge check did.
+And a new check is not finished until it has been made to fail: break the thing
+on purpose, watch the check catch it, put it back.
 Where a property is a *degree* rather than a fact — how good retrieval is —
 **measure it and print the misses**, do not assert a vibe. A test whose target
 cannot be hit is an error, not a pass.
@@ -86,9 +99,10 @@ control of the material.
 The keyless embedder is a hashed n-gram bag with IDF. It is called lexical
 everywhere it is named — in the code, the build report, the README and the UI —
 and never "semantic search". The same rule retired every other flattering word
-in this project: the region polygons are "simplified", the routing is
-"observed", the dashboard is "untested". If the honest word is worse, use the
-honest word.
+in this project: the region polygons are "simplified" and the routing is
+"observed". The dashboard was "untested" until Stage 14 and is now "rendered
+and read back, but not looked at" — it is checked for structure and computed
+style, never for appearance. If the honest word is worse, use the honest word.
 
 ---
 
@@ -155,6 +169,18 @@ api/chat.py       the tool loop, provider-agnostic, retriever optional
 api/gemini.py     the same loop on Gemini, behind the same seam
 api/server.py     GET /meta, GET /regions.geojson, POST /query, POST /ask
 ui/src/displays.js  the ONLY file in the UI that knows a query name
+ui/test_ui.py     Stage 13: the dashboard's couplings, checked from Python
+ui/test_render.py Stage 14: the dashboard RENDERED in Chrome and read back
+api/index.py      Stage 15: the one module a Vercel function imports
+api/requirements.txt  the API's closure alone — the root freeze does not fit
+api/test_deploy.py    Stage 15+17: the deployment config, both upload sets,
+                      the git tree as a deploy path, and .env.example
+vercel.json       one build, one route — zero-config would publish the suites
+.vercelignore     REPLACES .gitignore as the upload filter (D15.4)
+ui/vercel.json    the dashboard's own project: vite, static, no builds array
+ui/.gitignore     IS the dashboard's upload filter — no ui/.vercelignore (D17.7)
+.env.example      every variable the code reads; checked both ways (D17.4)
+DEPLOYMENT.md     the three tiers, step by step, and what each failure looks like
 run_pipeline.py   runs everything, skips what is already built
 DECISIONS.md      every choice and why — the long version
 ```
@@ -188,7 +214,15 @@ Five invariants worth not breaking:
 - **The path that answered is named everywhere it is shown.** Composer before
   you send, badge on the reply, chip in the audit trail, `provider` in the API
   response. There is no automatic fallback between paths: an answer that
-  silently changed engine would read as though a model wrote it.
+  silently changed engine would read as though a model wrote it. Since D16.8
+  the dashboard has one path and says so in all four places — and sends
+  `provider: "lexical"` explicitly, so a key appearing in the API's environment
+  cannot change what answered underneath a badge that still says `no model`.
+- **Every preset question on the landing screen is measured, every run.**
+  `ui/test_render.py` reads the chips off the rendered page, asks `/ask` each
+  one, and prints the misses: nine chips, each routing to a real query with
+  rows — except the BGC question, whose correct answer is a refusal (D16.7).
+  A chip is not a piece of copy; it is a claim that a question works.
 
 ---
 
@@ -203,9 +237,19 @@ written as Stage 8, and packaging was renumbered to 9 (commit 20e3215).
 the dashboard shipped first and took it (D10.1), so RAG became Stage 11 — and
 because D10.1 *wrote that down*, Stage 11 was binding and retrieval took it
 (D11.1). A reservation that is not written into the log is not binding on the
-log; one that is, is. Stage 12 took the lexical router (D12.1). Stage 13 is
-unclaimed; the deferred items with a written home are the Ollama transport
-(D12.1) and region centroids (D12.10).
+log; one that is, is. Stage 12 took the lexical router (D12.1), and Stage 13
+took the dashboard's own check suite (D13.6), Stage 14 the dashboard driven
+in Chrome (D14.1), Stage 15 the Vercel deployment configuration (D15.1), and
+Stage 16 the chat-first dashboard, its curated preset questions and its
+single answering path (D16.1, D16.7, D16.8), and Stage 17 the finished
+deployment — the hosted database, the dashboard as its own project, and the
+checks for the failure modes two deploy paths create (D17.1).
+This section said "Stage 14 is unclaimed" for two stages after Stage 14 had
+shipped — a reconstruction that was never corrected, which is the D10.1 failure
+arriving from the other direction. **Stage 18 is unclaimed**; the deferred
+items with a written home are the Ollama transport (D12.1), region centroids
+(D12.10), the Playwright suite over the rendering (D13.6) and a real connection
+pool in `catalog.py` (D17.5).
 
 ---
 
@@ -213,7 +257,9 @@ unclaimed; the deferred items with a written home are the Ollama transport
 
 ```bash
 .venv/bin/python run_pipeline.py            # build everything, skip what exists
-.venv/bin/python run_pipeline.py --check    # 405 checks, no network, no API key
+.venv/bin/python run_pipeline.py --check    # 543 checks, no network, no API key
+.venv/bin/python ui/test_ui.py              # the dashboard's couplings, no npm needed
+.venv/bin/python ui/test_render.py          # the dashboard in Chrome (needs npm + Chrome)
 .venv/bin/python etl/build_index.py         # Stage 11 index + its recall figures
 .venv/bin/python api/retrieval.py           # just the measurement
 .venv/bin/python api/corpus.py              # what is in the index, by kind
@@ -222,7 +268,30 @@ unclaimed; the deferred items with a written home are the Ollama transport
 .venv/bin/python api/router.py              # routing, measured: 3 rates + misses
 .venv/bin/uvicorn api.server:app --port 8000
 cd ui && npm install && npm run dev         # dashboard on :5173
+.venv/bin/python api/test_deploy.py         # Stage 15+17: the deployment config
 ```
+
+**Deploying is `DEPLOYMENT.md`, and every platform step in it is marked
+you.** Three tiers: Supabase Postgres, the API as a Vercel project rooted at
+`.`, the dashboard as a second Vercel project rooted at `ui`, both imported
+from GitHub so a push to master deploys both (D17.1).
+
+The API is live at `argo-rose.vercel.app` from Stage 15; it boots, routes and
+refuses honestly, and **it has no database behind it**, so it answers no
+question about ARGO until Step 1 of `DEPLOYMENT.md` is done.
+
+`FLOATCHAT_DSN`, `FLOATCHAT_ORIGINS` and `VITE_API_BASE` are the three
+variables, and `.env.example` is the list. Four traps, all logged:
+
+- `FLOATCHAT_DSN` must be the **pooled** connection string — a connection per
+  query against a direct endpoint exhausts it under serverless (D17.5).
+- Never `vercel deploy --prebuilt` from macOS: the Python builder resolves
+  darwin wheels for numpy and faiss and the function dies on Linux (D15.8).
+- Never `cd ui && vercel link`: D15.11's repo-level link resolves it to the
+  **API** project, and `vercel --prod` there replaces the API with the
+  dashboard at the API's URL. Import the second project in the web console.
+- `data/rag/` is committed on purpose (D17.2). A push deploys from the git
+  tree, and a gitignored index deploys an API whose retrieval is silently off.
 
 The check suites need Postgres and nothing else. `api/chat.py` needs
 `ANTHROPIC_API_KEY` or `GEMINI_API_KEY`; everything else runs without either,

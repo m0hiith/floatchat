@@ -1,32 +1,36 @@
 /**
- * Stage 11: the conversational half of the dashboard.
+ * The conversational half of the dashboard, and since Stage 16 the half it
+ * opens in.
  *
- * The thing worth noticing about this file is how little of it is new.  An
+ * The thing worth noticing about this file is how little of it is its own.  An
  * answer's charts are drawn by `ResultPanel` from `displays.js`, exactly as the
  * catalogue panel draws them, from rows that came out of the same eleven
  * queries.  There is no chat-specific renderer and no chat-specific query
- * path: the model's only power is choosing which catalogue query runs and what
- * goes into its parameters, and this panel shows both.
+ * path: the router's only power is choosing which catalogue query runs and
+ * what goes into its parameters, and this panel shows both.
  *
- * Three things are on screen for every answer, and none of them is optional:
+ * Two things are on screen for every answer, and neither is optional:
  *
- *   the answer      what the model said
- *   the queries     which catalogue query ran, with the parameters the
- *                   catalogue BOUND (defaults included), and the chart drawn
- *                   from the rows it returned
- *   the notes       what the vector index retrieved before the model chose,
- *                   each with the SQL that generated it
+ *   the answer      which catalogue query ran -- a statement about what ran,
+ *                   never a sentence about the ocean, because nothing in this
+ *                   path writes prose about the data
+ *   the queries     the parameters the catalogue BOUND (defaults included),
+ *                   where each bound value came from, and the chart drawn from
+ *                   the rows that came back
  *
- * The notes are collapsed and the queries are not.  That ordering is the
- * project's argument in miniature: retrieval steered the choice, and the
- * number came from the query.
+ * **One engine, named everywhere (D16.8).**  Stage 12 added a second path and
+ * refused to blur it; Stage 16 removed the model path from the dashboard
+ * altogether rather than leaving a selector whose other setting needs a key.
+ * The composer states the engine before you send, the reply carries a "lexical
+ * router · no model" badge, and the audit trail chips every query `lexical`.
+ * All three say the same thing because there is now only one thing to say --
+ * and `provider: "lexical"` is sent explicitly on every call, so a key
+ * appearing in the API's environment cannot quietly change what answered.
  *
- * Stage 12 adds a second path and refuses to blur it.  The lexical router
- * answers with no model at all, and everything on screen says so: the composer
- * names the path before you send, the reply carries a "lexical router · no
- * model" badge, and the bubble states which query ran rather than describing
- * the ocean.  A reader must never have to guess which engine produced what
- * they are looking at.
+ * **Stage 16's layout.**  An empty thread is a landing screen -- heading,
+ * composer and curated suggestions centred together -- instead of a card
+ * pinned above half a screen of nothing.  No sentence was softened to suit the
+ * promotion, and the audit trail did not move.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -36,42 +40,41 @@ import { DisplayBoundary, ModelFailure, Refusal, ApiFailure, Spinner } from "./S
 import { displayFor, suggestionsFor } from "../displays";
 import { formatParams, monthYear, rowCount, timeOfDay } from "../format";
 
-export default function ChatPanel({ meta, outlines, onQueries, onSwitchToCatalogue,
-                                   path, onPath }) {
+export default function ChatPanel({ meta, outlines, onQueries, onSwitchToCatalogue }) {
   const [turns, setTurns] = useState([]);
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
-  const [useRetrieval, setUseRetrieval] = useState(true);
   const bottom = useRef(null);
 
   const ai = meta.ai ?? {};
-  const rag = ai.retrieval ?? {};
   const router = ai.router ?? {};
-  // The selection lives in App so the header cannot contradict the replies:
-  // a tab badged "RAG" above a thread of answers badged "no model" is the
-  // dashboard disagreeing with itself about what just happened.
-  const setPath = onPath;
-  const lexical = path === "lexical";
+  // One path, named the same way in all three places it appears -- the
+  // composer before you send, the badge on the reply, the chip in the audit
+  // trail (D16.8). There is no selector left to disagree with any of them.
   const suggestions = suggestionsFor(meta, { monthYear });
 
   useEffect(() => {
     bottom.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [turns, busy]);
 
-  async function send(question, force) {
+  async function send(question) {
+    // A suggestion chip passes its own text. Only a send from the composer
+    // clears the composer -- clearing it for a chip would throw away something
+    // the reader had half-typed.
+    const fromDraft = question === undefined;
     const text = (question ?? draft).trim();
     if (!text || busy) return;
-    const useLexical = force ? force === "lexical" : lexical;
-    setDraft("");
+    if (fromDraft) setDraft("");
     setBusy(true);
     const at = timeOfDay();
     setTurns((t) => [...t, { role: "user", text, at }]);
 
     try {
-      const data = await ask(text, {
-        retrieval: useRetrieval && !useLexical,
-        provider: useLexical ? "lexical" : null,
-      });
+      // Explicit on every call, never inferred from what the server happens to
+      // have configured: this dashboard asks the lexical router, and a key
+      // appearing in the API's environment must not silently change the engine
+      // behind an answer badged `lexical router · no model`.
+      const data = await ask(text, { retrieval: false, provider: "lexical" });
       setTurns((t) => [...t, { role: "assistant", at: timeOfDay(), data }]);
       // The audit trail is shared with the catalogue panel: a query the model
       // chose and a query a human chose land in the same list, because they
@@ -91,201 +94,166 @@ export default function ChatPanel({ meta, outlines, onQueries, onSwitchToCatalog
         })),
       );
     } catch (error) {
+      // A failed question stays failed and is rendered as a failure. Nothing is
+      // re-asked by another engine, which is D12.12 and is now structural:
+      // there is no other engine in this dashboard to fall back to.
       setTurns((t) => [...t, { role: "assistant", at: timeOfDay(), error, text }]);
-      // The model was configured and did not answer. We now KNOW something the
-      // credential check could not: this key does not work. Move the selector
-      // so the next question reaches the path that does, and say so on screen.
-      //
-      // This is not the automatic fallback D12.12 refuses. The failed request
-      // stays failed and is rendered as a failure; nothing is silently
-      // re-answered by a different engine. Only the selector moves, it
-      // announces itself, and re-running the question is one explicit click.
-      if (error.kind === "no-model" && !useLexical) {
-        setPath("lexical");
-        setTurns((t) => [...t, {
-          role: "notice", at: timeOfDay(),
-          text: "Switched to the lexical router for the next question — it needs " +
-                "no key. Nothing above was re-answered.",
-        }]);
-      }
     } finally {
       setBusy(false);
     }
   }
 
-  if (!ai.available) {
+  // The router, not `ai.available`. `ai.available` is true when EITHER path
+  // can answer, so on a server with a model and a broken router it would show
+  // a chat box that cannot answer anything this dashboard is willing to ask.
+  if (!router.available) {
     return (
       <div className="mx-auto max-w-2xl py-8">
         <ModelFailure
-          error={{ message: "This server has no model credentials.", detail: ai.reason }}
+          error={{ message: "The lexical router is not available on this server.",
+                   detail: router.reason }}
           onSwitchToCatalogue={onSwitchToCatalogue}
         />
       </div>
     );
   }
 
+  // An empty thread is a LANDING screen, not a half-filled transcript: the
+  // heading, the composer and the suggestions sit together in the middle of
+  // the page, and the thread only claims the height once there is something in
+  // it. Before Stage 16 the opening card was pinned to the top with ~500px of
+  // dead space under it, which is what a secondary tab looks like.
+  const empty = turns.length === 0;
+
   return (
     <div className="flex h-full min-h-0 flex-col">
-      {/* `flex-1` on an empty thread left ~500px of dead space between the
-          opening card and the composer. The thread only claims the space once
-          there is something in it. */}
-      <div className={`space-y-4 overflow-y-auto pr-1 ${
-        turns.length === 0 ? "shrink-0" : "min-h-0 flex-1"}`}>
-        {turns.length === 0 && (
-          <Opening meta={meta} rag={rag} router={router} lexical={lexical} />
-        )}
-
-        {turns.map((turn, i) =>
-          turn.role === "user" ? (
-            <Question key={i} turn={turn} />
-          ) : turn.role === "notice" ? (
-            <Notice key={i} turn={turn} />
-          ) : (
-            <Reply key={i} turn={turn} meta={meta} outlines={outlines}
-                   onSwitchToCatalogue={onSwitchToCatalogue}
-                   onRetryLexical={() => send(turn.text, "lexical")} />
-          ),
-        )}
-
-        {busy && (
-          <div className="rounded-lg border border-slate-300 bg-white">
-            <Spinner label="Choosing a query and running it" />
-          </div>
-        )}
-        <div ref={bottom} />
-      </div>
-
-      <div className={`space-y-2 ${turns.length === 0 ? "mt-3" : "mt-3 shrink-0"}`}>
-        {turns.length === 0 && suggestions.length > 0 && (
-          <ul className="flex flex-wrap gap-1.5">
-            {suggestions.map((s) => (
-              <li key={s.from}>
-                <button
-                  onClick={() => send(s.text)}
-                  className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs text-slate-600 hover:border-slate-400 hover:bg-slate-50"
-                >
-                  {s.text}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        <div className="rounded-lg border border-slate-300 bg-white p-2">
-          <textarea
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                send();
-              }
-            }}
-            rows={2}
-            placeholder="Ask about the ARGO floats — enter to send, shift+enter for a new line"
-            className="w-full resize-none px-2 py-1 text-sm text-slate-800 outline-none placeholder:text-slate-400"
-          />
-          <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 px-2 pt-2">
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Which engine answers is chosen before sending and shown after.
-                  There is no automatic fallback from one to the other: an
-                  answer that silently changed engine would read as though a
-                  model wrote it. */}
-              <div className="flex rounded border border-slate-300 p-0.5 text-[11px]">
-                <button
-                  onClick={() => setPath("model")}
-                  disabled={!ai.model_provider}
-                  title={ai.model_provider ? undefined : ai.reason}
-                  className={`rounded px-2 py-0.5 ${
-                    !lexical ? "bg-slate-800 text-white"
-                      : ai.model_provider ? "text-slate-600 hover:bg-slate-100"
-                        : "text-slate-300"
-                  }`}
-                >
-                  model{ai.model_provider ? ` · ${ai.model_provider}` : ""}
-                </button>
-                <button
-                  onClick={() => setPath("lexical")}
-                  className={`rounded px-2 py-0.5 ${
-                    lexical ? "bg-slate-800 text-white" : "text-slate-600 hover:bg-slate-100"
-                  }`}
-                >
-                  lexical router · no model
-                </button>
-              </div>
-              {lexical ? (
-                <span className="text-[11px] text-slate-500">
-                  <span className="font-mono text-slate-400">
-                    {router.routes} routes · {router.exemplars} examples · floor {router.floor}
-                  </span>
-                </span>
+      <div
+        className={`mx-auto flex w-full min-h-0 flex-1 flex-col ${
+          empty ? "max-w-2xl justify-center" : "max-w-3xl"
+        }`}
+      >
+        {empty ? (
+          <Opening meta={meta} router={router}
+                   onSwitchToCatalogue={onSwitchToCatalogue} />
+        ) : (
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
+            {turns.map((turn, i) =>
+              turn.role === "user" ? (
+                <Question key={i} turn={turn} />
               ) : (
-                <label className="flex items-center gap-1.5 text-[11px] text-slate-500">
-                  <input
-                    type="checkbox"
-                    checked={useRetrieval}
-                    onChange={(e) => setUseRetrieval(e.target.checked)}
-                    disabled={!rag.available}
-                  />
-                  {rag.available ? (
-                    <>
-                      retrieval{" "}
-                      <span className="font-mono text-slate-400">
-                        {rag.documents} docs · {rag.embedder}
-                      </span>
-                    </>
-                  ) : (
-                    <>retrieval unavailable — {rag.reason}</>
-                  )}
-                </label>
-              )}
-            </div>
-            <button
-              onClick={() => send()}
-              disabled={busy || draft.trim().length === 0}
-              className="rounded bg-slate-800 px-4 py-1.5 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
-            >
-              {busy ? "Asking…" : "Ask"}
-            </button>
+                <Reply key={i} turn={turn} meta={meta} outlines={outlines}
+                       onSwitchToCatalogue={onSwitchToCatalogue} />
+              ),
+            )}
+
+            {busy && (
+              <div className="rounded-lg border border-slate-300 bg-white">
+                <Spinner label="Choosing a query and running it" />
+              </div>
+            )}
+            <div ref={bottom} />
           </div>
+        )}
+
+        <div className={`shrink-0 space-y-2 ${empty ? "mt-7" : "mt-3"}`}>
+          <div className="rounded-2xl border border-slate-300 bg-white p-2.5 shadow-sm
+                          transition focus-within:border-slate-400 focus-within:ring-4
+                          focus-within:ring-slate-200/60">
+            <textarea
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  send();
+                }
+              }}
+              rows={empty ? 3 : 2}
+              placeholder="Ask about the ARGO floats — enter to send, shift+enter for a new line"
+              className="w-full resize-none px-2 py-1.5 text-[15px] leading-relaxed text-slate-800 outline-none placeholder:text-slate-400"
+            />
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 px-2 pt-2">
+              <div className="flex flex-wrap items-center gap-2.5">
+                {/* The engine, named before you send, in the same words the
+                    reply is badged with. It was a selector until D16.8 and is
+                    now a statement of fact, which is the only thing that
+                    changed about it: there is one path, and nothing on screen
+                    may imply a choice the dashboard does not offer. */}
+                <span className="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                  lexical router · no model
+                </span>
+                <span className="font-mono text-[11px] text-slate-400">
+                  {router.routes} routes · {router.exemplars} examples · floor {router.floor}
+                </span>
+              </div>
+              <button
+                onClick={() => send()}
+                disabled={busy || draft.trim().length === 0}
+                className="rounded-lg bg-slate-800 px-5 py-1.5 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+              >
+                {busy ? "Asking…" : "Ask"}
+              </button>
+            </div>
+          </div>
+
+          {/* Under the composer, where a landing screen puts them. Still a
+              `ul > li > button` each, and still generated from the catalogue's
+              own examples -- no question here contains a value this dashboard
+              made up (rule 2). */}
+          {empty && suggestions.length > 0 && (
+            <ul className="grid gap-1.5 pt-1 sm:grid-cols-2">
+              {suggestions.map((s) => (
+                <li key={s.from} className="flex">
+                  <button
+                    onClick={() => send(s.text)}
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-xs leading-snug text-slate-600 hover:border-slate-400 hover:bg-slate-50"
+                  >
+                    {s.text}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <p className={`px-1 text-[11px] leading-snug text-slate-400 ${
+            empty ? "mx-auto max-w-xl text-center" : ""}`}>
+            {`Your wording is matched against written examples to pick one of the ${meta.queries.length} catalogue queries. This is lexical matching, not a language model and not semantic search: it cannot follow up, cannot chain queries and cannot write prose about the data.`}{" "}
+            It cannot write SQL either, and the connection it runs on holds{" "}
+            <code className="font-mono">SELECT</code> and nothing else. Every number below came
+            from a query named in its own answer.
+          </p>
         </div>
-        <p className="px-1 text-[11px] leading-snug text-slate-400">
-          {lexical
-            ? `Your wording is matched against written examples to pick one of the ${meta.queries.length} catalogue queries. This is lexical matching, not a language model and not semantic search: it cannot follow up, cannot chain queries and cannot write prose about the data.`
-            : `The model chooses one of the ${meta.queries.length} catalogue queries and fills its parameters.`}{" "}
-          Either way it cannot write SQL, and the connection it runs on holds{" "}
-          <code className="font-mono">SELECT</code> and nothing else. Every number below came
-          from a query named in its own answer.
-        </p>
       </div>
     </div>
   );
 }
 
-function Opening({ meta, rag, router, lexical }) {
+/**
+ * The landing screen's heading.  Every sentence here is either read from
+ * `/meta` or is a property of the data; none of it is decoration.  The units
+ * line and the BGC sentence stay because they are the two things a reader
+ * would otherwise assume wrongly before typing anything.
+ */
+function Opening({ meta, router, onSwitchToCatalogue }) {
   const db = meta.database;
   return (
-    <div className="rounded-lg border border-dashed border-slate-300 bg-white p-6">
-      <h3 className="text-sm font-semibold text-slate-800">Ask a question in English</h3>
-      <p className="mt-1 text-sm text-slate-500">
+    <div className="shrink-0 text-center">
+      <h2 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-[1.7rem]">
+        Ask a question in English
+      </h2>
+      <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-slate-500">
         {db.profiles.toLocaleString("en")} profiles from {db.floats} floats,{" "}
         {db.levels.toLocaleString("en")} measured levels, {db.window.start} to{" "}
         {db.window.end}. Pressure in dbar, temperature in °C, salinity in PSU — and no
         biogeochemical parameters, because these floats do not carry any.
       </p>
-      {/* Only describe retrieval on the path that uses it. Saying "put in
-          front of your question so the model knows which query to reach for"
-          while a router with no model is answering would be describing a
-          mechanism that is not running. */}
-      {rag.available && !lexical && (
-        <p className="mt-3 text-[11px] text-slate-400">
-          {rag.documents} summaries are indexed in {rag.dimensions} dimensions
-          ({rag.embedder}); the closest {rag.k} are put in front of your question so the model
-          knows which query to reach for. They orient it. They never become the answer.
-        </p>
-      )}
-      {router.available && lexical && (
-        <p className="mt-2 text-[11px] text-slate-400">
+      {/* Retrieval is deliberately NOT described here. The index still exists
+          and `/ask` still uses it on the model path, but this dashboard does
+          not take that path any more (D16.8), and a landing screen explaining a
+          mechanism that will not run for the question you are about to type is
+          the same false sentence as a badge naming the wrong engine. */}
+      {router.available && (
+        <p className="mx-auto mt-3 max-w-xl text-[11px] leading-snug text-slate-400">
           The <strong className="text-slate-500">lexical router</strong> is answering: your
           wording is matched against {router.exemplars} written examples to pick one of the{" "}
           {meta.queries.length} queries. No model, no key, no network. It cannot chain
@@ -293,16 +261,22 @@ function Opening({ meta, rag, router, lexical }) {
           audit trail are the answer.
         </p>
       )}
+      {/* The catalogue is the second door now, so the chat panel says where it
+          is. It is the same eleven queries either way -- which is the claim
+          this line gets to make precisely because it is true. */}
+      <p className="mt-5 text-[11px] text-slate-400">
+        Or pick a query by hand:{" "}
+        <button
+          onClick={onSwitchToCatalogue}
+          className="underline underline-offset-2 hover:text-slate-600"
+        >
+          open the catalogue
+        </button>{" "}
+        — the same {meta.queries.length} queries, the same audit trail.
+      </p>
     </div>
   );
 }
-
-function Notice({ turn }) {
-  return (
-    <p className="px-1 text-center text-[11px] text-slate-500">{turn.text}</p>
-  );
-}
-
 
 function Question({ turn }) {
   return (
@@ -314,23 +288,24 @@ function Question({ turn }) {
   );
 }
 
-function Reply({ turn, meta, outlines, onSwitchToCatalogue, onRetryLexical }) {
+function Reply({ turn, meta, outlines, onSwitchToCatalogue }) {
   if (turn.error) {
     const error = turn.error;
+    // Kept as a rendering, not as an offer: this panel asks for `lexical` on
+    // every call, so a 503 about credentials means the server disagrees with
+    // the request it was sent. It is shown as the failure it is, and there is
+    // no button here that re-asks it another way (D12.12, D16.8).
     if (error.kind === "no-model") {
-      return (
-        <ModelFailure
-          error={error}
-          onRetryLexical={turn.text ? onRetryLexical : null}
-          onSwitchToCatalogue={onSwitchToCatalogue}
-        />
-      );
+      return <ModelFailure error={error} onSwitchToCatalogue={onSwitchToCatalogue} />;
     }
     if (error.kind === "refused") return <Refusal error={error} />;
     return <ApiFailure error={error} />;
   }
 
-  const { answer, audit = [], retrieved = [], provider, turns: steps, refusal,
+  // `retrieved` is deliberately not read. The API still returns it on the
+  // model path; this dashboard does not take that path, so there is no panel
+  // here that could show notes no question in this thread was asked with.
+  const { answer, audit = [], provider, turns: steps, refusal,
           refusal_reason: reason, alternatives = [], notices = [], slots = [],
           considered = [] } = turn.data;
   const lexical = provider === "lexical";
@@ -405,7 +380,6 @@ function Reply({ turn, meta, outlines, onSwitchToCatalogue, onRetryLexical }) {
       ))}
 
       {slots.length > 0 && <Slots slots={slots} />}
-      {retrieved.length > 0 && <Retrieved notes={retrieved} />}
     </div>
   );
 }
@@ -501,62 +475,6 @@ function QueryResult({ entry, meta, outlines, seq }) {
           This query has no declared display in <code className="font-mono">displays.js</code>.
         </p>
       )}
-    </div>
-  );
-}
-
-/** What the vector index put in front of the question, and where it came from. */
-function Retrieved({ notes }) {
-  const [open, setOpen] = useState(false);
-  const failed = notes.length === 1 && notes[0].kind === "error";
-
-  if (failed) {
-    return (
-      <p className="px-1 text-[11px] text-amber-700">
-        Retrieval was unavailable for this question and the model answered without it:{" "}
-        <span className="font-mono">{notes[0].text}</span>
-      </p>
-    );
-  }
-
-  return (
-    <div className="rounded-lg border border-slate-200 bg-white">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-baseline justify-between gap-2 px-3 py-2 text-left hover:bg-slate-50"
-      >
-        <span className="text-[11px] font-semibold text-slate-600">
-          {notes.length} summaries retrieved before the model chose a query
-        </span>
-        <span className="text-[11px] text-slate-400">{open ? "hide" : "show"}</span>
-      </button>
-      {open && (
-        <ol className="divide-y divide-slate-100 border-t border-slate-100">
-          {notes.map((note) => (
-            <li key={note.doc_id} className="px-3 py-2">
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="text-[11px] font-semibold text-slate-700">{note.title}</span>
-                <span className="shrink-0 font-mono text-[10px] text-slate-400">
-                  {note.kind} · {note.score.toFixed(3)}
-                </span>
-              </div>
-              <p className="mt-1 text-[11px] leading-snug text-slate-500">{note.text}</p>
-              <details className="mt-1">
-                <summary className="cursor-pointer text-[10px] text-slate-400">
-                  the query that generated this summary
-                </summary>
-                <pre className="mt-1 overflow-x-auto rounded bg-slate-50 p-2 font-mono text-[10px] whitespace-pre-wrap text-slate-500">
-                  {note.source}
-                </pre>
-              </details>
-            </li>
-          ))}
-        </ol>
-      )}
-      <p className="border-t border-slate-100 px-3 py-1.5 text-[10px] text-slate-400">
-        Summaries of the database, not query results. They tell the model where to look; the
-        numbers above came from the queries listed with them.
-      </p>
     </div>
   );
 }

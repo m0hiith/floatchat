@@ -3,8 +3,32 @@ __pycache__/
 *.pyc
 .DS_Store
 
-# Raw GDAC downloads are inputs, not source. The index alone is 58 MB.
-data/
+# Raw GDAC downloads are inputs, not source.  The index alone is 58 MB, and
+# `data/` as a whole is 177 MB the API never opens.
+#
+# `data/rag/` is the exception and it is deliberate (D17.2).  Since the Vercel
+# project is connected to this repository, a push to master deploys the API --
+# and that path's source is the GIT TREE, not the working directory, so a
+# gitignored index would deploy an API whose retrieval is off and which says so
+# only in /meta.  The two files are 706 KB and are built by a deterministic
+# keyless embedder, so committing them is reproducible, not a binary blob with
+# no provenance.  `api/test_deploy.py` fails if they stop being tracked.
+#
+# Written as `data/*` with a negation rather than `data/`: git does not descend
+# into an excluded DIRECTORY, so `data/` + `!data/rag/` would not work.
+data/*
+!data/rag/
 
 # Session scratch from the agent loop
 .claude/
+
+# Vercel CLI project links. `vercel link` writes one of these at the
+# repo root (the API project) and one in ui/ (the dashboard).
+.vercel/
+.vercel
+
+# Every .env, including the .env.local `vercel link` writes with an OIDC token
+# in it (D15.12).  `.env.example` is the exception: it holds names and no
+# values, and it is meant to be read (D17.4).
+.env*
+!.env.example

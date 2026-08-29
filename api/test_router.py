@@ -309,28 +309,37 @@ def main():
           "where each bound value came from" in ui)
     check("the panel says this path cannot chain or follow up",
           "cannot chain queries" in ui)
-    check("retrieval is only described on the path that actually uses it",
-          "rag.available && !lexical" in ui)
+    check("retrieval is not described on a path that does not use it",
+          "rag.available" not in ui and "retrieval: false" in ui,
+          "the index still exists and /ask still uses it; this dashboard does not (D16.8)")
 
-    print("\na model failure offers the path that works")
+    print("\nthe dashboard asks one engine and cannot silently change it")
+    # Until Stage 16 this section asserted that a two-path UI could not lie
+    # about which path had answered: a selector, a three-valued badge, an
+    # explicit re-ask after a model failure. D16.8 removed the model path from
+    # the dashboard, so those properties are gone and these are what replaced
+    # them -- the same question (can what is on screen disagree with what
+    # answered?), asked of a UI that now has one answer.
     states = (UI.parent / "States.jsx").read_text()
-    check("the failure panel's primary action re-asks without a model",
-          "Ask this again without a model" in states and "onRetryLexical" in states)
-    check("the selector moves to the working path after a model failure",
-          'error.kind === "no-model"' in ui and 'setPath("lexical")' in ui)
-    check("and the move announces itself -- it is not a silent fallback",
-          "Switched to the lexical router" in ui)
-    check("the failed request is NOT re-answered behind the reader's back "
-          "(D12.12 still holds)",
-          "Nothing above was re-answered" in ui
-          and "re-answered by a different engine" in ui)
-    check("re-asking is an explicit click, carrying the original question",
-          'send(turn.text, "lexical")' in ui)
+    check("the failure panel offers the catalogue, not another engine",
+          "Ask this again without a model" not in states
+          and "Use the query catalogue instead" in states)
+    check("every question is sent with the provider named", 'provider: "lexical"' in ui,
+          "never inferred from what the server happens to have configured")
+    check("one call site sends a question, so there is no fallback path",
+          ui.count("await ask(") == 1, f"{ui.count('await ask(')} call site(s)")
+    check("no engine selector remains in the panel",
+          "setPath(" not in ui and "onPath" not in ui)
     app = (UI.parent.parent / "App.jsx").read_text()
-    check("the header reports the LIVE path, so it cannot contradict the replies",
-          "usingModel" in app and "chatPath ===" in app)
-    check("and it only claims RAG when the model path is the one answering",
-          'usingModel && ai.retrieval?.available ? "RAG"' in app)
+    check("the header derives no path it cannot offer",
+          "usingModel" not in app and "chatPath" not in app)
+    check("the chat tab is offered when the ROUTER can answer",
+          "ai.router?.available" in app,
+          "`ai.available` is true when EITHER path can, the model included")
+    badge = app.split("const badge =")[1].split(";")[0] if "const badge =" in app else ""
+    check("and the tab badge says what every reply badge says",
+          '"no model"' in badge and "model_provider" not in badge,
+          "one engine, one sentence about it")
     check("the audit trail is told which path answered, not a constant",
           "via: data.provider" in ui and '"chat"' not in ui.split("onQueries")[1][:400])
     audit_src = (UI.parent / "AuditPanel.jsx").read_text()

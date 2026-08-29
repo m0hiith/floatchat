@@ -55,6 +55,7 @@ Run it:
 
 from __future__ import annotations
 
+import os
 import re
 import sys
 from datetime import date, datetime
@@ -87,6 +88,37 @@ PROVIDER_LEXICAL = lexical.PROVIDER
 # have not thought about.
 DEV_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
+
+def deployed_origins() -> list[str]:
+    """Origins of a deployed dashboard, comma-separated in `FLOATCHAT_ORIGINS`.
+
+    The dev origins stay in the list either way, so a deployed API is still
+    reachable from a local UI pointed at it.
+
+    `*` is refused rather than honoured.  A wildcard is precisely the claim the
+    comment above declines to make, and an environment variable is the easiest
+    place for one to arrive by accident -- a loud failure at import beats an API
+    that is permissive and looks configured.  An entry without a scheme is
+    refused for the same reason: the CORS middleware matches origins by exact
+    string, so `floatchat.vercel.app` would match nothing and fail as a browser
+    error at demo time rather than as a message here (D15.3).
+    """
+    raw = os.environ.get("FLOATCHAT_ORIGINS", "")
+    origins = [o.strip().rstrip("/") for o in raw.split(",") if o.strip()]
+    if "*" in origins:
+        raise ValueError(
+            "FLOATCHAT_ORIGINS may not contain '*' -- list the dashboard's "
+            "origins explicitly.")
+    unschemed = [o for o in origins if not o.startswith(("http://", "https://"))]
+    if unschemed:
+        raise ValueError(
+            "FLOATCHAT_ORIGINS entries must be full origins including the "
+            f"scheme; got: {', '.join(unschemed)}")
+    return origins
+
+
+ALLOWED_ORIGINS = DEV_ORIGINS + deployed_origins()
+
 # Postgres renders `polygon` as ((x,y),(x,y),...).  x is longitude (D5.1).
 POINT = re.compile(r"\(([-\d.eE+]+),([-\d.eE+]+)\)")
 
@@ -97,7 +129,7 @@ app = FastAPI(
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=DEV_ORIGINS,
+    allow_origins=ALLOWED_ORIGINS,
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
 )
@@ -534,4 +566,18 @@ def health() -> dict[str, Any]:
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+
+    # Vercel imports `app` and never reaches this block, so these two variables
+    # do nothing there (D17.6).  They exist for a container host -- Render and
+    # Railway inject `PORT` and route to it, and a process that ignored it
+    # would bind 8000, fail the platform's health check, and look like an
+    # application error rather than a binding one.  That is rule 7's failure
+    # mode, so the variable is read rather than left decorative.
+    #
+    # The defaults are the previous literals, unchanged: 127.0.0.1 stays the
+    # default because a laptop should not bind every interface by accident.
+    # A container must set HOST=0.0.0.0, and the documented start command in
+    # DEPLOYMENT.md passes it explicitly rather than relying on this default.
+    uvicorn.run(app,
+                host=os.environ.get("HOST", "127.0.0.1"),
+                port=int(os.environ.get("PORT", "8000")))

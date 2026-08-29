@@ -27,7 +27,7 @@ python -m venv .venv
 ```
 
 That downloads ~155 MB, builds the database, builds the retrieval index, and
-runs 405 checks. First run is a few minutes, mostly transfer; afterwards it
+runs 543 checks. First run is a few minutes, mostly transfer; afterwards it
 re-runs from cache in about 11 seconds.
 
 Then apply the read-only role the query layer uses, once:
@@ -39,7 +39,7 @@ psql -h localhost -d floatchat -f db/roles.sql
 To ask questions in English you need a key for **either** provider — the same
 tool loop runs on Anthropic or Gemini behind one transport seam. **Everything
 else works without either key**, including the dashboard, the retrieval index
-and all six test suites:
+and every test suite:
 
 ```bash
 export ANTHROPIC_API_KEY=...          # or: export GEMINI_API_KEY=...
@@ -51,12 +51,15 @@ export ANTHROPIC_API_KEY=...          # or: export GEMINI_API_KEY=...
 Whichever key is present is used; `--anthropic` / `--gemini` force the choice
 and `--model=NAME` overrides the model.
 
-**The whole dashboard needs no key at all** — both tabs. **Catalogue** is eleven
-queries with dropdowns built from the database. **Chat** takes a question in
-English: with a key a model picks the query, and without one a **lexical
-router** picks it instead, badged `lexical router · no model` on every reply.
-Either way you see which query ran, the parameters the catalogue bound, and the
-chart drawn from the rows that came back:
+**The whole dashboard needs no key at all**, and since Stage 16 it does not
+ask for one: it opens in **Chat**, where a **lexical router** — written
+examples, no model, no network — picks one of the eleven queries and every
+reply is badged `lexical router · no model`. **Catalogue**, one click away, is
+the same eleven queries with dropdowns built from the database. Either way you
+see which query ran, the parameters the catalogue bound, and the chart drawn
+from the rows that came back. The model path is still there and still tested;
+it is reached through `/ask` with an explicit `provider`, or from `api/chat.py`
+above — not from the dashboard:
 
 ```bash
 .venv/bin/uvicorn api.server:app --port 8000     # one terminal
@@ -85,7 +88,7 @@ The retrieval index builds with no key either, and reports how well it works:
 | database size | 95 MB |
 | parameterised queries | 11 |
 | indexed summaries | 131 |
-| automated checks | 405 |
+| automated checks | 543 |
 
 The ten floats are deliberately mixed: 6 delayed-mode, 2 real-time-only, 2 that
 change mode mid-life; 4 data centres of which 5 floats are Indian (`incois`);
@@ -113,7 +116,7 @@ GDAC index (3,397,664 rows)
                                      │    ├─ Anthropic (claude-opus-5)
                                      │    └─ api/gemini.py  the same loop on Gemini
                                      └─ api/server.py   GET /meta, POST /query, POST /ask
-                                          └─ ui/        the dashboard: Catalogue and Chat, one audit trail
+                                          └─ ui/        the dashboard: Chat and Catalogue, one audit trail
 ```
 
 `api/catalog.py` feeds two consumers from the same objects: the model's tool
@@ -220,6 +223,21 @@ parameters, and how many rows each returned.
   arriving as a number rather than a string; an aggregate over nothing
   reporting `null` rather than `0.0`; and a stopped database returning 503
   with its reason instead of an empty body.
+- **52 deployment-configuration checks** — the two requirements freezes
+  reconciled pin by pin, and the property behind them: no third-party module
+  imported anywhere under `api/` is missing from the slim one. Then both upload
+  sets, *computed by walking the tree* rather than grepping the ignore files —
+  the API's (1.1 MB, 26 files) and the dashboard's (0.25 MB, 24 files) — each
+  asserted to carry the retrieval index and no credential and no `node_modules`.
+  Then the git tree as its own deploy path, because a push deploys from it and
+  it must carry what the CLI carries. Then `.env.example` compared against every
+  `os.environ` read in the code **both ways**, so a variable added to one and
+  not the other fails here rather than during a demo, and every example value
+  checked against the shapes of a real key. And last, with a fabricated model
+  key in the environment, that the vector index is still searched by the
+  embedder recorded in its own manifest — which withdrew a limitation this
+  project had documented and never re-checked (D17.10). None of it needs a
+  network, a database or a Vercel account.
 - **The funnel reconciles.** 939 profiles promised by the index − 13 dropped by
   QC + 2 the index's box filter had excluded = 928 written. Every one of those
   15 has a name and a reason in `dropped_profiles`.
@@ -230,8 +248,43 @@ parameters, and how many rows each returned.
 
 ---
 
+## Deploying it
+
+`DEPLOYMENT.md` is the whole thing, step by step. The short version:
+
+| tier | where | why |
+|---|---|---|
+| dashboard | Vercel, root directory `ui` | static Vite build |
+| API | Vercel, root directory `.` | one Python function, `api/index.py` |
+| database | Supabase Postgres, **pooled** connection string | 96 MB against a 500 MB free tier |
+
+Both Vercel projects import the same GitHub repository, so one push deploys
+both. Three environment variables — `FLOATCHAT_DSN`, `FLOATCHAT_ORIGINS`,
+`VITE_API_BASE` — and `.env.example` is the list.
+
+**Render and Railway were considered and are documented as the fallback.** The
+deciding argument was not cost: Render's free instance sleeps after 15 minutes
+and takes about 50 seconds to wake, and a blank page in front of judges is the
+failure this project is organised against. Nothing here needs a GPU service —
+the dashboard's answering engine runs inside the API process with no model.
+
+**The API is live at `argo-rose.vercel.app` and has no database behind it.** It
+boots, routes, and returns `503` naming the address it tried. That is Stage 15;
+Step 1 of `DEPLOYMENT.md` is what makes it answer a question about ARGO.
+
+---
+
 ## Known limitations
 
+- **Nothing in this repository has been run against the deployed stack.** The
+  configuration for all three tiers is written and checked by 52 assertions, and
+  every one of them checks *this repository* — none can check Vercel or
+  Supabase. No hosted database has been created from here, no environment
+  variable has been set, no push has been deployed. `DEPLOYMENT.md` marks every
+  step that needs a person, and its last section lists what is still unproven
+  after they are all done — including the cold start of `/ask`, and the fact
+  that `catalog.connect()` still opens a connection per query, which the pooled
+  connection string makes survivable rather than solved.
 - **The keyless chat path is a lexical router, not a language model.** It
   matches your wording against 110 written examples to pick one of the eleven
   queries. It cannot follow up, cannot chain queries and writes no prose about
@@ -275,15 +328,27 @@ parameters, and how many rows each returned.
 - **Ten floats, two years, one ocean basin.** The scope is deliberate and
   documented, not a stub. Widening it means re-running Stage 1 with different
   constants and re-checking the funnel.
-- **The dashboard has no automated tests.** The 405 checks cover the ETL, the
-  catalogue, both model loops, retrieval and the HTTP API. The UI was verified
-  by driving a real browser and reading back the rendered chart and map objects
-  — which found three bugs that built cleanly and passed every server-side
-  check — but that was a session, not a suite, and **the chat panel has not had
-  even that**. Three checks now assert the UI cannot drift from the catalogue
-  (every query has a display, every suggestion names a real query and a real
-  example key), but nothing re-checks on every run that depth still plots
-  downward or that an answer's chart renders.
+- **The dashboard is read back on every run; how it *looks* is still not
+  checked.** Of the 543 checks, 44 (`ui/test_ui.py`) read the UI source and
+  assert what has already been broken here at least once: every query has a
+  display and no display is stale, `displays.js` is still the only UI file
+  naming a query in code, no Plotly attribute that this pinned version silently
+  drops, no map marker depending on an image file, three data modes, units
+  declared, every suggestion filled from a real catalogue example, and the tab
+  badge naming the engine that would actually answer. They need no database, no
+  npm and no browser. A further 53 (`ui/test_render.py`) drive the *production
+  build* in headless Chrome and read the result back — the computed axis
+  colours, that pressure increases downward on the drawn axis, that no request
+  404s, that the page opens in the chat tab and the catalogue is one click
+  away. **What none of them can see is whether anything looks right** — a
+  legend that overlaps, a layout that breaks in a narrow window, two labels on
+  top of each other. One browser, one viewport, and no screenshot is compared
+  against anything.
+- **The dashboard no longer exercises the model path at all.** Stage 16 removed
+  it from the UI (D16.8) because on this machine the key is a placeholder and
+  the button failed on every click. A model choosing a catalogue query is
+  therefore demonstrated by `api/chat.py` and by `/ask`, both of which are
+  tested — and neither of which has been run against a live key from here.
 - **Core ARGO only.** Pressure, temperature, salinity. No biogeochemical
   parameters — the ten floats do not carry them.
 - **Region polygons drop island holes and are simplified** to fit a core
@@ -308,11 +373,15 @@ api/embed.py      three embedders behind one seam (Gemini · keyless · scripted
 api/retrieval.py  the FAISS index, and the measurement of whether it works
 api/router.py     Stage 12: picks a query with no model, and measures itself
 api/server.py     GET /meta, GET /regions.geojson, POST /query, POST /ask
-api/test_*.py     384 checks, no network, no API key
+api/test_*.py     443 checks, no network, no API key
 ui/               the dashboard; ui/src/displays.js maps each query to a chart
 db/schema.sql     tables, constraints, indexes
 db/roles.sql      the read-only role
 run_pipeline.py   runs everything, skips what is already built
+vercel.json       the API's Vercel project: one build, one route
+ui/vercel.json    the dashboard's: vite, static, its own project
+.env.example      every variable the code reads, names only, checked both ways
+DEPLOYMENT.md     the three tiers, step by step, and every failure's message
 CLAUDE.md         the working agreement and the ARGO domain rules
 DECISIONS.md      every choice and why — the long version
 ```

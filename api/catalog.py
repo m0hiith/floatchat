@@ -27,6 +27,7 @@ Three further defences, none of which rely on the model behaving:
 
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass, field
 from datetime import date
@@ -35,7 +36,18 @@ from typing import Any
 import psycopg
 from psycopg.rows import dict_row
 
-DSN = "postgresql://floatchat_ro:floatchat_ro@localhost:5432/floatchat"
+# The local development database, and the default.  `FLOATCHAT_DSN` overrides it
+# so a deployment can point at a hosted Postgres without a source edit -- the
+# credentials of a deployed database do not belong in a committed file.
+#
+# The default names `floatchat_ro` because defence 1 above assumes a role with
+# SELECT and nothing else, and a deployment that supplies an owner DSN has
+# quietly removed it.  Nothing here can inspect what an environment variable
+# contains; what CAN check it is `api/test_catalog.py`, which tries a DELETE on
+# whatever DSN is in force and fails if the connection executes it.  Run it
+# against the deployment before believing the deployment is read-only (D15.2).
+DSN = os.environ.get("FLOATCHAT_DSN") or \
+    "postgresql://floatchat_ro:floatchat_ro@localhost:5432/floatchat"
 STATEMENT_TIMEOUT_MS = 10_000
 MAX_ROWS = 5_000
 
