@@ -2598,6 +2598,36 @@ nothing re-checked. A false limitation is cheaper than a false capability and
 it is still false — it would have sent someone rebuilding an index to fix a
 problem they did not have.
 
+### D17.11 — "No PostGIS, no extensions" was true of the schema and false of the deployment
+`DEPLOYMENT.md` told the reader that the restore was one command because the
+schema uses core `point` and `polygon` and needs no extensions. That sentence
+was inherited from D4.4, where it is correct: `db/schema.sql` really does need
+nothing.
+**The catalogue does.** `nearest_profiles` calls `ll_to_earth`, `earth_box` and
+`earth_distance` (`api/catalog.py:332`) — `earthdistance`, which is built on
+`cube`. The local database has both, which is why nothing ever noticed: the
+claim was checked against the file it was written about and not against the
+thing being deployed.
+**Found by dumping.** `pg_restore -l` on the real dump lists `EXTENSION cube`
+and `EXTENSION earthdistance` before the first table. Re-reading the schema
+would never have found it.
+**Decided:** create both in `public` before the restore, and say so.
+**Why `public` specifically:** Supabase's dashboard toggle installs extensions
+into an `extensions` schema, and `api/catalog.py` sets no `search_path`. In
+that arrangement ten of eleven queries work and one raises `function
+ll_to_earth does not exist` — invisible until someone asks where the nearest
+floats are, which is a question a judge asks.
+**What already catches it, and is why this is a documentation fix rather than a
+code one:** `api/test_catalog.py` runs *every* query against its documented
+example, so running it against the deployment — the D15.2 manual step that
+already existed — names `nearest_profiles` and fails. The new check in
+`api/test_deploy.py` is the other half: it reads the functions the catalogue
+calls and fails if `DEPLOYMENT.md` has stopped naming the extension that
+provides them. Made to fail by renaming both in the document.
+**The general form, which is why this is logged rather than quietly edited:** a
+claim inherited from a decision about one artefact, restated about a different
+one, is unchecked at the moment it is restated. D4.4 was never wrong.
+
 ### Stage 17 result
 | | |
 |---|---:|
@@ -2605,9 +2635,9 @@ problem they did not have.
 | code changed | 2 lines in `api/server.py` (`HOST`/`PORT`), 3 in `db/roles.sql` |
 | architecture changed | none — Stage 15's two seams and one entrypoint are untouched |
 | functionality removed | none |
-| new checks | 20 (`api/test_deploy.py`, 32 → 52), each made to fail first |
-| total checks | 543 |
-| a documented limitation withdrawn | 1 (D17.10) |
+| new checks | 21 (`api/test_deploy.py`, 32 → 53), each made to fail first |
+| total checks | 544 |
+| documented claims withdrawn as false | 2 (D17.10, D17.11) |
 | new dependencies | 0 |
 | the suite needs a key, a network or an account | no |
 | deployed by this stage | **no** — every platform step is marked **you** in `DEPLOYMENT.md` |
@@ -2623,7 +2653,7 @@ that picks a query (Anthropic **and** Gemini behind one transport seam) **or a
 lexical router that picks one with no model at all** -> HTTP API -> dashboard
 with both front doors and one audit trail -- and, since Stage 17, a documented
 deployment of all three tiers whose configuration is checked on every run.
-**17 stages, 149 logged decisions, 543 automated checks, one command to rebuild.**
+**17 stages, 150 logged decisions, 544 automated checks, one command to rebuild.**
 (Both counts were stale here too -- `grep -c '^## Stage ' DECISIONS.md` and
 `grep -c '^### D[0-9]' DECISIONS.md` are where they now come from.)
 
@@ -2637,7 +2667,7 @@ send, and in the audit trail beside the queries a model chose.
 This table was two stages stale until Stage 16 (D16.6) and is now written from
 what `run_pipeline.py --check` actually prints, suite by suite.  The 21
 database checks live inside `etl/load_db.py` and are counted separately from
-the 543, exactly as that command reports them.
+the 544, exactly as that command reports them.
 
 | check suite | count |
 |---|---:|
@@ -2649,8 +2679,8 @@ the 543, exactly as that command reports them.
 | lexical router, no model (`api/test_router.py`) | 96 |
 | dashboard source (`ui/test_ui.py`) | 44 |
 | dashboard rendered in Chrome (`ui/test_render.py`) | 56 |
-| deployment configuration (`api/test_deploy.py`) | 52 |
-| **total** | **543** |
+| deployment configuration (`api/test_deploy.py`) | 53 |
+| **total** | **544** |
 | database verification (`etl/load_db.py`, counted apart) | 21 |
 
 **The measured numbers, in one place.** Everything below is produced by a suite

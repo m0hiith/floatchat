@@ -129,8 +129,29 @@ pg_restore -d "$OWNER_DSN" --no-owner --no-privileges --clean --if-exists /tmp/f
 
 `$OWNER_DSN` is the **session pooler / direct** string with the owner role.
 `--no-owner --no-privileges` because the local owner role does not exist there.
-No PostGIS, no extensions: the schema uses core `point` and `polygon` with a
-GiST index, which is why this restore is one command (D4.4).
+
+**Two extensions have to exist first, and this document was wrong about that**
+until D17.11. `db/schema.sql` needs none — positions are a core `point` with a
+GiST index, and no PostGIS (D4.4) — but one of the eleven catalogue queries
+does. `nearest_profiles` calls `ll_to_earth`, `earth_box` and `earth_distance`
+(`api/catalog.py:332`), which come from `earthdistance`, which needs `cube`.
+Create them **in `public`**, before the restore, so the dump's own
+`CREATE EXTENSION` lines are no-ops and the functions resolve on the default
+search path:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS cube          WITH SCHEMA public;
+CREATE EXTENSION IF NOT EXISTS earthdistance WITH SCHEMA public;
+```
+
+Supabase's dashboard toggle puts extensions in the `extensions` schema
+instead. That is the wrong place here: the API sets no `search_path`, so
+`ll_to_earth` would not resolve and exactly one of eleven queries would fail
+in production while the other ten worked.
+
+**What catches this** is the read-only proof below — `api/test_catalog.py` runs
+*every* query against its documented example, so a missing extension is a named
+failure on `nearest_profiles` rather than a question that breaks in a demo.
 
 Then the read-only role, **with a password that is not in this repository**:
 

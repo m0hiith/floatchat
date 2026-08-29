@@ -65,7 +65,7 @@ what corrected them. Numbered `D<stage>.<n>`. These are the author's defence
 notes; a decision that is not written down did not happen.
 
 **5. A claim is only true if something re-checks it on every run.**
-543 checks across ten suites, none of which need a network or an API key. If a
+544 checks across ten suites, none of which need a network or an API key. If a
 property matters — the region assignment, the funnel, the QC asymmetry, the
 Bay of Bengal being fresher than the Arabian Sea — it is asserted, not
 commented. `python run_pipeline.py --check`.
@@ -257,7 +257,7 @@ pool in `catalog.py` (D17.5).
 
 ```bash
 .venv/bin/python run_pipeline.py            # build everything, skip what exists
-.venv/bin/python run_pipeline.py --check    # 543 checks, no network, no API key
+.venv/bin/python run_pipeline.py --check    # 544 checks, no network, no API key
 .venv/bin/python ui/test_ui.py              # the dashboard's couplings, no npm needed
 .venv/bin/python ui/test_render.py          # the dashboard in Chrome (needs npm + Chrome)
 .venv/bin/python etl/build_index.py         # Stage 11 index + its recall figures

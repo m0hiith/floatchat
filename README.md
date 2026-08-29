@@ -27,7 +27,7 @@ python -m venv .venv
 ```
 
 That downloads ~155 MB, builds the database, builds the retrieval index, and
-runs 543 checks. First run is a few minutes, mostly transfer; afterwards it
+runs 544 checks. First run is a few minutes, mostly transfer; afterwards it
 re-runs from cache in about 11 seconds.
 
 Then apply the read-only role the query layer uses, once:
@@ -88,7 +88,7 @@ The retrieval index builds with no key either, and reports how well it works:
 | database size | 95 MB |
 | parameterised queries | 11 |
 | indexed summaries | 131 |
-| automated checks | 543 |
+| automated checks | 544 |
 
 The ten floats are deliberately mixed: 6 delayed-mode, 2 real-time-only, 2 that
 change mode mid-life; 4 data centres of which 5 floats are Indian (`incois`);
@@ -223,7 +223,7 @@ parameters, and how many rows each returned.
   arriving as a number rather than a string; an aggregate over nothing
   reporting `null` rather than `0.0`; and a stopped database returning 503
   with its reason instead of an empty body.
-- **52 deployment-configuration checks** — the two requirements freezes
+- **53 deployment-configuration checks** — the two requirements freezes
   reconciled pin by pin, and the property behind them: no third-party module
   imported anywhere under `api/` is missing from the slim one. Then both upload
   sets, *computed by walking the tree* rather than grepping the ignore files —
@@ -277,7 +277,7 @@ Step 1 of `DEPLOYMENT.md` is what makes it answer a question about ARGO.
 ## Known limitations
 
 - **Nothing in this repository has been run against the deployed stack.** The
-  configuration for all three tiers is written and checked by 52 assertions, and
+  configuration for all three tiers is written and checked by 53 assertions, and
   every one of them checks *this repository* — none can check Vercel or
   Supabase. No hosted database has been created from here, no environment
   variable has been set, no push has been deployed. `DEPLOYMENT.md` marks every
@@ -329,7 +329,7 @@ Step 1 of `DEPLOYMENT.md` is what makes it answer a question about ARGO.
   documented, not a stub. Widening it means re-running Stage 1 with different
   constants and re-checking the funnel.
 - **The dashboard is read back on every run; how it *looks* is still not
-  checked.** Of the 543 checks, 44 (`ui/test_ui.py`) read the UI source and
+  checked.** Of the 544 checks, 44 (`ui/test_ui.py`) read the UI source and
   assert what has already been broken here at least once: every query has a
   display and no display is stale, `displays.js` is still the only UI file
   naming a query in code, no Plotly attribute that this pinned version silently
@@ -373,7 +373,7 @@ api/embed.py      three embedders behind one seam (Gemini · keyless · scripted
 api/retrieval.py  the FAISS index, and the measurement of whether it works
 api/router.py     Stage 12: picks a query with no model, and measures itself
 api/server.py     GET /meta, GET /regions.geojson, POST /query, POST /ask
-api/test_*.py     443 checks, no network, no API key
+api/test_*.py     444 checks, no network, no API key
 ui/               the dashboard; ui/src/displays.js maps each query to a chart
 db/schema.sql     tables, constraints, indexes
 db/roles.sql      the read-only role

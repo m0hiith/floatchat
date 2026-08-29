@@ -449,6 +449,31 @@ def main() -> None:
           f"loaded {lines[1] if len(lines) > 1 else '?'}, "
           f"manifest {manifest.get('embedder_name')}")
 
+    # ------------------------------------ what the hosted database needs first
+    # DEPLOYMENT.md said "no extensions" and was wrong: one of the eleven
+    # queries calls earthdistance's functions, so a restore that creates only
+    # tables leaves ten queries working and one failing in production
+    # (D17.11).  The catalogue is the authority on what it calls; this asserts
+    # the deployment document has kept up with it.
+    print("\nthe deploy document names every extension the catalogue needs (D17.11)")
+    catalog_src = (ROOT / "api" / "catalog.py").read_text()
+    doc = (ROOT / "DEPLOYMENT.md").read_text()
+    # function -> the extension that provides it
+    PROVIDED_BY = {"ll_to_earth": "earthdistance", "earth_box": "earthdistance",
+                   "earth_distance": "earthdistance", "cube(": "cube",
+                   "gen_random_uuid": "pgcrypto", "uuid_generate": "uuid-ossp",
+                   "unaccent(": "unaccent", "similarity(": "pg_trgm",
+                   "ST_": "postgis", "<->": None}
+    needed = {ext for fn, ext in PROVIDED_BY.items()
+              if ext and fn in catalog_src}
+    # earthdistance is itself built on cube, so requiring it requires both.
+    if "earthdistance" in needed:
+        needed.add("cube")
+    undocumented = sorted(e for e in needed if e not in doc)
+    check("every extension the queries need is in DEPLOYMENT.md", not undocumented,
+          f"missing: {undocumented}" if undocumented
+          else f"needs {sorted(needed) or 'none'}, all named")
+
     print(f"\n{passed} passed, {failed} failed")
     sys.exit(1 if failed else 0)
 
