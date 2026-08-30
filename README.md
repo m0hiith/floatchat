@@ -15,6 +15,48 @@ turned out to be wrong — is in [DECISIONS.md](DECISIONS.md).
 
 ---
 
+## What it looks like
+
+Four frames from the dashboard, captured from the production bundle running
+against the local database — headless Chrome driven over the DevTools
+Protocol, through the same `ui/test_render.py` harness the check suite uses,
+with the API proxied onto the page's own origin. Nothing below is a mockup:
+every number in them came out of Postgres when the frame was taken.
+
+**The landing screen.** It opens in Chat with no key and no model. The nine
+preset questions are not copy — `ui/test_render.py` reads them off the
+rendered page on every run, asks `/ask` each one, and prints the misses:
+
+![The FloatChat landing screen: a chat composer badged "lexical router - no model", nine preset questions, the header counts read from the database, and an empty audit trail](docs/screenshots/01-landing.png)
+
+**A question that becomes a chart.** The router names the query it picked and
+the score it matched at, the audit trail lists the parameters the catalogue
+bound, and the yellow panel says out loud that the date range was a fallback
+rather than something the question asked for. Pressure increases downward, in
+dbar; temperature is °C and salinity PSU, on their own axes:
+
+![The question "Plot temperature against depth in the Arabian Sea" answered by depth_profile: a two-axis line chart of temperature and salinity against pressure, with the bound parameters shown above it](docs/screenshots/02-depth-profile.png)
+
+**A question that becomes a map.** `nearest_profiles` bound `lat=15, lon=68,
+radius_km=200, limit=200` and returned 77 rows — the circle is the radius that
+was actually queried, not a decoration:
+
+![The question "Which ARGO floats are nearest to 15°N, 68°E?" answered by nearest_profiles: 77 profile positions plotted inside the queried 200 km radius](docs/screenshots/03-nearest-profiles.png)
+
+**One float's life.** The earliest 200 of float 6903139's 289 fixes, coloured
+by `DATA_MODE`. The legend carries all three states because `DATA_MODE` has
+three; these 200 hold two of them — 191 delayed-mode and 9 real-time-adjusted,
+which is the green track and the short purple run just before `last`:
+
+![The question "Show me the trajectory of float 6903139" answered by float_trajectory: the float's track across the Gulf of Aden on an OpenStreetMap basemap, points coloured by data mode with a legend for R, A and D](docs/screenshots/04-float-trajectory.png)
+
+Every one of those four screens names the query that produced it, in the
+answer, in the audit trail and in the footer under the chart. That is the whole
+point of the project: there is no number on the page that cannot be traced to a
+query and its bound parameters.
+
+---
+
 ## Quickstart
 
 Needs Python 3.13 and a running PostgreSQL (14 or later). No Docker, no
