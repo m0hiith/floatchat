@@ -35,6 +35,11 @@ data/parsed
 data/profiles
 data/regions
 
+# The README's screenshots.  1.5 MB of PNGs that only GitHub ever renders --
+# no code path opens them, and a function bundle is not a place to keep
+# documentation.
+docs
+
 # The pipeline itself.  Nothing under these paths runs on a serverless
 # function, and nothing under api/ opens a file in them.
 etl
